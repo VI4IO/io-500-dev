@@ -1,26 +1,59 @@
 #!/bin/bash 
-#DW jobdw type=scratch access_mode=striped capacity=213006GiB
+
+#IO-500 benchmark
+#v0.2
+
 #SBATCH --ntasks-per-node=2 
-#SBATCH --nodes=2048
+#SBATCH --nodes=512
 #SBATCH --job-name=IO-500 
 #SBATCH --time=00:50:00
 #SBATCH -o io_500_out_%J
 #SBATCH -e io_500_err_%J
 
-procs=4096
+
+##DW jobdw type=scratch access_mode=striped capacity=213006GiB
+
+procs=1024
 procs_per_node=2
+
+
 
 # set here the parameters you want
 mpirun="srun -n $procs --ntasks-per-node=${procs_per_node}"
-workdir="${DW_JOB_STRIPED}"
-ior_easy_params="-t 512k -b 3195392k" 
+#Select filesystem
+# 1 for Lustre
+# 2 for Cray DataWarp
+filesystem=1
+
+if [ $filesystem -eq 1 ]; then
+#workdir for Lustre, adapt to your path
+#Do not use same path with the current location of your script!
+  workdir="/project/k01/markomg/io_test"
+  rm -rf $workdir
+  mkdir $workdir
+  cp IOR mdtest $workdir
+#Please declare the required OST to be used (only for Lustre)
+#does this work on all Lustre?
+  max_ost=`lfs df -h $DIRNAME | grep OST0 | wc -l`
+
+  lfs setstripe -c $max_ost $workdir
+  ior_easy_params="-t 1m -b 10g"
+  cd $workdir
+
+elif [ $filesystem -eq 2 ]; then
+  #workdir for Cray DataWarp
+  workdir="${DW_JOB_STRIPED}"
+  ior_easy_params="-t 512k -b 3195392k"
+fi
+
 mdtest_hard_files_per_proc=100 
 ior_hard_writes_per_proc=5000
 ior_results_file=ior_${SLURM_JOBID}
 mdt_results_file=mdt_${SLURM_JOBID}
 
+
 ############
-# don't edit below here
+# dont edit below here
 ############
 tmp_dir=`mktemp -d`
 
@@ -103,7 +136,7 @@ print_iops 4 $iops4 | tee -a $mdt_results_file
 
 
 
-echo "Executing command find"
+echo "Executing find command"
 start=$(date +%s.%N)
 time find ${workdir} -name \*00\* -newer ${workdir}/$ts2  -size +3000c | wc
 end=$(date +%s.%N)
