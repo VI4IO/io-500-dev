@@ -31,9 +31,10 @@ if [ $filesystem -eq 1 ]; then
   workdir="/project/k01/markomg/io_test"
   rm -rf $workdir
   mkdir $workdir
-  cp IOR mdtest $workdir
 
   lfs setstripe -c -1 $workdir
+  cp IOR mdtest $workdir
+
   ior_easy_params="-t 1m -b 10g"
   cd $workdir
 
