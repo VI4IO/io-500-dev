@@ -32,11 +32,8 @@ if [ $filesystem -eq 1 ]; then
   rm -rf $workdir
   mkdir $workdir
   cp IOR mdtest $workdir
-#Please declare the required OST to be used (only for Lustre)
-#does this work on all Lustre?
-  max_ost=`lfs df -h $DIRNAME | grep OST0 | wc -l`
 
-  lfs setstripe -c $max_ost $workdir
+  lfs setstripe -c -1 $workdir
   ior_easy_params="-t 1m -b 10g"
   cd $workdir
 
