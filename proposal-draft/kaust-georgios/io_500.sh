@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash -x 
 
 #IO-500 benchmark
 #v0.2
@@ -13,7 +13,7 @@
 
 ##DW jobdw type=scratch access_mode=striped capacity=213006GiB
 
-procs=1024
+procs=256
 procs_per_node=2
 
 
@@ -30,10 +30,15 @@ if [ $filesystem -eq 1 ]; then
 #Do not use same path with the current location of your script!
   workdir="/project/k01/markomg/io_test"
   rm -rf $workdir
-  mkdir $workdir
+  mkdir -p $workdir/ior_hard
+  
+  lfs setstripe -c -1 $workdir/ior_hard
+  cp IOR $workdir/ior_hard
+mkdir $workdir/ior_easy $workdir/mdt_easy $workdir/mdt_hard
+  cp IOR $workdir/ior_easy
+  cp mdtest $workdir/mdt_easy
+  cp mdtest $workdir/mdt_hard
 
-  lfs setstripe -c -1 $workdir
-  cp IOR mdtest $workdir
 
   ior_easy_params="-t 1m -b 10g"
   cd $workdir
@@ -46,8 +51,8 @@ fi
 
 mdtest_hard_files_per_proc=100 
 ior_hard_writes_per_proc=5000
-ior_results_file=ior_${SLURM_JOBID}
-mdt_results_file=mdt_${SLURM_JOBID}
+ior_results_file=${SLURM_SUBMIT_DIR}/ior_${SLURM_JOBID}
+mdt_results_file=${SLURM_SUBMIT_DIR}/mdt_${SLURM_JOBID}
 
 
 ############
@@ -64,7 +69,8 @@ function print_iops  {
 }
 
 # ior easy write
-$mpirun IOR -F -e -g -vv -w -G 27 -k $ior_easy_params -o $workdir/ior_easy | tee $tmp_dir/ior_easy
+cd $workdir/ior_easy
+$mpirun IOR -F -e -g -vv -w -G 27 -k $ior_easy_params -o $workdir/ior_easy/ior_file_easy | tee $tmp_dir/ior_easy
 bw1=$(grep "Max W" $tmp_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
 bw_dur1=$(grep "write " $tmp_dir/ior_easy | tail -n 1 | awk '{print $10}')
@@ -78,8 +84,9 @@ else
 	let ior_easy_files=1
 fi 
 #mdtest easy create
-mkdir ${workdir}/mdtest_easy
-$mpirun mdtest -v -C -d ${workdir}/mdtest_easy -u -n $mdtest_hard_files_per_proc | tee $tmp_dir/mdt_easy
+cd $workdir/mdt_easy
+mkdir temp
+$mpirun mdtest -v -C -d ${workdir}/mdt_easy/tmp -u -n $mdtest_hard_files_per_proc | tee $tmp_dir/mdt_easy
 iops1=$(grep "File creation" $tmp_dir/mdt_easy | tail -n 1 | awk '{print $4}')
 print_iops 1 $iops1 | tee  $mdt_results_file
 
@@ -89,7 +96,8 @@ ts2=`date +%s`
 touch $workdir/$ts2
 
 # ior hard write
-$mpirun IOR -e -g -vv -w -G 27 -k -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/IOR_file | tee $tmp_dir/ior_hard
+cd $workdir/ior_hard
+$mpirun IOR -e -g -vv -w -G 27 -k -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file | tee $tmp_dir/ior_hard
 bw2=$(grep "Max W" $tmp_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
 bw_dur2=$(grep "write " $tmp_dir/ior_hard | tail -n 1 | awk '{print $10}')
@@ -97,14 +105,16 @@ print_bw 2 $bw2 $bw_dur2 | tee -a $ior_results_file
 
 
 #mdtest hard create
-mkdir ${workdir}/mdtest_hard
-$mpirun mdtest -v -C -d ${workdir}/mdtest_hard -n $mdtest_hard_files_per_proc -w 3900 | tee $tmp_dir/mdt_hard
+cd $workdir/mdt_hard
+mkdir tmp
+$mpirun mdtest -v -C -d ${workdir}/mdt_hard/tmp -n $mdtest_hard_files_per_proc -w 3900 | tee $tmp_dir/mdt_hard
 iops2=$(grep "File creation"  $tmp_dir/mdt_hard | tail -n 1 | awk '{print $4}')
 print_iops 2 $iops2 | tee -a $mdt_results_file
 
 
 # ior easy read
-$mpirun IOR -F -e -g -vv -R -r -C -G 27 -k -t 512k -b 3195392k -o ${workdir}/ior_easy | tee $tmp_dir/ior_read_easy
+cd $workdir/ior_easy
+$mpirun IOR -F -e -g -vv -R -r -C -G 27 -k -t 512k -b 3195392k -o ${workdir}/ior_easy/ior_file_easy | tee $tmp_dir/ior_read_easy
 bw3=$(grep "Max R" $tmp_dir/ior_read_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
 bw_dur3=$(grep "read " $tmp_dir/ior_read_easy | tail -n 1 | awk '{print $10}')
@@ -112,14 +122,17 @@ print_bw 3 $bw3 $bw_dur3 | tee -a $ior_results_file
 
 
 # mdtest easy stat
-$mpirun mdtest -v -T -d ${workdir}/mdtest_easy -u -n $mdtest_hard_files_per_proc | tee $tmp_dir/mdt_read_easy
+cd $workdir/mdt_easy
+mkdir tmp
+$mpirun mdtest -v -T -d ${workdir}/mdt_easy/tmp -u -n $mdtest_hard_files_per_proc | tee $tmp_dir/mdt_read_easy
 iops3=$(grep "File stat" $tmp_dir/mdt_read_easy | tail -n 1 | awk '{print $4}')
 print_iops 3 $iops3 | tee -a $mdt_results_file
 
 
 
 # ior hard read
-$mpirun IOR  -g -vv -R -r -C -G 27 -k -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/IOR_file | tee $tmp_dir/ior_read_hard
+cd $workdir/ior_hard
+$mpirun IOR  -g -vv -R -r -C -G 27 -k -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file | tee $tmp_dir/ior_read_hard
 bw4=$(grep "Max R" $tmp_dir/ior_read_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1| awk '{print $5}')
 
 bw_dur4=$(grep "read " $tmp_dir/ior_read_hard | tail -n 1 | awk '{print $10}')
@@ -128,7 +141,8 @@ print_bw 4 $bw4 $bw_dur4 | tee -a $ior_results_file
 
 
 # mdtest hard stat
-$mpirun mdtest -v -T -d ${workdir}/mdtest_hard -n $mdtest_hard_files_per_proc    | tee $tmp_dir/mdt_read_hard
+cd $workdir/mdt_hard
+$mpirun mdtest -v -T -d ${workdir}/mdt_hard/tmp -n $mdtest_hard_files_per_proc    | tee $tmp_dir/mdt_read_hard
 iops4=$(grep "File stat" $tmp_dir/mdt_read_hard | tail -n 1 | awk '{print $4}')
 print_iops 4 $iops4 | tee -a $mdt_results_file
 
