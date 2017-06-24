@@ -1,7 +1,7 @@
-#!/bin/bash -x 
+#!/bin/bash 
 
 #IO-500 benchmark
-#v0.2
+#v0.3
 
 #SBATCH --ntasks-per-node=2 
 #SBATCH --nodes=512
