@@ -19,7 +19,7 @@ mkdir $workdir/ior_easy $workdir/mdt_easy $workdir/mdt_hard
   ior_easy_params="-t 1m -b 10g"
   cd $workdir
 
-elif [ $filesystem -eq 2 ]; then
+elif [ $filesystem -eq 3 ]; then
   #workdir for Cray DataWarp
   workdir="${DW_JOB_STRIPED}"
   ior_easy_params="-t 512k -b 3195392k"

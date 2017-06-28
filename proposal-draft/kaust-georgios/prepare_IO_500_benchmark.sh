@@ -35,6 +35,10 @@ fi
 
 fi
 
+if [ $filesystem -eq 3 ]; then
+
+ echo "#DW jobdw type=scratch access_mode=striped capacity=800GiB" >> io500.sh
+fi
 cat parameters.txt | grep -v mpirun >> io500.sh
 
 echo -e "\nUsed mpirun alias\n" >> io500.sh
