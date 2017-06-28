@@ -1,0 +1,21 @@
+#Choose your scheduler
+#1 for SLURM
+#2 for ...
+scheduler=1
+
+#give job duration in minutes
+job_duration=60
+
+#Number of MPI processes
+procs=256
+#Number of MPI processes per node
+procs_per_node=2
+
+#Declare the command that you use for mpirun	
+mpirun="srun"
+#mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node}"
+extra=""
+
+#What filesystem are you using?
+#1 - Lustre, 2 - GPFS, 3 - Cray DataWarp, 4 - DDN IME
+filesystem=1 
