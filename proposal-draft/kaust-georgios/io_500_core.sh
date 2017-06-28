@@ -27,9 +27,10 @@ fi
 
 mdtest_hard_files_per_proc=100 
 ior_hard_writes_per_proc=5000
-ior_results_file=${SLURM_SUBMIT_DIR}/ior_${SLURM_JOBID}
-mdt_results_file=${SLURM_SUBMIT_DIR}/mdt_${SLURM_JOBID}
-
+if [ $scheduler -eq 1 ]; then
+  ior_results_file=${SLURM_SUBMIT_DIR}/ior_${SLURM_JOBID}
+  mdt_results_file=${SLURM_SUBMIT_DIR}/mdt_${SLURM_JOBID}
+fi
 
 ############
 # dont edit below here
