@@ -6,8 +6,8 @@ scheduler=1
 #give job duration in minutes
 job_duration=60
 
-#Number of MPI processes
-procs=256
+#Number of compute nodes
+nodes=256
 #Number of MPI processes per node
 procs_per_node=2
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --ntasks-per-node=
-#SBATCH --ntasks=
+#SBATCH --nodes=
 #SBATCH --job-name=IO-500
 #SBATCH --time=
 #SBATCH -o io_500_out_%J
