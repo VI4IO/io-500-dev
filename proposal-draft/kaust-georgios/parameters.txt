@@ -19,6 +19,9 @@ extra=""
 #1 - Lustre, 2 - GPFS, 3 - Cray DataWarp, 4 - DDN IME
 filesystem=3
 
+#Declare your working directory
+workpath="/project/k01/markomg/io_test"
+
 #Benchmarks parameters
 mdtest_hard_files_per_proc=100
 ior_hard_writes_per_proc=5000

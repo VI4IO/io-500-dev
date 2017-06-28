@@ -4,7 +4,7 @@
 if [ $filesystem -eq 1 ]; then
 #workdir for Lustre, adapt to your path
 #Do not use same path with the current location of your script!
-  workdir="/project/k01/markomg/io_test"
+  workdir=$workpath
   rm -rf $workdir
   mkdir -p $workdir/ior_hard
   
