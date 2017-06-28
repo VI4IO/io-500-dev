@@ -26,6 +26,11 @@ sed -i.bak "s/time=/time=${real_time}/g"  io500.sh
 if [ "$mpirun"=="srun" ]; then
 
 	mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra
+
+elif [ "$mpirun"=="mpirun" ]; then
+
+        mpirun="mpirun -np ${procs} --npernode ${procs_per_node} "$extra
+
 fi
 
 fi
