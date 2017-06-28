@@ -86,7 +86,7 @@ print_iops 2 $iops2 | tee -a $mdt_results_file
 
 # ior easy read
 cd $workdir/ior_easy
-$mpirun IOR -F -e -g -vv -R -r -C -G 27 -k -t 512k -b 3195392k -o ${workdir}/ior_easy/ior_file_easy | tee $tmp_dir/ior_read_easy
+$mpirun IOR -F -e -g -vv -R -r -C -G 27 -k $ior_easy_params -o ${workdir}/ior_easy/ior_file_easy | tee $tmp_dir/ior_read_easy
 bw3=$(grep "Max R" $tmp_dir/ior_read_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
 bw_dur3=$(grep "read " $tmp_dir/ior_read_easy | tail -n 1 | awk '{print $10}')

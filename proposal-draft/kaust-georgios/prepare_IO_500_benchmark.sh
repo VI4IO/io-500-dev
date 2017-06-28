@@ -23,17 +23,6 @@ real_time="00:"$(printf %02d $hours)":"$(printf %02d $minutes)
 
 fi
 sed -i.bak "s/time=/time=${real_time}/g"  io500.sh
-if [ "$mpirun"=="srun" ]; then
-
-	mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra
-
-elif [ "$mpirun"=="mpirun" ]; then
-
-        mpirun="mpirun -np ${procs} --npernode ${procs_per_node} "$extra
-
-fi
-
-fi
 
 if [ $filesystem -eq 3 ]; then
 
@@ -41,7 +30,23 @@ if [ $filesystem -eq 3 ]; then
 fi
 cat parameters.txt | grep -v mpirun >> io500.sh
 
+if [ "$mpirun"=="srun" ]; then
+
+	mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra
+
 echo -e "\nUsed mpirun alias\n" >> io500.sh
-echo "mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra" >> io500.sh
+echo "mpirun=\"srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra\" >> io500.sh
+
+
+elif [ "$mpirun"=="mpirun" ]; then
+
+        mpirun="mpirun -np ${procs} --npernode ${procs_per_node} "$extra
+echo -e "\nUsed mpirun alias\n" >> io500.sh
+echo "mpirun=\"mpirun -np ${procs} --npernode ${procs_per_node} "$extra\" >> io500.sh
+fi
+
+fi
+
+
 
 cat io_500_core.sh >> io500.sh
