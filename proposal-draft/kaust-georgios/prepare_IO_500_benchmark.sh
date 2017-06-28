@@ -34,7 +34,7 @@ if [ "$mpirun"=="srun" ]; then
 
 	mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra
 
-echo -e "\nUsed mpirun alias\n" >> io500.sh
+echo -e "\n#Used mpirun alias\n" >> io500.sh
 echo "mpirun=\"srun -n ${procs} --ntasks-per-node=${procs_per_node} "$extra\" >> io500.sh
 
 
