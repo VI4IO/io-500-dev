@@ -13,9 +13,16 @@ procs_per_node=2
 
 #Declare the command that you use for mpirun	
 mpirun="srun"
-#mpirun="srun -n ${procs} --ntasks-per-node=${procs_per_node}"
 extra=""
 
 #What filesystem are you using?
 #1 - Lustre, 2 - GPFS, 3 - Cray DataWarp, 4 - DDN IME
-filesystem=1 
+filesystem=3
+
+#Benchmarks parameters
+mdtest_hard_files_per_proc=100
+ior_hard_writes_per_proc=5000
+
+ior_easy_params="-t 1m -b 10g"
+#ior_easy_params="-t 512k -b 3195392k"
+
