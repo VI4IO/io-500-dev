@@ -11,7 +11,7 @@ else
 hours=$(($job_duration/60))
 minutes=$(($job_duration%60))
 
-real_time="00:"$(printf %02d $hours)":"$(printf %02d $minutes)
+real_time="00:"$(printf %02d $(($hours*60)))":"$(printf %02d $minutes)
 
 fi
 
