@@ -1,7 +1,8 @@
 #Choose your scheduler
 #1 for SLURM
 #2 for PBS
-scheduler=3
+#3 for LSF
+scheduler=1
 
 #give job duration in minutes
 job_duration=60
@@ -23,7 +24,7 @@ extra=""
 
 #What filesystem are you using?
 #1 - Lustre, 2 - GPFS, 3 - Cray DataWarp, 4 - DDN IME
-filesystem=3
+filesystem=1
 
 #Declare your working directory
 workpath="/project/k01/markomg/io_test"
