@@ -2,13 +2,20 @@
 
 source parameters.txt
 
-if [ $scheduler -eq 1 ]; then
+./scheduler.sh $scheduler io500.sh
 
+if [ $scheduler -eq 1 ]; then
 #echo "SLURM scheduler"
 
-cat scheduler_slurm.sh > io500.sh
 sed -i.bak "s/nodes=/nodes=$nodes/g"  io500.sh 
 sed -i.bak "s/ntasks-per-node=/ntasks-per-node=$procs_per_node/g"  io500.sh
+
+elif [ $scheduler -eq 2 ]; then
+#echo "PBS scheduler"
+
+sed -i.bak "s/select=/select=$nodes/g"  io500.sh
+sed -i.bak "s/mpiprocs=/mpiprocs=$procs_per_node/g"  io500.sh
+fi 
 
 if [ $job_duration -lt 60 ]; then
 
@@ -22,7 +29,11 @@ minutes=$(($job_duration%60))
 real_time="00:"$(printf %02d $hours)":"$(printf %02d $minutes)
 
 fi
+if [ $scheduler -eq 1 ]; then
 sed -i.bak "s/time=/time=${real_time}/g"  io500.sh
+elif [ $scheduler -eq 2 ]; then
+sed -i.bak "s/walltime=/walltime=${real_time}/g"  io500.sh
+fi
 
 if [ $filesystem -eq 3 ]; then
 
@@ -30,22 +41,22 @@ if [ $filesystem -eq 3 ]; then
 fi
 cat parameters.txt | grep -v mpirun >> io500.sh
 mpi_procs=$(($nodes*$procs_per_node))
+if [ $scheduler -eq 1 ]; then
 if [ "$mpirun"=="srun" ]; then
 
 	mpirun="srun -n $mpi_procs --ntasks-per-node=${procs_per_node} "$extra
 
 echo -e "\n#Used mpirun alias\n" >> io500.sh
 echo "mpirun=\"srun -n $mpi_procs --ntasks-per-node=${procs_per_node} "$extra\" >> io500.sh
+fi
 
-
-elif [ "$mpirun"=="mpirun" ]; then
+else
 
         mpirun="mpirun -np $mpi_procs --npernode ${procs_per_node} "$extra
-echo -e "\nUsed mpirun alias\n" >> io500.sh
+echo -e "\n#Used mpirun alias\n" >> io500.sh
 echo "mpirun=\"mpirun -np $mpi_procs --npernode ${procs_per_node} "$extra\" >> io500.sh
 fi
 
-fi
 
 
 
