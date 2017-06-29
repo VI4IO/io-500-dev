@@ -1,7 +1,7 @@
 #Choose your scheduler
 #1 for SLURM
-#2 for ...
-scheduler=1
+#2 for PBS
+scheduler=3
 
 #give job duration in minutes
 job_duration=60
@@ -10,6 +10,12 @@ job_duration=60
 nodes=256
 #Number of MPI processes per node
 procs_per_node=2
+
+#Declare your project account number
+project_code=k01
+
+#Declare your queue or partition
+partition=workq
 
 #Declare the command that you use for mpirun	
 mpirun="srun"

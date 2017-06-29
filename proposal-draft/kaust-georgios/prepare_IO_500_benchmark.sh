@@ -2,21 +2,6 @@
 
 source parameters.txt
 
-./scheduler.sh $scheduler io500.sh
-
-if [ $scheduler -eq 1 ]; then
-#echo "SLURM scheduler"
-
-sed -i.bak "s/nodes=/nodes=$nodes/g"  io500.sh 
-sed -i.bak "s/ntasks-per-node=/ntasks-per-node=$procs_per_node/g"  io500.sh
-
-elif [ $scheduler -eq 2 ]; then
-#echo "PBS scheduler"
-
-sed -i.bak "s/select=/select=$nodes/g"  io500.sh
-sed -i.bak "s/mpiprocs=/mpiprocs=$procs_per_node/g"  io500.sh
-fi 
-
 if [ $job_duration -lt 60 ]; then
 
 real_time="00:00:"$job_duration
@@ -29,11 +14,39 @@ minutes=$(($job_duration%60))
 real_time="00:"$(printf %02d $hours)":"$(printf %02d $minutes)
 
 fi
+
+./scheduler.sh $scheduler io500.sh
+
 if [ $scheduler -eq 1 ]; then
+#echo "SLURM scheduler"
+
+sed -i.bak "s/nodes=/nodes=$nodes/g"  io500.sh 
+sed -i.bak "s/ntasks-per-node=/ntasks-per-node=$procs_per_node/g"  io500.sh
+sed -i.bak "s/partition=/partition=$partition/g"  io500.sh
+sed -i.bak "s/-A/-A $project_code/g"  io500.sh
 sed -i.bak "s/time=/time=${real_time}/g"  io500.sh
+
+
 elif [ $scheduler -eq 2 ]; then
+#echo "PBS scheduler"
+
+sed -i.bak "s/select=/select=$nodes/g"  io500.sh
+sed -i.bak "s/mpiprocs=/mpiprocs=$procs_per_node/g"  io500.sh
+sed -i.bak "s/-q/-q $partition/g"  io500.sh
+sed -i.bak "s/-A/-A $project_code/g"  io500.sh
 sed -i.bak "s/walltime=/walltime=${real_time}/g"  io500.sh
-fi
+
+elif [ $scheduler -eq 3 ]; then
+#echo "LSF scheduler"
+
+sed -i.bak "s/-n/-n $(($nodes*procs_per_node)) /g"  io500.sh
+sed -i.bak "s/ptile=/ptile=$procs_per_node/g"  io500.sh
+sed -i.bak "s/-q/-q $partition/g"  io500.sh
+sed -i.bak "s/-P/-P $project_code/g"  io500.sh
+sed -i.bak "s/-W/-W ${real_time}/g"  io500.sh
+
+fi 
+
 
 if [ $filesystem -eq 3 ]; then
 

@@ -25,6 +25,15 @@ fi
 if [ $scheduler -eq 1 ]; then
   ior_results_file=${SLURM_SUBMIT_DIR}/ior_${SLURM_JOBID}
   mdt_results_file=${SLURM_SUBMIT_DIR}/mdt_${SLURM_JOBID}
+
+elif [ $scheduler -eq 2 ]; then
+  ior_results_file=${PBS_O_WORKDIR}/ior_${PBS_JOBID}
+  mdt_results_file=${PBS_O_WORKDIR}/mdt_${PBS_JOBID}
+
+elif [ $scheduler -eq 3 ]; then
+  ior_results_file=${LSB_SUBCWD}/ior_${LSB_JOBID}
+  mdt_results_file=${LSB_SUBCWD}/mdt_${LSB_JOBID}
+
 fi
 
 ############
