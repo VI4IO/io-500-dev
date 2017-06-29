@@ -4,8 +4,8 @@
 if [ $filesystem -eq 1 ]; then
 #workdir for Lustre, adapt to your path
 #Do not use same path with the current location of your script!
-  workdir=$workpath
-  rm -rf $workdir
+  workdir=$workpath/$$
+ # rm -rf $workdir
   mkdir -p $workdir/ior_hard
   
   lfs setstripe -c -1 $workdir/ior_hard
@@ -60,7 +60,7 @@ print_bw 1 $bw1 $bw_dur1 | tee  $ior_results_file
 
 grep -q "file-per-proc" $tmp_dir/ior_easy
 if [ $? -eq 0 ]; then
-	let ior_easy_files=$procs
+	let ior_easy_files=$(($nodes*$procs_per_node))
 else
 	let ior_easy_files=1
 fi 
@@ -152,3 +152,4 @@ export final_score=$( echo "$bw_score*$md_score" | bc)
 
 
 echo -e "\nTotal score is "$final_score
+echo "Delete the data from $workdir"
