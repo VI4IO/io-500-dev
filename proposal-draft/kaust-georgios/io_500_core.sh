@@ -140,7 +140,7 @@ print_iops 4 $iops4 | tee -a $mdt_results_file
 
 echo "Executing find command"
 start=$(date +%s.%N)
-#time find ${workdir} -name \*00\* -newer ${workdir}/$ts2  -size +3000c | wc
+time find ${workdir} -name \*00\* -newer ${workdir}/$ts2  -size +3000c | wc
 end=$(date +%s.%N)
 export duration=$(echo "scale=2; $end - $start" | bc)
 
@@ -154,7 +154,6 @@ let searched_files=$searched_files1+$searched_files2+1+$ior_easy_files
 echo "Searched files: "$searched_files
 echo "Duration: "$duration
 export iops5=$( echo "$searched_files/$duration" |bc )
-#echo $find_ops >> mdtest_${SLURM_JOBID}
 
 bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
 md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 | awk '{print ($1*$2*$3*$4*$5)^(1/5)}'`
