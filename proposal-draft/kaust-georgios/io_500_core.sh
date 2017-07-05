@@ -67,10 +67,14 @@ fi
 #mdtest easy create
 cd $workdir/mdt_easy
 mkdir temp
+start=$(date +%s.%N)
 $mpirun mdtest -v -C -d ${workdir}/mdt_easy/tmp -u -n $mdtest_hard_files_per_proc | tee $tmp_dir/mdt_easy
+end=$(date +%s.%N)
+export duration=$(echo "scale=2; $end - $start" | bc)
 iops1=$(grep "File creation" $tmp_dir/mdt_easy | tail -n 1 | awk '{print $4}')
 print_iops 1 $iops1 | tee  $mdt_results_file
 
+echo "mdt easy create duration "$duration
 
 
 ts2=`date +%s`
@@ -88,10 +92,15 @@ print_bw 2 $bw2 $bw_dur2 | tee -a $ior_results_file
 #mdtest hard create
 cd $workdir/mdt_hard
 mkdir tmp
+start=$(date +%s.%N)
+
 $mpirun mdtest -v -C -d ${workdir}/mdt_hard/tmp -n $mdtest_hard_files_per_proc -w 3900 | tee $tmp_dir/mdt_hard
+end=$(date +%s.%N)
+export duration=$(echo "scale=2; $end - $start" | bc)
 iops2=$(grep "File creation"  $tmp_dir/mdt_hard | tail -n 1 | awk '{print $4}')
 print_iops 2 $iops2 | tee -a $mdt_results_file
 
+echo "mdt hard create duration "$duration
 
 # ior easy read
 cd $workdir/ior_easy
@@ -131,7 +140,7 @@ print_iops 4 $iops4 | tee -a $mdt_results_file
 
 echo "Executing find command"
 start=$(date +%s.%N)
-time find ${workdir} -name \*00\* -newer ${workdir}/$ts2  -size +3000c | wc
+#time find ${workdir} -name \*00\* -newer ${workdir}/$ts2  -size +3000c | wc
 end=$(date +%s.%N)
 export duration=$(echo "scale=2; $end - $start" | bc)
 
@@ -142,7 +151,8 @@ searched_files2=$(grep "files/directories" $tmp_dir/mdt_easy | tail -n 1 | awk '
 # we know that ior_hard is just one file
 # we check of the access to IOR easy is file-per-proc to know the number of the files
 let searched_files=$searched_files1+$searched_files2+1+$ior_easy_files
-
+echo "Searched files: "$searched_files
+echo "Duration: "$duration
 export iops5=$( echo "$searched_files/$duration" |bc )
 #echo $find_ops >> mdtest_${SLURM_JOBID}
 
@@ -153,3 +163,6 @@ export final_score=$( echo "$bw_score*$md_score" | bc)
 
 echo -e "\nTotal score is "$final_score
 echo "Delete the data from $workdir"
+if [ $delete -eq 1 ]; then
+	rm -r $workdir &
+fi
