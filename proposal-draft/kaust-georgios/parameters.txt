@@ -4,7 +4,7 @@
 #3 for LSF
 scheduler=1
 
-#give job duration in minutes
+#Provide job duration in minutes
 job_duration=60
 
 #Number of compute nodes
@@ -20,6 +20,8 @@ partition=workq
 
 #Declare the command that you use for mpirun	
 mpirun="srun"
+
+#Any extra argument that should be added in the execution declared it here
 extra=""
 
 #What filesystem are you using?
@@ -33,6 +35,10 @@ workpath="/project/k01/markomg/io_test"
 mdtest_hard_files_per_proc=1200
 ior_hard_writes_per_proc=5000
 
+#Your IOR parameters
+# (m for MB, g for GB, k for KB, nothing for bytes)
+# -t is transfer size 
+# -b is continuous size to write per task 
 ior_easy_params="-t 1m -b 10g"
 #ior_easy_params="-t 512k -b 3195392k"
 
