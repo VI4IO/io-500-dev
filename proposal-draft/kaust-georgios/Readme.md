@@ -10,4 +10,11 @@
 
 ## Submission of results
 
-to be updated 
+to be updated
+
+## Not finished
+
+* Only SLURM scheduler is tested, we need to test the script on other schedulers
+* The automatic delete is not tested yet
+* Conclude to final version of the hard case of IOR (fix parameters)
+* Check github issues for mix workload etc.
