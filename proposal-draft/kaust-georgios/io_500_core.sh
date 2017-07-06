@@ -163,5 +163,5 @@ export final_score=$( echo "$bw_score*$md_score" | bc)
 echo -e "\nTotal score is "$final_score
 echo "Delete the data from $workdir"
 if [ $delete -eq 1 ]; then
-	rm -r $workdir &
+	rm -r $workdir 
 fi
