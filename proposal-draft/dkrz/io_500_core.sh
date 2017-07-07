@@ -123,10 +123,8 @@ print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 
 # find
 phase="find"
-searched_files1=$(grep "files/directories" $output_dir/mdt_hard | tail -n 1 | awk '{print $3*2}')
-searched_files2=$(grep "files/directories" $output_dir/mdt_easy | tail -n 1 | awk '{print $3*2}')
 startphase
-iops5=$($find_cmd $workdir)
+iops5=$($find_cmd $workdir/mdt_easy/#test-dir.0/mdtest_tree.0.0/)
 endphase  
 print_iops 5 $iops5 | tee -a $output_dir/find-results.txt 
 
