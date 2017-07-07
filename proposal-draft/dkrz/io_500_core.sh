@@ -84,7 +84,7 @@ print_iops 2  $iops2 | tee $output_dir/mdt-hard-results.txt
 # ior easy read
 phase="ior-easy-read"
 startphase
-$mpirun $ior_cmd -R -r -C $params_ior_easy >> $output_dir/ior_easy 2>&1
+$mpirun $ior_cmd -r -C $params_ior_easy >> $output_dir/ior_easy 2>&1
 endphase  
 bw3=$(grep "Max R" $output_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
