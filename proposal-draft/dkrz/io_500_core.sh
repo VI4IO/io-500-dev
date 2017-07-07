@@ -15,7 +15,7 @@ echo "[Precreating] missing directories"
 mkdir -p $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $output_dir 2>/dev/null
 
 function print_bw  {
-   echo "$1/$phase BW:$2 MB/s time: ${3}s" 
+   echo "$1/$phase BW:$2 MB/s time: ${duration}s" 
 }
 
 function print_iops  {

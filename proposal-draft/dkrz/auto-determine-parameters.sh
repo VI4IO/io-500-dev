@@ -2,8 +2,8 @@
 
 # This script automatically identifies the parameters based on the following directories:
 
-maxTasks=$SLURM_NTASKS
-mpirun="srun -N $SLURM_JOB_NUM_NODES -n $SLURM_NTASKS"
+maxTasks=$(($SLURM_TASKS_PER_NODE*$SLURM_JOB_NUM_NODES))
+mpirun="srun"
 workdir=/mnt/lustre02/work/k20200/k202079/io500-2/data
 output_dir=/mnt/lustre02/work/k20200/k202079/io500-2/results
 
@@ -22,7 +22,10 @@ mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
 
 
 
-## Do not change the script below this point ...
+## Do not change the script below this point except for testing...
+timeExpected=30       # 300 seconds
+timeThreshhold=10   # 100 seconds
+
 subtree_to_scan_config=$PWD/subtree.cfg
 
 function createSubtree(){
@@ -52,26 +55,31 @@ function run() {
 	echo $mdtest_easy_files_per_proc
 	source io_500_core.sh 
 	) 1>>output 2>&1 
+	rm -rf $workdir/*/* || true
 }
 
 function adaptParameter(){
 	timefile=$1
 	currentValue=$2
 	time=$(cat $output_dir/$timefile | cut -d ":" -f 3 | cut -d "s" -f 1 | sort -n | head -n 1)
-	if [[ $time == "0" ]] ; then
+	
+	if [[ $time -lt 1 ]] ; then
 		echo $(($currentValue * 100))
 		return
 	fi
-	if [[ $time -gt 300 ]] ; then 
+	if [[ $time -gt $timeExpected ]] ; then 
 		echo $(($currentValue)) # use the current value
 		return
 	fi
-	if [[ $time -lt 100 ]] ; then 
-		echo $(($currentValue * 300/$time)) 
+	if [[ $time -lt $timeThreshhold ]] ; then 
+		echo $(($currentValue * $timeExpected/$time)) 
 		return
 	fi
-	echo $(($currentValue * 2))
+	echo $(($currentValue * 2)) # simply double the files...
 }
+
+# initial clean of existing directories
+rm -rf $workdir/*/* || true
 
 # initial run to calibrate
 run
