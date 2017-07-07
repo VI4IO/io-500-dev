@@ -5,7 +5,7 @@
 export LC_NUMERIC=C  # prevents printf errors
 
 # check variables
-if [[ "$workdir" == "" || "$ior_easy_params" == "" || "$mdtest_hard_files_per_proc" == "" || "$ior_hard_writes_per_proc" == "" || "$find_cmd" == "" || "$ior_cmd" == ""  || "$mdtest_cmd" == ""  ]] ; then
+if [[ "$subtree_to_scan_config" == "" || "$workdir" == "" || "$ior_easy_params" == "" || "$mdtest_hard_files_per_proc" == "" || "$ior_hard_writes_per_proc" == "" || "$find_cmd" == "" || "$ior_cmd" == ""  || "$mdtest_cmd" == ""  ]] ; then
 	echo "IO500 script lacks important paramaters!"
 	exit 1
 fi 
@@ -42,6 +42,8 @@ params_ior_easy="-C -Q 1 -g -G 27 -k -vv -e -F $ior_easy_params -o $workdir/ior_
 params_md_easy="-v -u -b 1 -L -d ${workdir}/mdt_easy -u -n $mdtest_easy_files_per_proc"
 params_md_hard="-d ${workdir}/mdt_hard -n $mdtest_hard_files_per_proc -w 3900 -e 3900"
 
+touch $workdir/timestamp
+
 # ior easy write
 phase="ior-easy-write"
 startphase
@@ -59,9 +61,6 @@ $mpirun $mdtest_cmd -C $params_md_easy > $output_dir/mdt_easy 2>&1
 endphase  
 iops1=$(grep "File creation" $output_dir/mdt_easy | tail -n 1 | awk '{print $4}')
 print_iops 1 $iops1 | tee  $output_dir/mdt-easy-results.txt
-
-
-touch $workdir/timestamp
 
 # ior hard write
 phase="ior-hard-write"
@@ -124,7 +123,7 @@ print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 # find
 phase="find"
 startphase
-iops5=$($find_cmd $workdir/timestamp $workdir/mdt_easy/$subtree_to_scan)
+iops5=$($find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/ $subtree_to_scan_config)
 endphase  
 print_iops 5 $iops5 | tee -a $output_dir/find-results.txt 
 

@@ -19,7 +19,16 @@ ior_easy_params="-t 2048k -b 2048000k" # 2 GBytes per process, file per proc is 
 ior_hard_writes_per_proc=1000               # each process writes 1000 times 47k
 mdtest_hard_files_per_proc=1000           
 mdtest_easy_files_per_proc=1000
-subtree_to_scan=/#test-dir.0/mdtest_tree.0*.0/
+subtree_to_scan_config=$PWD/subtree.cfg
+
+# The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
+cat > subtree.cfg << EOF
+mdtest_tree.0.0
+mdtest_tree.1.0
+mdtest_tree.2.0
+mdtest_tree.3.0
+mdtest_tree.4.0
+EOF
 
 # commands
 find_cmd=$PWD/io500-find.sh
