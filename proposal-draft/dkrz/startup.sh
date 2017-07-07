@@ -29,7 +29,7 @@ subtree_to_scan_config=$PWD/subtree.cfg
 
 # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
 ( for I in $(seq 300) ; do 
-mdtest_tree.$I.0
+  echo mdtest_tree.$I.0
 done ) > subtree.cfg
 
 # commands
@@ -48,4 +48,4 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 source io_500_core.sh
 ) 2>&1 | tee $nodes-$SLURM_NTASKS.txt
 
-rm -rf $workdir
+rm -rf $workdir/

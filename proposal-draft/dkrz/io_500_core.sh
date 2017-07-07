@@ -11,10 +11,8 @@ if [[ "$subtree_to_scan_config" == "" || "$workdir" == "" || "$ior_easy_params" 
 fi 
 # 
 
-if [[ ! -d $workdir/ior_easy ]] ; then
-	echo "[Precreating] missing directories"
-	mkdir -p $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $output_dir 2>/dev/null
-fi
+echo "[Precreating] missing directories"
+mkdir -p $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $output_dir 2>/dev/null
 
 function print_bw  {
    echo "$1/$phase BW:$2 MB/s time: ${3}s" 
@@ -91,7 +89,7 @@ endphase
 bw3=$(grep "Max R" $output_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
 bw_dur3=$(grep "read " $output_dir/ior_easy | tail -n 1 | awk '{print $10}')
-print_bw 3 $bw3 $bw_dur3 | tee -a $output_dir/mdt-easy-results.txt
+print_bw 3 $bw3 $bw_dur3 | tee -a $output_dir/ior-easy-results.txt
 
 
 # mdtest easy stat
@@ -109,7 +107,7 @@ $mpirun $ior_cmd  -R -r -C $params_ior_hard >> $output_dir/ior_hard 2>&1
 endphase  
 bw4=$(grep "Max R" $output_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1| awk '{print $5}')
 bw_dur4=$(grep "read " $output_dir/ior_hard | tail -n 1 | awk '{print $10}')
-print_bw 4 $bw4 $bw_dur4 | tee -a $output_dir/ior-hard-results.txt
+print_bw 4 $bw4 $bw_dur4 | tee -a $output_dir/mdt-hard-results.txt
 
 
 # mdtest hard stat
@@ -125,7 +123,7 @@ phase="find"
 startphase
 iops5=$($find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/ $subtree_to_scan_config)
 endphase  
-print_iops 5 $iops5 | tee -a $output_dir/find-results.txt 
+print_iops 5 $iops5 | tee $output_dir/find-results.txt 
 
 # cleanup phase
 # mdtest easy remove
