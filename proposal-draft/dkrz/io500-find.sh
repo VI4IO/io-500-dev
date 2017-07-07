@@ -22,6 +22,7 @@ C=0
 for DIR in $(cat $subtree_to_scan_config); do 
 	C=$(($C+1))
 	found=$(($found+ $(cat $workdir/find-$C)))
+	rm $workdir/find-$C
 done
 
 end=$(date +%s.%N)
