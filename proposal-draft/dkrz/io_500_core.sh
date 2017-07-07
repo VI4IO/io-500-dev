@@ -124,7 +124,7 @@ print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 # find
 phase="find"
 startphase
-iops5=$($find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/mdtest_tree.0.0/)
+iops5=$($find_cmd $workdir/timestamp $workdir/mdt_easy/$subtree_to_scan)
 endphase  
 print_iops 5 $iops5 | tee -a $output_dir/find-results.txt 
 
