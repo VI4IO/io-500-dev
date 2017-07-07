@@ -2,29 +2,9 @@
 
 # This script automatically identifies the parameters based on the following directories:
 
-maxTasks=$(($SLURM_TASKS_PER_NODE*$SLURM_JOB_NUM_NODES))
-mpirun="srun"
-workdir=/mnt/lustre02/work/k20200/k202079/io500-2/data
-output_dir=/mnt/lustre02/work/k20200/k202079/io500-2/results
-
-# precreate directories for lustre with the appropriate striping
-mkdir -p ${workdir}/ior_easy
-lfs setstripe --stripe-count 2  ${workdir}/ior_easy
-
-mkdir -p ${workdir}/ior_hard
-lfs setstripe --stripe-count 100  ${workdir}/ior_hard
-
-# commands
-find_cmd=$PWD/io500-find.sh
-ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
-mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
-
-
-
-
 ## Do not change the script below this point except for testing...
-timeExpected=30       # 300 seconds
-timeThreshhold=10   # 100 seconds
+timeExpected=300       # 300 seconds
+timeThreshhold=100   # 100 seconds
 
 subtree_to_scan_config=$PWD/subtree.cfg
 
