@@ -78,7 +78,7 @@ $mpirun $mdtest_cmd -C  $params_md_hard > $output_dir/mdt_hard 2>&1
 endphase  
 
 iops2=$(grep "File creation"  $output_dir/mdt_hard | tail -n 1 | awk '{print $4}')
-print_iops 2  $iops2 | tee -a $output_dir/mdt-hard-results.txt
+print_iops 2  $iops2 | tee $output_dir/mdt-hard-results.txt
 
 
 # ior easy read
@@ -101,13 +101,13 @@ iops3=$(grep "File stat" $output_dir/mdt_easy | tail -n 1 | awk '{print $4}')
 print_iops 3 $iops3 | tee -a $output_dir/mdt-easy-results.txt
 
 # ior hard read
-phase="md-hard-read"
+phase="ior-hard-read"
 startphase
 $mpirun $ior_cmd  -R -r -C $params_ior_hard >> $output_dir/ior_hard 2>&1
 endphase  
 bw4=$(grep "Max R" $output_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1| awk '{print $5}')
 bw_dur4=$(grep "read " $output_dir/ior_hard | tail -n 1 | awk '{print $10}')
-print_bw 4 $bw4 $bw_dur4 | tee -a $output_dir/mdt-hard-results.txt
+print_bw 4 $bw4 $bw_dur4 | tee -a $output_dir/ior-hard-results.txt
 
 
 # mdtest hard stat
