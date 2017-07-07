@@ -2,6 +2,11 @@
 
 # This script automatically identifies the parameters based on the following directories:
 
+if [[ "$workdir" == "" ]] ; then
+	echo "Invalid workdir!"
+	exit 1
+fi
+
 ## Do not change the script below this point except for testing...
 timeExpected=300       # 300 seconds
 timeThreshhold=100   # 100 seconds
@@ -17,8 +22,8 @@ function createSubtree(){
 }
 
 # Initial settings
-ior_easy_params="-t 2048k -b 2048k" # 120 GBytes per process, file per proc is already configured
-ior_hard_writes_per_proc=1               # each process writes 1000 times 47k
+ior_easy_params="-t 2048k -b 204800k"
+ior_hard_writes_per_proc=1              
 mdtest_hard_files_per_proc=1           
 mdtest_easy_files_per_proc=1
 rm output || true

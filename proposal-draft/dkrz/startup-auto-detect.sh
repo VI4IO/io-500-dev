@@ -11,7 +11,7 @@ module load bullxmpi
 module load intel
 
 # parameters that are always true
-maxTasks=$(($SLURM_TASKS_PER_NODE*$SLURM_JOB_NUM_NODES))
+maxTasks=$(($SLURM_TASKS_PER_NODE * $SLURM_JOB_NUM_NODES))
 mpirun="srun"
 workdir=/mnt/lustre02/work/k20200/k202079/io500-2/data
 output_dir=/mnt/lustre02/work/k20200/k202079/io500-2/results
@@ -29,4 +29,4 @@ ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
 
 
-./auto-determine-parameters.sh
+source ./auto-determine-parameters.sh
