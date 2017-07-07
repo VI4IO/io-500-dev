@@ -25,7 +25,7 @@ function print_iops  {
 }
 
 function startphase {
-  echo "[Starting] phase $phase"
+  echo "[Starting] $phase"
   start=$(date +%s.%N)
 }
 
@@ -37,8 +37,8 @@ function endphase  {
   fi
 }
 
-params_ior_hard="-e -g -vv -G 27 -k -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file"
-params_ior_easy="-F -e -g -vv -G 27 -k $ior_easy_params -o $workdir/ior_easy/ior_file_easy"
+params_ior_hard="-C -Q 1 -g -G 27 -k -vv -e -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file" # -W (validation) NOT for testing runtime
+params_ior_easy="-C -Q 1 -g -G 27 -k -vv -e -F $ior_easy_params -o $workdir/ior_easy/ior_file_easy" # -W (validation) NOT for testing runtime
 params_md_easy="-v -u -b 1 -L -d ${workdir}/mdt_easy -u -n $mdtest_easy_files_per_proc"
 params_md_hard="-d ${workdir}/mdt_hard -n $mdtest_hard_files_per_proc -w 3900 -e 3900"
 
@@ -52,13 +52,6 @@ bw1=$(grep "Max W" $output_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 
 bw_dur1=$(grep "write " $output_dir/ior_easy | tail -n 1 | awk '{print $10}')
 print_bw 1 $bw1 $bw_dur1 | tee   $output_dir/ior-easy-results.txt
 
-
-grep -q "file-per-proc" $output_dir/ior_easy
-if [ $? -eq 0 ]; then
-	let ior_easy_files=$(($nodes*$procs_per_node))
-else
-	let ior_easy_files=1
-fi 
 #mdtest easy create
 phase="md-easy-create"
 startphase
@@ -128,7 +121,7 @@ endphase
 iops4=$(grep "File stat" $output_dir/mdt_hard | tail -n 1 | awk '{print $4}')
 print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 
-##### find
+# find
 phase="find"
 searched_files1=$(grep "files/directories" $output_dir/mdt_hard | tail -n 1 | awk '{print $3*2}')
 searched_files2=$(grep "files/directories" $output_dir/mdt_easy | tail -n 1 | awk '{print $3*2}')
@@ -157,8 +150,10 @@ print_iops 7 $iops7 | tee -a $output_dir/mdt-hard-results.txt
 
 bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
 md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops6 $iops7 $iops5 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
+echo
+echo "IO-500 bw score: $bw_score MB/s"
+echo "IO-500 md score: $md_score IOPS"
 export final_score=$( echo "$bw_score*$md_score" | bc)
-
-
-echo -e "\nIO-500 score:"$final_score
+echo
+echo "IO-500 score: " $final_score
 

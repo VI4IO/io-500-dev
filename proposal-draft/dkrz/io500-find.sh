@@ -1,4 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash
+# feel free to replace this command with another command
+# Input arguments is the workdir
+# Expected output is the number of found entities divided by the runtime, e.g., ioops for the found entities
 workdir=$1
 
 start=$(date +%s.%N)
