@@ -22,7 +22,7 @@ function createSubtree(){
 }
 
 # Initial settings
-ior_easy_params="-t 2048k -b 204800k"
+ior_easy_params="-t 2048k -b 2048000k -s 1"
 ior_hard_writes_per_proc=1              
 mdtest_hard_files_per_proc=1           
 mdtest_easy_files_per_proc=1
@@ -70,21 +70,21 @@ rm -rf $workdir/*/* || true
 run
 
 # adapt the ior-easy parameters
-count=2048
+count=1
 while true ; do
 	newCount=$(adaptParameter ior-easy-results.txt $count)
 	if [[ $count == $newCount ]] ; then
 		break
 	fi
 	count=$newCount
-	ior_easy_params="-t 2048k -b ${count}k"
+	ior_easy_params="-t 4096k -b 4096000k -s ${count}"
 	run
 done
 
 # remember best setting
 ior_easy_params_tmp=$ior_easy_params
 echo "ior_easy_params=$ior_easy_params_tmp"
-ior_easy_params="-t 2048k -b 2048k"
+ior_easy_params="-t 2048k -b 2048k -s 1"
 
 
 

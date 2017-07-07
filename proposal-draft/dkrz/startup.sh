@@ -9,16 +9,13 @@
 module load bullxmpi
 module load intel
 
-# set here the parameters you want
-nodes=$SLURM_JOB_NUM_NODES
-
 # choosing parameters for DKRZ
 # throughput for independent I/O ~400 GByte/s => 300*400 == 120 TByte data to write or 120 GByte per process...
 # IOPS for random I/O (1500 IOPS per client): 5000 
 # metadata: 20k Ops for a single MD server (here we use only one albeit we have 5+8) => 300*20k / 10000 = 6000
 # find: roughly 12 seconds to scan a 6000 file directory => 25 directories => this can be parallelized, say 10x improvement 
 
-mpirun="srun -N $nodes -n $SLURM_NTASKS"
+mpirun="srun -m cyclic"
 workdir=/mnt/lustre02/work/k20200/k202079/io500/data
 output_dir=/mnt/lustre02/work/k20200/k202079/io500/results
 ior_easy_params="-t 2048k -b 120048000k" # 120 GBytes per process, file per proc is already configured
