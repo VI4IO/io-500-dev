@@ -27,11 +27,14 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 find_cmd=$PWD/io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
+mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/md-real-io # set to "" to not run mdreal
+
+params_mdreal="-P=10 -I=10"
 
 #
 identify_parameters_ior_hard=False
 identify_parameters_ior_easy=False
 identify_parameters_mdt_easy=True # also identifies find
-identify_parameters_mdt_hard=False
+identify_parameters_mdt_hard=True
 
 source ./auto-determine-parameters.sh

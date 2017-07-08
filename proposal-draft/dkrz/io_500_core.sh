@@ -12,7 +12,7 @@ fi
 # 
 
 echo "[Precreating] missing directories"
-mkdir -p $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $output_dir 2>/dev/null
+mkdir -p $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $output_dir/mdreal $output_dir  2>/dev/null
 
 function print_bw  {
    echo "$1/$phase BW:$2 MB/s time: ${duration}s" 
@@ -39,6 +39,7 @@ params_ior_hard="-C -Q 1 -g -G 27 -k -vv -e -t 47000 -b 47000 -s $ior_hard_write
 params_ior_easy="-C -Q 1 -g -G 27 -k -vv -e -F $ior_easy_params -o $workdir/ior_easy/ior_file_easy" # -W (validation) NOT for testing runtime
 params_md_easy="-v -u -L -F -d ${workdir}/mdt_easy -u -n $mdtest_easy_files_per_proc"
 params_md_hard="-t -F -w 3900 -e 3900 -d ${workdir}/mdt_hard -n $mdtest_hard_files_per_proc"
+params_mdreal="-I=3 -L=$output_dir/mdreal -D=1 $params_mdreal  -- -D=${workdir}/mdreal"
 
 touch $workdir/timestamp
 
@@ -141,6 +142,16 @@ $mpirun $mdtest_cmd -r $params_md_hard   >> $output_dir/mdt_hard 2>&1
 endphase  
 iops7=$(grep "File removal" $output_dir/mdt_hard | tail -n 1 | awk '{print $4}')
 print_iops 7 $iops7 | tee -a $output_dir/mdt-hard-results.txt
+
+if [[ $mdreal_cmd != "" ]] ; then
+	phase="md-real-io"
+	startphase
+	$mpirun $mdreal_cmd $params_mdreal > $output_dir/mdreal 2>&1
+	endphase
+	iops8=$( grep "^benchmark" $output_dir/mdreal | tail -n 1 | awk '{print $3}' ) # obj/s
+	bw8=$( grep "^benchmark" $output_dir/mdreal | tail -n 1 | awk '{print $9}' ) # in MiB/s
+	print_iops 8 $iops8 | tee -a $output_dir/mdreal-results.txt
+fi
 
 
 bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`

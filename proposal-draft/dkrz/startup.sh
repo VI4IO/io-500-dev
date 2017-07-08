@@ -18,10 +18,18 @@ module load intel
 mpirun="srun -m block"
 workdir=/mnt/lustre02/work/k20200/k202079/io500/data
 output_dir=/mnt/lustre02/work/k20200/k202079/io500/results
-ior_easy_params="-t 2048k -b 120048000k" # 120 GBytes per process, file per proc is already configured
+ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
 ior_hard_writes_per_proc=5000               # each process writes 1000 times 47k
 mdtest_hard_files_per_proc=6000           
 mdtest_easy_files_per_proc=6000
+
+# for testing only
+ior_easy_params="-t 2048k -b 2048k" # 120 GBytes per process, file per proc is already configured
+ior_hard_writes_per_proc=5               # each process writes 1000 times 47k
+mdtest_hard_files_per_proc=6          
+mdtest_easy_files_per_proc=6
+####
+params_mdreal="-P=5000 -I=1000"
 subtree_to_scan_config=$PWD/subtree.cfg
 
 # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
@@ -33,6 +41,7 @@ done ) > subtree.cfg
 find_cmd=$PWD/io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
+mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/md-real-io # if set != "" then run mdreal
 
 # precreate directories for lustre with the appropriate striping
 mkdir -p ${workdir}/ior_easy
@@ -43,6 +52,6 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 
 (
 source io_500_core.sh
-) 2>&1 | tee $nodes-$SLURM_NTASKS.txt
+) 2>&1 | tee $SLURM_NNODES.txt
 
 rm -rf $workdir/
