@@ -37,8 +37,8 @@ function endphase  {
 
 params_ior_hard="-C -Q 1 -g -G 27 -k -vv -e -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file" # -W (validation) NOT for testing runtime
 params_ior_easy="-C -Q 1 -g -G 27 -k -vv -e -F $ior_easy_params -o $workdir/ior_easy/ior_file_easy" # -W (validation) NOT for testing runtime
-params_md_easy="-v -u -b 1 -L -d ${workdir}/mdt_easy -u -n $mdtest_easy_files_per_proc"
-params_md_hard="-d ${workdir}/mdt_hard -n $mdtest_hard_files_per_proc -w 3900 -e 3900"
+params_md_easy="-v -u -L -F -d ${workdir}/mdt_easy -u -n $mdtest_easy_files_per_proc"
+params_md_hard="-t -F -w 3900 -e 3900 -d ${workdir}/mdt_hard -n $mdtest_hard_files_per_proc"
 
 touch $workdir/timestamp
 
