@@ -15,7 +15,7 @@ module load intel
 # metadata: 20k Ops for a single MD server (here we use only one albeit we have 5+8) => 300*20k / 10000 = 6000
 # find: roughly 12 seconds to scan a 6000 file directory => 25 directories => this can be parallelized, say 10x improvement 
 
-mpirun="srun -m cyclic"
+mpirun="srun -m block"
 workdir=/mnt/lustre02/work/k20200/k202079/io500/data
 output_dir=/mnt/lustre02/work/k20200/k202079/io500/results
 ior_easy_params="-t 2048k -b 120048000k" # 120 GBytes per process, file per proc is already configured

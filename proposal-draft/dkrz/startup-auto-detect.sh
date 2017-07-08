@@ -12,9 +12,9 @@ module load intel
 
 # parameters that are always true
 maxTasks=$((${SLURM_TASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))
-mpirun="srun -m cyclic"
-workdir=/mnt/lustre02/work/k20200/k202079/io500-2/data
-output_dir=/mnt/lustre02/work/k20200/k202079/io500-2/results
+mpirun="srun -m block"
+workdir=/mnt/lustre02/work/k20200/k202079/io500-data/
+output_dir=/mnt/lustre02/work/k20200/k202079/io500-results-${SLURM_JOB_NUM_NODES}
 
 # precreate directories for lustre with the appropriate striping
 mkdir -p ${workdir}/ior_easy
@@ -28,5 +28,10 @@ find_cmd=$PWD/io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
 
+#
+identify_parameters_ior_hard=False
+identify_parameters_ior_easy=False
+identify_parameters_mdt_easy=True # also identifies find
+identify_parameters_mdt_hard=False
 
 source ./auto-determine-parameters.sh

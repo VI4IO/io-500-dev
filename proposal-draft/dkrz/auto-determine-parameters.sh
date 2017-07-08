@@ -8,8 +8,8 @@ if [[ "$workdir" == "" ]] ; then
 fi
 
 ## Do not change the script below this point except for testing...
-timeExpected=300       # 300 seconds
-timeThreshhold=100   # 100 seconds
+timeExpected=100       # 300 seconds
+timeThreshhold=50   # 100 seconds
 
 subtree_to_scan_config=$PWD/subtree.cfg
 
@@ -26,20 +26,17 @@ ior_easy_params="-t 2048k -b 2048000k -s 1"
 ior_hard_writes_per_proc=1              
 mdtest_hard_files_per_proc=1           
 mdtest_easy_files_per_proc=1
-rm output || true
 
 createSubtree 1
 
 function run() {
 	echo "Running "
-	(
 	echo ""
 	echo $ior_easy_params
 	echo $ior_hard_writes_per_proc
 	echo $mdtest_hard_files_per_proc
 	echo $mdtest_easy_files_per_proc
 	source io_500_core.sh 
-	) 1>>output 2>&1 
 	rm -rf $workdir/*/* || true
 }
 
@@ -69,98 +66,102 @@ rm -rf $workdir/*/* || true
 # initial run to calibrate
 run
 
-# adapt the ior-easy parameters
-count=1
-while true ; do
-	newCount=$(adaptParameter ior-easy-results.txt $count)
-	if [[ $count == $newCount ]] ; then
-		break
-	fi
-	count=$newCount
-	ior_easy_params="-t 4096k -b 4096000k -s ${count}"
-	run
-done
+if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
+	# adapt the ior-easy parameters
+	count=1
+	while true ; do
+		newCount=$(adaptParameter ior-easy-results.txt $count)
+		if [[ $count == $newCount ]] ; then
+			break
+		fi
+		count=$newCount
+		ior_easy_params="-t 4096k -b 4096000k -s ${count}"
+		run
+	done
 
-# remember best setting
-ior_easy_params_tmp=$ior_easy_params
-echo "ior_easy_params=$ior_easy_params_tmp"
-ior_easy_params="-t 2048k -b 2048k -s 1"
-
-
-
-# adapt the ior-hard parameters
-count=1
-while true ; do
-	newCount=$(adaptParameter ior-hard-results.txt $count)
-	if [[ $count == $newCount ]] ; then
-		break
-	fi
-	count=$newCount
-	ior_hard_writes_per_proc="${count}"
-	run
-done
-# remember settings
-ior_hard_writes_per_proc_tmp=$ior_hard_writes_per_proc
-echo "ior_hard_writes_per_proc=$ior_hard_writes_per_proc_tmp"
-ior_hard_writes_per_proc="1"
+	# remember best setting
+	ior_easy_params_tmp=$ior_easy_params
+	echo "ior_easy_params=$ior_easy_params_tmp"
+	ior_easy_params="-t 2048k -b 2048k -s 1"
+fi
 
 
-
-# adapt the md-easy parameters
-count=1
-while true ; do
-	newCount=$(adaptParameter mdt-easy-results.txt $count)
-	if [[ $count == $newCount ]] ; then
-		break
-	fi
-	count=$newCount
-	mdtest_easy_files_per_proc="${count}"
-	run
-done
-
-# remember settings
-mdtest_easy_files_per_proc_tmp=$mdtest_easy_files_per_proc
-echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp"
-mdtest_easy_files_per_proc="1"
-
-
-# adapt the md-hard parameters
-count=1
-while true ; do
-	newCount=$(adaptParameter mdt-hard-results.txt $count)
-	if [[ $count == $newCount ]] ; then
-		break
-	fi
-	count=$newCount
-	mdtest_hard_files_per_proc="${count}"
-	run
-done
-
-# remember settings
-mdtest_hard_files_per_proc_tmp=$mdtest_hard_files_per_proc
-echo "mdtest_hard_files_per_proc=$mdtest_hard_files_per_proc"
-mdtest_hard_files_per_proc="1"
+if [[ "$identify_parameters_ior_hard" == "True" ]] ; then
+	# adapt the ior-hard parameters
+	count=1
+	while true ; do
+		newCount=$(adaptParameter ior-hard-results.txt $count)
+		if [[ $count == $newCount ]] ; then
+			break
+		fi
+		count=$newCount
+		ior_hard_writes_per_proc="${count}"
+		run
+	done
+	# remember settings
+	ior_hard_writes_per_proc_tmp=$ior_hard_writes_per_proc
+	echo "ior_hard_writes_per_proc=$ior_hard_writes_per_proc_tmp"
+	ior_hard_writes_per_proc="1"
+fi
 
 
-# adapt the find parameters
-mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp
+if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
+	# adapt the md-easy parameters
+	count=1
+	while true ; do
+		newCount=$(adaptParameter mdt-easy-results.txt $count)
+		if [[ $count == $newCount ]] ; then
+			break
+		fi
+		count=$newCount
+		mdtest_easy_files_per_proc="${count}"
+		run
+	done
 
-count=1
-while true ; do
-	newCount=$(adaptParameter mdt-hard-results.txt $count)
-	if [[ $count == $newCount ]] ; then
-		break
-	fi
-	count=$newCount
-	if [[ $count -gt $maxTasks ]] ; then
-		echo "You have to manually increase the number of processes"
-		echo "Find command is faster than 5 minutes!"
-		exit 1
-	fi
+	# remember settings
+	mdtest_easy_files_per_proc_tmp=$mdtest_easy_files_per_proc
+	echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp"
 
-	createSubtree $count
-	run
-done
+
+	# adapt the find parameters
+	count=1
+	while true ; do
+		newCount=$(adaptParameter find-results.txt $count)
+		if [[ $count == $newCount ]] ; then
+			break
+		fi
+		count=$newCount
+		if [[ $count -gt $maxTasks ]] ; then
+			echo "You have to manually increase the number of processes"
+			echo "Find command is faster than 5 minutes!"
+			exit 1
+		fi
+
+		createSubtree $count
+		run
+	done
+
+	mdtest_easy_files_per_proc="1"
+fi
+
+if [[ "$identify_parameters_mdt_hard" == "True" ]] ; then
+	# adapt the md-hard parameters
+	count=1
+	while true ; do
+		newCount=$(adaptParameter mdt-hard-results.txt $count)
+		if [[ $count == $newCount ]] ; then
+			break
+		fi
+		count=$newCount
+		mdtest_hard_files_per_proc="${count}"
+		run
+	done
+
+	# remember settings
+	mdtest_hard_files_per_proc_tmp=$mdtest_hard_files_per_proc
+	echo "mdtest_hard_files_per_proc=$mdtest_hard_files_per_proc"
+	mdtest_hard_files_per_proc="1"
+fi
 
 
 # final parameters:
