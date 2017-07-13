@@ -30,12 +30,10 @@ mdtest_easy_files_per_proc=1
 createSubtree 1
 
 function run() {
-	echo "Running "
-	echo ""
-	echo $ior_easy_params
-	echo $ior_hard_writes_per_proc
-	echo $mdtest_hard_files_per_proc
-	echo $mdtest_easy_files_per_proc
+	#echo $ior_easy_params
+	#echo $ior_hard_writes_per_proc
+	#echo $mdtest_hard_files_per_proc
+	#echo $mdtest_easy_files_per_proc
 	source io_500_core.sh
 	rm -rf $workdir/*/* || true
 }
@@ -72,9 +70,11 @@ function adaptParameter(){
 rm -rf $workdir/*/* || true
 
 # initial run to calibrate
+echo "Calibrating run"
 run
 
 if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
+	echo "Tuning IOR easy"
 	# adapt the ior-easy parameters
 	count=1
 	while true ; do
@@ -84,6 +84,7 @@ if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
 		fi
 		count=$newCount
 		ior_easy_params="-t 4096k -b 4096000k -s ${count}"
+		echo ior_easy_params="$ior_easy_params"
 		run
 	done
 
@@ -97,6 +98,7 @@ fi
 if [[ "$identify_parameters_ior_hard" == "True" ]] ; then
 	# adapt the ior-hard parameters
 	count=1
+	echo "Tuning IOR hard"
 	while true ; do
 		newCount=$(adaptParameter ior-hard-results.txt $count)
 		if [[ $count == $newCount ]] ; then
@@ -104,6 +106,7 @@ if [[ "$identify_parameters_ior_hard" == "True" ]] ; then
 		fi
 		count=$newCount
 		ior_hard_writes_per_proc="${count}"
+		echo ior_hard_writes_per_proc="$ior_hard_writes_per_proc"
 		run
 	done
 	# remember settings
@@ -115,6 +118,7 @@ fi
 
 if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 	# adapt the md-easy parameters
+	echo "Tuning md-easy"
 	count=1
 	while true ; do
 		newCount=$(adaptParameter mdt-easy-results.txt $count)
@@ -123,6 +127,7 @@ if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 		fi
 		count=$newCount
 		mdtest_easy_files_per_proc="${count}"
+		echo mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc
 		run
 	done
 
@@ -130,7 +135,7 @@ if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 	mdtest_easy_files_per_proc_tmp=$mdtest_easy_files_per_proc
 	echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp"
 
-
+  echo "Tuning find parameter"
 	# adapt the find parameters
 	count=1
 	while true ; do
@@ -144,6 +149,7 @@ if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 			echo "Find command is faster than 5 minutes!"
 			exit 1
 		fi
+		echo "createSubtree $count"
 
 		createSubtree $count
 		run
@@ -153,6 +159,7 @@ if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 fi
 
 if [[ "$identify_parameters_mdt_hard" == "True" ]] ; then
+	echo "Tuning MD-hard"
 	# adapt the md-hard parameters
 	count=1
 	while true ; do
@@ -162,6 +169,7 @@ if [[ "$identify_parameters_mdt_hard" == "True" ]] ; then
 		fi
 		count=$newCount
 		mdtest_hard_files_per_proc="${count}"
+		echo mdtest_hard_files_per_proc=$mdtest_hard_files_per_proc
 		run
 	done
 
