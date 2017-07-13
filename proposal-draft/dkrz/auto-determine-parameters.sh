@@ -16,15 +16,15 @@ subtree_to_scan_config=$PWD/subtree.cfg
 function createSubtree(){
 	count="$1"
 	# The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-	( for I in $(seq $count) ; do 
+	( for I in $(seq $count) ; do
 	echo mdtest_tree.$(($I-1)).0
 	done ) > subtree.cfg
 }
 
 # Initial settings
-ior_easy_params="-t 2048k -b 2048000k -s 1"
-ior_hard_writes_per_proc=1              
-mdtest_hard_files_per_proc=1           
+ior_easy_params="-t 2048k -b 2048k -s 1"
+ior_hard_writes_per_proc=1
+mdtest_hard_files_per_proc=1
 mdtest_easy_files_per_proc=1
 
 createSubtree 1
@@ -36,7 +36,7 @@ function run() {
 	echo $ior_hard_writes_per_proc
 	echo $mdtest_hard_files_per_proc
 	echo $mdtest_easy_files_per_proc
-	source io_500_core.sh 
+	source io_500_core.sh
 	rm -rf $workdir/*/* || true
 }
 
@@ -44,17 +44,25 @@ function adaptParameter(){
 	timefile=$1
 	currentValue=$2
 	time=$(cat $output_dir/$timefile | cut -d ":" -f 3 | cut -d "s" -f 1 | sort -n | head -n 1)
-	
-	if [[ $time -lt 1 ]] ; then
+  timemax=$(cat $output_dir/$timefile | cut -d ":" -f 3 | cut -d "s" -f 1 | sort -n -r | head -n 1)
+
+	if [[ $time -lt 1 && $timemax -lt 31 ]] ; then
 		echo $(($currentValue * 100))
 		return
 	fi
-	if [[ $time -gt $timeExpected ]] ; then 
+	if [[ $time -gt $timeExpected ]] ; then
 		echo $(($currentValue)) # use the current value
 		return
 	fi
-	if [[ $time -lt $timeThreshhold ]] ; then 
-		echo $(($currentValue * $timeExpected/$time)) 
+
+	if [[ $(($time*5)) -lt $timemax && $timemax > 10 ]] ; then
+		echo "Error: The maximum runtime for this configuration exceeds the minimum runtime significantly" > 2
+		echo "I cannot scale one workload without exceeding the other significantly" > 2
+		exit 1
+	fi
+	if [[ $time -lt $timeThreshhold ]] ; then
+		echo $(($currentValue * $timeExpected/$time))
+
 		return
 	fi
 	echo $(($currentValue * 2)) # simply double the files...
@@ -171,4 +179,3 @@ echo "ior_hard_writes_per_proc=$ior_hard_writes_per_proc_tmp"
 echo "mdtest_hard_files_per_proc=$mdtest_hard_files_per_proc_tmp"
 echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp"
 echo "subtree_to_scan_config=$PWD/subtree.cfg"
-
