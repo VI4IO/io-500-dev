@@ -11,7 +11,7 @@ module load bullxmpi
 module load intel
 
 # parameters that are always true
-maxTasks=$((${SLURM_TASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))
+maxTasks=$((${SLURM_NTASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))
 mpirun="srun -m block"
 workdir=/mnt/lustre02/work/k20200/k202079/io500-data/
 output_dir=/mnt/lustre02/work/k20200/k202079/io500-results-${SLURM_JOB_NUM_NODES}
