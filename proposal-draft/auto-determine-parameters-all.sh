@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-# This script automatically identifies the parameters for the IO-500 benchmark
-# It will determine the number of directories, files and data for the creation phase and the find.
+# This script automatically identifies the parameters for the IO-500
+# but not only scales the runtime for the creation and find time but also for the read phases.
+# Be aware that sometimes read is significantly faster.
 
 if [[ "$workdir" == "" ]] ; then
 	echo "Invalid workdir!"
@@ -31,6 +32,10 @@ mdtest_easy_files_per_proc=1
 createSubtree 1
 
 function run() {
+	#echo $ior_easy_params
+	#echo $ior_hard_writes_per_proc
+	#echo $mdtest_hard_files_per_proc
+	#echo $mdtest_easy_files_per_proc
 	source io_500_core.sh
 	rm -rf $workdir/*/* || true
 }
@@ -38,9 +43,10 @@ function run() {
 function adaptParameter(){
 	timefile=$1
 	currentValue=$2
-	time=$(cat $output_dir/$timefile | cut -d ":" -f 3 | cut -d "s" -f 1 | head -n 1)
+	time=$(cat $output_dir/$timefile | cut -d ":" -f 3 | cut -d "s" -f 1 | sort -n | head -n 1)
+  timemax=$(cat $output_dir/$timefile | cut -d ":" -f 3 | cut -d "s" -f 1 | sort -n -r | head -n 1)
 
-	if [[ $time -lt 1 ]] ; then
+	if [[ $time -lt 1 && $timemax -lt 31 ]] ; then
 		echo $(($currentValue * 100))
 		return
 	fi
@@ -49,12 +55,18 @@ function adaptParameter(){
 		return
 	fi
 
+	if [[ $(($time*5)) -lt $timemax && $timemax > 10 ]] ; then
+		echo "Error: The maximum runtime for this configuration exceeds the minimum runtime significantly" > 2
+		echo "I cannot scale one workload without exceeding the other significantly" > 2
+		exit 1
+	fi
+
 	if [[ $time -lt $timeThreshhold ]] ; then
 		echo $(($currentValue * $timeExpected/$time))
 
 		return
 	fi
-	echo $(($currentValue * 2)) # simply double the files/amount of data...
+	echo $(($currentValue * 2)) # simply double the files...
 }
 
 # initial clean of existing directories
