@@ -31,7 +31,7 @@ mdtest_easy_files_per_proc=1
 createSubtree 1
 
 function run() {
-	source io_500_core.sh
+	source ./io_500_core.sh
 	rm -rf $workdir/*/* || true
 }
 

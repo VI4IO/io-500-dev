@@ -23,25 +23,19 @@ ior_hard_writes_per_proc=5000               # each process writes 1000 times 47k
 mdtest_hard_files_per_proc=6000           
 mdtest_easy_files_per_proc=6000
 
-# for testing only
-ior_easy_params="-t 2048k -b 2048k" # 120 GBytes per process, file per proc is already configured
-ior_hard_writes_per_proc=5               # each process writes 1000 times 47k
-mdtest_hard_files_per_proc=6          
-mdtest_easy_files_per_proc=6
-####
-params_mdreal="-P=5000 -I=1000"
+#params_mdreal="-P=5000 -I=1000"
 subtree_to_scan_config=$PWD/subtree.cfg
 
 # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-( for I in $(seq 300) ; do 
+( for I in $(seq 100) ; do 
   echo mdtest_tree.$I.0
 done ) > subtree.cfg
 
 # commands
-find_cmd=$PWD/io500-find.sh
+find_cmd=$PWD/../io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
-mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/md-real-io # if set != "" then run mdreal
+#mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/md-real-io # if set != "" then run mdreal
 
 # precreate directories for lustre with the appropriate striping
 mkdir -p ${workdir}/ior_easy
@@ -51,6 +45,7 @@ mkdir -p ${workdir}/ior_hard
 lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 
 (
+cd ..
 source io_500_core.sh
 ) 2>&1 | tee $SLURM_NNODES.txt
 
