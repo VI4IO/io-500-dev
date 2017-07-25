@@ -11,7 +11,7 @@ C=0
 # trivial parallelism of the find command across the directories
 for DIR in $(cat $subtree_to_scan_config); do 
 	C=$(($C+1))
-	find ${workdir}/$DIR -name \*.mdtest.\* -newer $timestamp  -size +3000c | wc -l > $workdir/find-$C &
+	find ${workdir}/$DIR -name \*.mdtest.\* -newer $timestamp  -size +0c | wc -l > $workdir/find-$C &
 done
 
 wait
