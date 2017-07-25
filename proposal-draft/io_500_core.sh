@@ -122,7 +122,7 @@ if [[ "$run_ior_easy" != "False" && "$run_ior_easy_read" != "False" ]] ; then
   print_bw 3 $bw3 $bw_dur3 | tee -a $output_dir/ior-easy-results.txt
 fi
 
-if [[ "$run_mdt_easy" != "False" && "$run_mdt_easy_read" != "False" ]] ; then
+if [[ "$run_md_easy" != "False" && "$run_md_easy_read" != "False" ]] ; then
   # mdtest easy stat
   phase="md-easy-stat"
   startphase
@@ -143,7 +143,7 @@ if [[ "$run_ior_hard" != "False" && "$run_ior_hard_read" != "False" ]] ; then
   print_bw 4 $bw4 $bw_dur4 | tee -a $output_dir/ior-hard-results.txt
 fi
 
-if [[ "$run_mdt_hard" != "False" && "$run_mdt_hard_read" != "False" ]] ; then
+if [[ "$run_md_hard" != "False" && "$run_md_hard_read" != "False" ]] ; then
   # mdtest hard stat
   phase="md-hard-stat"
   startphase
@@ -153,7 +153,7 @@ if [[ "$run_mdt_hard" != "False" && "$run_mdt_hard_read" != "False" ]] ; then
   print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 fi
 
-if [[ "$run_mdt_easy" != "False" && "$run_find" != "False" ]] ; then
+if [[ "$run_md_easy" != "False" && "$run_find" != "False" ]] ; then
   # find
   phase="find"
   startphase

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 #SBATCH --ntasks-per-node=10
 #SBATCH --nodes=10
 #SBATCH --job-name=IO-500
@@ -34,9 +34,11 @@ params_mdreal="-P=10 -I=10"
 #
 identify_parameters_ior_hard=True
 identify_parameters_ior_easy=True
-identify_parameters_mdt_easy=True # also enables to do the find
-identify_parameters_mdt_hard=True
+identify_parameters_md_easy=True # also enables to do the find
+identify_parameters_md_hard=True
 identify_parameters_find=False # only works if ior_easy is also run
+
+timeExpected=10
 
 cd ..
 source ./auto-determine-parameters.sh | tee auto-${SLURM_JOB_NUM_NODES}-${SLURM_JOB_CPUS_PER_NODE}.txt

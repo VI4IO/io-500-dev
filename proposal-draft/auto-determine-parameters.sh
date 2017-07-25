@@ -9,8 +9,10 @@ if [[ "$workdir" == "" ]] ; then
 fi
 
 ## Do not change the script below this point except for testing...
-timeExpected=100       # 300 seconds
-timeThreshhold=50   # 100 seconds
+if [[ "$timeExpected" == "" ]] ; then
+  timeExpected=100       # 300 seconds
+  timeThreshhold=50   # 100 seconds
+fi
 
 subtree_to_scan_config=$PWD/subtree.cfg
 
@@ -60,12 +62,22 @@ function adaptParameter(){
 # initial clean of existing directories
 rm -rf $workdir/*/* || true
 
-# initial run to calibrate
-echo "Calibrating run"
-run
+run_ior_easy=False
+run_ior_hard=False
+run_md_hard=False
+run_md_easy=False
+run_find=False
+run_ior_easy_read=False
+run_ior_hard_read=False
+run_md_hard_read=False
+run_md_easy_read=False
+
 
 if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
 	echo "Tuning IOR easy"
+	run_ior_easy=True
+	run
+
 	# adapt the ior-easy parameters
 	count=1
 	while true ; do
@@ -80,6 +92,7 @@ if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
 		run
 	done
 
+	run_ior_easy=False
 	# remember best setting
 	ior_easy_params_tmp=$ior_easy_params
 	echo "ior_easy_params=$ior_easy_params_tmp"
@@ -89,8 +102,10 @@ fi
 
 if [[ "$identify_parameters_ior_hard" == "True" ]] ; then
 	# adapt the ior-hard parameters
-	count=1
 	echo "Tuning IOR hard"
+	run_ior_hard=True
+	run
+	count=1
 	while true ; do
 		newCount=$(adaptParameter ior-hard-results.txt $count)
 		if [[ $count == $newCount ]] ; then
@@ -105,12 +120,16 @@ if [[ "$identify_parameters_ior_hard" == "True" ]] ; then
 	ior_hard_writes_per_proc_tmp=$ior_hard_writes_per_proc
 	echo "ior_hard_writes_per_proc=$ior_hard_writes_per_proc_tmp"
 	ior_hard_writes_per_proc="1"
+	run_ior_hard=False
 fi
 
 
-if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
+if [[ "$identify_parameters_md_easy" == "True" ]] ; then
 	# adapt the md-easy parameters
 	echo "Tuning md-easy"
+	run_md_easy=True
+	run
+
 	count=1
 	while true ; do
 		newCount=$(adaptParameter mdt-easy-results.txt $count)
@@ -127,12 +146,16 @@ if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 	mdtest_easy_files_per_proc_tmp=$mdtest_easy_files_per_proc
 	echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp"
         # no tuning of find needed
+	run_md_easy=False
 
 	mdtest_easy_files_per_proc="1"
 fi
 
-if [[ "$identify_parameters_mdt_hard" == "True" ]] ; then
+if [[ "$identify_parameters_md_hard" == "True" ]] ; then
 	echo "Tuning MD-hard"
+	run_md_hard=True
+	run
+
 	# adapt the md-hard parameters
 	count=1
 	while true ; do
@@ -150,6 +173,7 @@ if [[ "$identify_parameters_mdt_hard" == "True" ]] ; then
 	mdtest_hard_files_per_proc_tmp=$mdtest_hard_files_per_proc
 	echo "mdtest_hard_files_per_proc=$mdtest_hard_files_per_proc"
 	mdtest_hard_files_per_proc="1"
+	run_md_hard=False
 fi
 
 
