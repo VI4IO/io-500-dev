@@ -36,5 +36,6 @@ identify_parameters_ior_hard=False
 identify_parameters_ior_easy=False
 identify_parameters_mdt_easy=True # also identifies find
 identify_parameters_mdt_hard=True
+identify_parameters_find=False # only works if ior_easy is also run
 
 source ./auto-determine-parameters.sh

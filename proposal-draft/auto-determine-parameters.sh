@@ -127,25 +127,27 @@ if [[ "$identify_parameters_mdt_easy" == "True" ]] ; then
 	mdtest_easy_files_per_proc_tmp=$mdtest_easy_files_per_proc
 	echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc_tmp"
 
-  echo "Tuning find parameter"
-	# adapt the find parameters
-	count=1
-	while true ; do
-		newCount=$(adaptParameter find-results.txt $count)
-		if [[ $count == $newCount ]] ; then
-			break
-		fi
-		count=$newCount
-		if [[ $count -gt $maxTasks ]] ; then
-			echo "You have to manually increase the number of processes"
-			echo "Find command is faster than 5 minutes!"
-			exit 1
-		fi
-		echo "createSubtree $count"
+        if [[ "$identify_parameters_find" == "True" ]] ; then
+		echo "Tuning find parameter"
+		# adapt the find parameters
+		count=1
+		while true ; do
+			newCount=$(adaptParameter find-results.txt $count)
+			if [[ $count == $newCount ]] ; then
+				break
+			fi
+			count=$newCount
+			if [[ $count -gt $maxTasks ]] ; then
+				echo "You have to manually increase the number of processes"
+				echo "Find command is faster than 5 minutes!"
+				exit 1
+			fi
+			echo "createSubtree $count"
 
-		createSubtree $count
-		run
-	done
+			createSubtree $count
+			run
+		done
+	fi
 
 	mdtest_easy_files_per_proc="1"
 fi
