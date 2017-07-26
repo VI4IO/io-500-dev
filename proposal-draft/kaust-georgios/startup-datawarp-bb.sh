@@ -1,9 +1,9 @@
-#!/bin/bash -e
-#SBATCH --ntasks-per-node=32
-#SBATCH --partition=debug
-#SBATCH --nodes=2
+#!/bin/bash 
+#SBATCH --ntasks-per-node=8
+#SBATCH --partition=workq
+#SBATCH --nodes=100
 #SBATCH --job-name=IO-500
-#SBATCH --time=00:30:00
+#SBATCH --time=02:30:00
 #SBATCH -o io_500_out_%J
 #SBATCH -e io_500_err_%J
 
@@ -11,10 +11,24 @@
 
 # parameters that are always true
 # If hyperthreading is not active, do not divide by two in the next command
-let maxTasks=$((${SLURM_NTASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))/2
+let maxTasks=$((${SLURM_JOB_CPUS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))/2
 mpirun="srun -m block"
 workdir=/$DW_JOB_STRIPED/test.$$/
 output_dir=/$DW_JOB_STRIPED/io500-results-${SLURM_JOB_NUM_NODES}
+
+#params_mdreal="-P=5000 -I=1000"
+  subtree_to_scan_config=$PWD/subtree.cfg
+  
+  # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
+  ( for I in $(seq 100) ; do 
+    echo mdtest_tree.$I.0
+  done ) > subtree.cfg
+
+# ToDo add here optimum values
+#ior_easy_params=
+#ior_hard_writes_per_proc=               
+#mdtest_hard_files_per_proc=
+#mdtest_easy_files_per_proc=
 
 # precreate directories for lustre with the appropriate striping
 mkdir -p ${workdir}/ior_easy
@@ -29,15 +43,9 @@ mdreal_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/md-r
 
 params_mdreal="-P=10 -I=10"
 
-#
-identify_parameters_ior_hard=False
-identify_parameters_ior_easy=False
-identify_parameters_md_easy=True # also enables to do the find 
-identify_parameters_md_hard=True
-identify_parameters_find=False # only works if ior_easy is also run
-
-timeExpected=300 
-timeThreshhold=100
-
+(
 cd ..
-source ./auto-determine-parameters.sh | tee auto-${SLURM_JOB_NUM_NODES}-${SLURM_NTASKS_PER_NODE}.txt 
+source io_500_core.sh
+) 2>&1 | tee $SLURM_NNODES.txt
+
+rm -rf $workdir/
