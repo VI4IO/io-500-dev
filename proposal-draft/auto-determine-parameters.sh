@@ -10,8 +10,10 @@ fi
 
 ## Do not change the script below this point except for testing...
 if [[ "$timeExpected" == "" ]] ; then
-  timeExpected=100       # 300 seconds
-  timeThreshhold=50   # 100 seconds
+  timeExpected=300       # 300 seconds
+fi
+if [[ "$timeThreshhold" == "" ]] ; then
+  timeThreshhold=150   # 100 seconds
 fi
 
 subtree_to_scan_config=$PWD/subtree.cfg
