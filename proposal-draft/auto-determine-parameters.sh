@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -x
 
 # This script automatically identifies the parameters for the IO-500 benchmark
 # It will determine the number of directories, files and data for the creation phase and the find.
@@ -81,7 +81,7 @@ if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
 	run
 
 	# adapt the ior-easy parameters
-	count=1
+	count=2
 	while true ; do
 		newCount=$(adaptParameter ior-easy-results.txt $count)
 		newCount=$(($newCount / 2 * 2))
