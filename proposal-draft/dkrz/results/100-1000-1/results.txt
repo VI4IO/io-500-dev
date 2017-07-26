@@ -1,0 +1,31 @@
+[Precreating] missing directories
+[Starting] ior-easy-write
+1/ior-easy-write BW:92885.56 MB/s time: 707s
+[Starting] md-easy-create
+[Warning]: the runtime is below 5 minutes
+1/md-easy-create IOPs:23980.714 time:272s
+[Starting] ior-hard-write
+[Warning]: the runtime is below 5 minutes
+2/ior-hard-write BW:1886.90 MB/s time: 170s
+[Starting] md-hard-create
+[Warning]: the runtime is below 5 minutes
+2/md-hard-create IOPs:22581.522 time:287s
+[Starting] ior-easy-read
+3/ior-easy-read BW:138002.62 MB/s time: 485s
+[Starting] md-easy-stat
+3/md-easy-stat IOPs:152111.244 time:68s
+[Starting] ior-hard-read
+4/ior-hard-read BW:7856.87 MB/s time: 383s
+[Starting] md-hard-stat
+4/md-hard-stat IOPs:166260.792 time:66s
+[Starting] find
+5/find IOPs:11613 time:52s
+[Starting] md-easy-delete
+6/md-easy-delete IOPs:9977.899 time:625s
+[Starting] md-hard-delete
+7/md-hard-delete IOPs:9149.041 time:686s
+
+IO-500 bw score: 20878.9 MB/s
+IO-500 md score: 28294.6 IOPS
+
+IO-500 score:  590760123.9
