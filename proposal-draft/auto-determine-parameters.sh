@@ -84,6 +84,7 @@ if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
 	count=2
 	while true ; do
 		newCount=$(adaptParameter ior-easy-results.txt $count)
+		newCount=$(($newCount / 2 * 2))
 		if [[ $count == $newCount ]] ; then
 			break
 		fi

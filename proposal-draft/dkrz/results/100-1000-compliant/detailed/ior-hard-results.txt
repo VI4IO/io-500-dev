@@ -1,0 +1,2 @@
+2/ior-hard-write BW:1624.46 MB/s time: 310s
+4/ior-hard-read BW:7928.41 MB/s time: 991s
