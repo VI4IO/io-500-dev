@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -x
 #IO-500 benchmark
 # don't edit
 
@@ -50,8 +50,13 @@ function endphase_check  {
   fi
 }
 
+
 params_ior_hard="-C -Q 1 -g -G 27 -k -vv -e -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file" # -W (validation) NOT for testing runtime
 params_ior_easy="-C -Q 1 -g -G 27 -k -vv -e -F $ior_easy_params -o $workdir/ior_easy/ior_file_easy" # -W (validation) NOT for testing runtime
+
+params_ior_hard2="-C -Q 1 -g -G 27 -vv -e -t 47000 -b 47000 -s $ior_hard_writes_per_proc -o ${workdir}/ior_hard/IOR_file" # -W (validation) NOT for testing runtime
+params_ior_easy2="-C -Q 1 -g -G 27 -vv -e -F $ior_easy_params -o $workdir/ior_easy/ior_file_easy" # -W (validation) NOT for testing runtime
+
 params_md_easy="-v -u -L -F -d ${workdir}/mdt_easy -u -n $mdtest_easy_files_per_proc"
 params_md_hard="-t -F -w 3900 -e 3900 -d ${workdir}/mdt_hard -n $mdtest_hard_files_per_proc"
 params_mdreal="-I=3 -L=$output_dir/mdreal -D=1 $params_mdreal  -- -D=${workdir}/mdreal"
@@ -114,7 +119,7 @@ fi
 if [[ "$run_ior_easy" != "False" && "$run_ior_easy_read" != "False" ]] ; then
   phase="ior-easy-read"
   startphase
-  $mpirun $ior_cmd -r -C $params_ior_easy >> $output_dir/ior_easy 2>&1
+  $mpirun $ior_cmd -r -C $params_ior_easy2 >> $output_dir/ior_easy 2>&1
   endphase
   bw3=$(grep "Max R" $output_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
 
@@ -136,7 +141,7 @@ if [[ "$run_ior_hard" != "False" && "$run_ior_hard_read" != "False" ]] ; then
   # ior hard read
   phase="ior-hard-read"
   startphase
-  $mpirun $ior_cmd  -R -r -C $params_ior_hard >> $output_dir/ior_hard 2>&1
+  $mpirun $ior_cmd  -R -r -C $params_ior_hard2 >> $output_dir/ior_hard 2>&1
   endphase
   bw4=$(grep "Max R" $output_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1| awk '{print $5}')
   bw_dur4=$(grep "read " $output_dir/ior_hard | tail -n 1 | awk '{print $10}')
