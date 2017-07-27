@@ -203,3 +203,5 @@ echo "IO-500 md score: $md_score IOPS"
 export final_score=$( echo "$bw_score*$md_score" | bc)
 echo
 echo "IO-500 score: " $final_score
+
+rm $workdir/ior_easy/ior_file_easy* ${workdir}/ior_hard/IOR_file
