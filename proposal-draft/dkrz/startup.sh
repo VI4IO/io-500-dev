@@ -46,6 +46,13 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 
 (
 cd ..
+echo "filesystem_utilization=$(df /mnt/lustre02)"
+echo "date=$(date -I)"
+echo "queue="
+echo "nodes=$SLURM_NNODES"
+echo "ppn=$SLURM_TASKS_PER_NODE"
+echo "nodelist=$SLURM_NODELIST"
+
 source io_500_core.sh
 ) 2>&1 | tee $SLURM_NNODES.txt
 
