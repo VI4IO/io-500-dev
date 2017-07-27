@@ -44,8 +44,8 @@ mdreal_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/md-r
 params_mdreal="-P=1000 -I=100"
 
 echo "System statistics"
-echo "Number of jobs: "`squeue | wc -l`
-echo "Nodes of largest job: "`squeue | grep -v NODES | awk 'BEGIN{proc=0}{if($NF>proc) proc=$NF}END{print proc}'
+echo "Number of running jobs: "`squeue -t running | wc -l`
+echo "Number of nodes of largest job: "`squeue | grep -v NODES | awk 'BEGIN{proc=0}{if($NF>proc) proc=$NF}END{print proc}'
 `
 
 
