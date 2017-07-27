@@ -68,11 +68,11 @@ run_ior_easy=False
 run_ior_hard=False
 run_md_hard=False
 run_md_easy=False
-run_find=False
-run_ior_easy_read=False
-run_ior_hard_read=False
-run_md_hard_read=False
-run_md_easy_read=False
+run_find=True
+run_ior_easy_read=True
+run_ior_hard_read=True
+run_md_hard_read=True
+run_md_easy_read=True
 
 
 if [[ "$identify_parameters_ior_easy" == "True" ]] ; then
