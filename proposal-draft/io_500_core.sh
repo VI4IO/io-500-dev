@@ -158,7 +158,7 @@ if [[ "$run_md_easy" != "False" && "$run_pfind" == "True" ]] ; then
   phase="find"
   find_procs=`wc -l < $subtree_to_scan_config`
   startphase
-  $mpirun -n $find_procs pfind $find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/    >> $output_dir/find_re 2>&1
+  $mpirun_pfind -n $find_procs pfind $find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/    >> $output_dir/find_re 2>&1
   endphase
   found=0
   for ((i=1;i<=$find_procs;i++)); do found=$(($found + $(cat $workdir/mdt_easy/$i))); done;

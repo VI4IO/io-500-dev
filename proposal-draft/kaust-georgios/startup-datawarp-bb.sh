@@ -13,6 +13,7 @@
 # If hyperthreading is not active, do not divide by two in the next command
 let maxTasks=$((${SLURM_NTASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))/2
 mpirun="srun -m block"
+mpirun_pfind=$mpirun
 workdir=/$DW_JOB_STRIPED/test.$$/
 output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}.$$
 
@@ -24,6 +25,13 @@ output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}.$$
     echo mdtest_tree.$I.0
   done ) > subtree.cfg
  cp subtree.cfg ../
+
+  lines=`wc -l < subtree.cfg` 
+
+if [ $SLURM_JOB_NUM_NODES -le $lines ];
+then
+	mpirun_pfind=$mpirun" --ntasks-per-node=1"
+fi
 # ToDo add here optimum values
 ior_easy_params="-t 2m -b 192616m"
 ior_hard_writes_per_proc=77872
