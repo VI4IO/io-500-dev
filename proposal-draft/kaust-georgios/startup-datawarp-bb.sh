@@ -7,23 +7,23 @@
 #SBATCH -o io_500_out_%J
 #SBATCH -e io_500_err_%J
 
-#DW jobdw type=scratch access_mode=striped capacity=3200GiB
+#DW jobdw type=scratch access_mode=striped capacity=500000GiB
 
 # parameters that are always true
 # If hyperthreading is not active, do not divide by two in the next command
 let maxTasks=$((${SLURM_NTASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))/2
 mpirun="srun -m block"
 workdir=/$DW_JOB_STRIPED/test.$$/
-output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}
+output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}.$$
 
 #params_mdreal="-P=5000 -I=1000"
   subtree_to_scan_config=$PWD/subtree.cfg
   
   # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-  ( for I in $(seq 100) ; do 
+  ( for I in $(seq 200) ; do 
     echo mdtest_tree.$I.0
   done ) > subtree.cfg
-
+ cp subtree.cfg ../
 # ToDo add here optimum values
 ior_easy_params="-t 2m -b 192616m"
 ior_hard_writes_per_proc=77872
@@ -35,8 +35,16 @@ mkdir -p ${workdir}/ior_easy
 
 mkdir -p ${workdir}/ior_hard
 
+#To execute parallel find uncomment both lines below
+#run_pfind="True"
+#run_find="False"
+
 # commands
+#Parallel find
+#find_cmd=$PWD/../io500-pfind.sh
+#Serialized find
 find_cmd=$PWD/../io500-find.sh
+
 ior_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/ior
 mdtest_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest
 mdreal_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/md-real-io # set to "" to not run mdreal

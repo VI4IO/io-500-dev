@@ -153,6 +153,20 @@ if [[ "$run_md_hard" != "False" && "$run_md_hard_read" != "False" ]] ; then
   print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 fi
 
+if [[ "$run_md_easy" != "False" && "$run_pfind" == "True" ]] ; then
+  # find
+  phase="find"
+  find_procs=`wc -l < $subtree_to_scan_config`
+  startphase
+  $mpirun -n $find_procs pfind $find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/    >> $output_dir/find_re 2>&1
+  endphase
+  found=0
+  for ((i=1;i<=$find_procs;i++)); do found=$(($found + $(cat $workdir/mdt_easy/$i))); done;
+  iops5=`echo "$found/$duration" |bc`
+  print_iops 5 $iops5 | tee $output_dir/find-results.txt
+fi
+
+
 if [[ "$run_md_easy" != "False" && "$run_find" != "False" ]] ; then
   # find
   phase="find"
