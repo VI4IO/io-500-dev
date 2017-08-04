@@ -1,0 +1,61 @@
+-- started at 08/02/2017 20:00:45 --
+
+mdtest-1.9.4-rc1 was launched with 2400 total task(s) on 300 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -C -t -F -w 3900 -e 3900 -d //var/opt/cray/dws/mounts/batch/3595303/ss//test.52273//mdt_hard -n 1630
+Path: /var/opt/cray/dws/mounts/batch/3595303/ss/test.52273
+FS: 488.4 TiB   Used FS: 92.3%   Inodes: 100074.6 Mi   Used Inodes: 0.1%
+
+2400 tasks, 3912000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :      11400.559      11400.559      11400.559          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :        592.751        592.751        592.751          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+
+-- finished at 08/02/2017 20:06:29 --
+-- started at 08/02/2017 20:41:58 --
+
+mdtest-1.9.4-rc1 was launched with 2400 total task(s) on 300 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -T -t -F -w 3900 -e 3900 -d //var/opt/cray/dws/mounts/batch/3637650/ss//test.52273//mdt_hard -n 1630
+Path: /var/opt/cray/dws/mounts/batch/3637650/ss/test.52273
+FS: 488.4 TiB   Used FS: 0.4%   Inodes: 100074.6 Mi   Used Inodes: 0.1%
+
+2400 tasks, 3912000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :      38727.432      38727.432      38727.432          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+
+-- finished at 08/02/2017 20:43:40 --
+-- started at 08/02/2017 20:52:02 --
+
+mdtest-1.9.4-rc1 was launched with 2400 total task(s) on 300 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -r -t -F -w 3900 -e 3900 -d //var/opt/cray/dws/mounts/batch/3637650/ss//test.52273//mdt_hard -n 1630
+Path: /var/opt/cray/dws/mounts/batch/3637650/ss/test.52273
+FS: 488.4 TiB   Used FS: 0.1%   Inodes: 100074.6 Mi   Used Inodes: 0.0%
+
+2400 tasks, 3912000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :      18924.546      18924.546      18924.546          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :        311.243        311.243        311.243          0.000
+
+-- finished at 08/02/2017 20:55:35 --
+
