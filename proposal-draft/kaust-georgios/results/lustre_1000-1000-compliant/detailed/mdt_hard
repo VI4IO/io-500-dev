@@ -1,0 +1,60 @@
+-- started at 08/08/2017 22:21:46 --
+
+mdtest-1.9.4-rc1 was launched with 16000 total task(s) on 1000 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -C -t -F -w 3900 -e 3900 -d /project/k01/markomg/test.6161//mdt_hard -n 452
+Path: /lustre/project/k01/markomg/test.6161
+FS: 16257.8 TiB   Used FS: 51.9%   Inodes: 2431.3 Mi   Used Inodes: 41.4%
+
+16000 tasks, 7232000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :      13665.608      13665.608      13665.608          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :       1567.378       1567.378       1567.378          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+
+-- finished at 08/08/2017 22:30:37 --
+-- started at 08/08/2017 22:40:50 --
+
+mdtest-1.9.4-rc1 was launched with 16000 total task(s) on 1000 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -T -t -F -w 3900 -e 3900 -d /project/k01/markomg/test.6161//mdt_hard -n 452
+Path: /lustre/project/k01/markomg/test.6161
+FS: 16257.8 TiB   Used FS: 51.9%   Inodes: 2431.3 Mi   Used Inodes: 41.7%
+
+16000 tasks, 7232000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :     127321.906     127321.906     127321.906          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+
+-- finished at 08/08/2017 22:41:48 --
+-- started at 08/08/2017 22:49:36 --
+
+mdtest-1.9.4-rc1 was launched with 16000 total task(s) on 1000 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -r -t -F -w 3900 -e 3900 -d /project/k01/markomg/test.6161//mdt_hard -n 452
+Path: /lustre/project/k01/markomg/test.6161
+FS: 16257.8 TiB   Used FS: 51.9%   Inodes: 2431.3 Mi   Used Inodes: 41.4%
+
+16000 tasks, 7232000 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :      11298.678      11298.678      11298.678          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :          2.850          2.850          2.850          0.000
+
+-- finished at 08/08/2017 23:00:19 --

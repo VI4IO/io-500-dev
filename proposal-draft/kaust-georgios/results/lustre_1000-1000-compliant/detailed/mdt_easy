@@ -1,0 +1,210 @@
+-- started at 08/08/2017 22:05:56 --
+
+mdtest-1.9.4-rc1 was launched with 16000 total task(s) on 1000 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -C -v -u -L -F -d /project/k01/markomg/test.6161//mdt_easy -u -n 380
+V-1: Entering parse_dirpath...
+V-1: Entering valid_tests...
+barriers                : True
+collective_creates      : False
+create_only             : True
+dirpath(s):
+	/project/k01/markomg/test.6161//mdt_easy
+dirs_only               : False
+read_bytes              : 0
+read_only               : False
+first                   : 1
+files_only              : True
+iterations              : 1
+items_per_dir           : 0
+last                    : 0
+leaf_only               : True
+items                   : 380
+nstride                 : 0
+pre_delay               : 0
+remove_only             : True
+random_seed             : 0
+stride                  : 1
+shared_file             : False
+time_unique_dir_overhead: False
+stat_only               : False
+unique_dir_per_task     : True
+write_bytes             : 0
+sync_file               : False
+depth                   : 0
+V-1: Entering display_freespace...
+V-1: Entering show_file_system_size...
+Path: /lustre/project/k01/markomg/test.6161
+FS: 16257.8 TiB   Used FS: 51.9%   Inodes: 2431.3 Mi   Used Inodes: 41.1%
+
+16000 tasks, 6080000 files
+
+   Operation               Duration              Rate
+   ---------               --------              ----
+V-1: Entering timestamp...
+V-1: main: * iteration 1 08/08/2017 22:05:57 *
+V-1: Entering create_remove_directory_tree, currDepth = 0...
+V-1: Entering create_remove_directory_tree, currDepth = 1...
+V-1: main:   Tree creation     :          1.501 sec,          0.666 ops/sec
+V-1: Entering file_test...
+V-1: Entering unique_dir_access...
+V-1: Entering offset_timers...
+V-1: Entering create_remove_items, currDepth = 0...
+V-1: Entering create_remove_items_helper...
+V-1: Entering offset_timers...
+V-1:   File creation     :        480.314 sec,      12658.383 ops/sec
+V-1:   File stat         :          0.280 sec,          0.000 ops/sec
+V-1:   File read         :          0.002 sec,          0.000 ops/sec
+V-1:   File removal      :          0.001 sec,          0.000 ops/sec
+V-1: Entering summarize_results...
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :      12658.661      12658.661      12658.661          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :          0.666          0.666          0.666          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+V-1: Entering timestamp...
+
+-- finished at 08/08/2017 22:14:00 --
+-- started at 08/08/2017 22:38:45 --
+
+mdtest-1.9.4-rc1 was launched with 16000 total task(s) on 1000 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -T -v -u -L -F -d /project/k01/markomg/test.6161//mdt_easy -u -n 380
+V-1: Entering parse_dirpath...
+V-1: Entering valid_tests...
+barriers                : True
+collective_creates      : False
+create_only             : False
+dirpath(s):
+	/project/k01/markomg/test.6161//mdt_easy
+dirs_only               : False
+read_bytes              : 0
+read_only               : False
+first                   : 1
+files_only              : True
+iterations              : 1
+items_per_dir           : 0
+last                    : 0
+leaf_only               : True
+items                   : 380
+nstride                 : 0
+pre_delay               : 0
+remove_only             : True
+random_seed             : 0
+stride                  : 1
+shared_file             : False
+time_unique_dir_overhead: False
+stat_only               : True
+unique_dir_per_task     : True
+write_bytes             : 0
+sync_file               : False
+depth                   : 0
+V-1: Entering display_freespace...
+V-1: Entering show_file_system_size...
+Path: /lustre/project/k01/markomg/test.6161
+FS: 16257.8 TiB   Used FS: 51.9%   Inodes: 2431.3 Mi   Used Inodes: 41.7%
+
+16000 tasks, 6080000 files
+
+   Operation               Duration              Rate
+   ---------               --------              ----
+V-1: Entering timestamp...
+V-1: main: * iteration 1 08/08/2017 22:38:46 *
+V-1: Entering file_test...
+V-1: Entering unique_dir_access...
+V-1: Entering offset_timers...
+V-1: Entering mdtest_stat...
+V-1: Entering offset_timers...
+V-1:   File creation     :          0.000 sec,          0.000 ops/sec
+V-1:   File stat         :         50.328 sec,     120806.382 ops/sec
+V-1:   File read         :          0.001 sec,          0.000 ops/sec
+V-1:   File removal      :          0.001 sec,          0.000 ops/sec
+V-1: Entering summarize_results...
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :     120809.675     120809.675     120809.675          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+V-1: Entering timestamp...
+
+-- finished at 08/08/2017 22:39:37 --
+-- started at 08/08/2017 22:42:24 --
+
+mdtest-1.9.4-rc1 was launched with 16000 total task(s) on 1000 node(s)
+Command line used: /project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest -r -v -u -L -F -d /project/k01/markomg/test.6161//mdt_easy -u -n 380
+V-1: Entering parse_dirpath...
+V-1: Entering valid_tests...
+barriers                : True
+collective_creates      : False
+create_only             : False
+dirpath(s):
+	/project/k01/markomg/test.6161//mdt_easy
+dirs_only               : False
+read_bytes              : 0
+read_only               : False
+first                   : 1
+files_only              : True
+iterations              : 1
+items_per_dir           : 0
+last                    : 0
+leaf_only               : True
+items                   : 380
+nstride                 : 0
+pre_delay               : 0
+remove_only             : True
+random_seed             : 0
+stride                  : 1
+shared_file             : False
+time_unique_dir_overhead: False
+stat_only               : False
+unique_dir_per_task     : True
+write_bytes             : 0
+sync_file               : False
+depth                   : 0
+V-1: Entering display_freespace...
+V-1: Entering show_file_system_size...
+Path: /lustre/project/k01/markomg/test.6161
+FS: 16257.8 TiB   Used FS: 51.9%   Inodes: 2431.3 Mi   Used Inodes: 41.7%
+
+16000 tasks, 6080000 files
+
+   Operation               Duration              Rate
+   ---------               --------              ----
+V-1: Entering timestamp...
+V-1: main: * iteration 1 08/08/2017 22:42:25 *
+V-1: Entering file_test...
+V-1: Entering unique_dir_access...
+V-1: Entering offset_timers...
+V-1: Entering create_remove_items, currDepth = 0...
+V-1: Entering create_remove_items_helper...
+V-1: Entering unique_dir_access...
+V-1: Entering offset_timers...
+V-1:   File creation     :          0.002 sec,          0.000 ops/sec
+V-1:   File stat         :          0.294 sec,          0.000 ops/sec
+V-1:   File read         :          0.001 sec,          0.000 ops/sec
+V-1:   File removal      :        406.353 sec,      14962.377 ops/sec
+V-1: Entering create_remove_directory_tree, currDepth = 0...
+V-1: Entering create_remove_directory_tree, currDepth = 1...
+V-1: main   Tree removal      :          0.507 sec,          1.972 ops/sec
+V-1: Entering summarize_results...
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :      14962.743      14962.743      14962.743          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :          1.972          1.972          1.972          0.000
+V-1: Entering timestamp...
+
+-- finished at 08/08/2017 22:49:13 --

@@ -1,0 +1,3 @@
+2/md-hard-create IOPs:13665.608 time:566s
+4/md-hard-stat IOPs:127321.906 time:87s
+7/md-hard-delete IOPs:11298.678 time:668s

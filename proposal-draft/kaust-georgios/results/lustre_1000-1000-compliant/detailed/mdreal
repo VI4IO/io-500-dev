@@ -1,0 +1,24 @@
+MD-REAL-IO total objects: 22912000 workingset size: 59509.277 MiB (version: 9a85ace@master) time: 2017-08-08 23:00:47
+	offset=1 
+	interface=posix
+	obj-per-proc=144 
+	latency=/project/k01/markomg/io500-results-1000.6161/mdreal
+	precreate-per-set=1000 
+	data-sets=1 
+	lim-free-mem=0 
+	lim-free-mem-phase=0 
+	object-size=3900 
+	iterations=3 
+	run-precreate
+	run-benchmark
+	run-cleanup
+
+	root-dir=/project/k01/markomg/test.6161//mdreal
+
+WARN: Will use the existing (empty) directory
+precreate 1339.8s 11954.4 iops/s 16000 dset 16000000 obj 11.942 dset/s 11942.5 obj/s 44.4 Mib/s (0 errs)
+benchmark 358.9s 25680.4 iops/s 2304000 obj 6420.1 obj/s 47.8 Mib/s (0 errs)
+benchmark 371.4s 24817.1 iops/s 2304000 obj 6204.3 obj/s 46.2 Mib/s (0 errs)
+benchmark 418.6s 22015.4 iops/s 2304000 obj 5503.9 obj/s 40.9 Mib/s (0 errs)
+cleanup 1248.4s 12829.6 iops/s 16000000 obj 16000 dset 12816.8 obj/s 12.817 dset/s (0 errs)
+Total runtime: 3737s time: 2017-08-09 00:03:05
