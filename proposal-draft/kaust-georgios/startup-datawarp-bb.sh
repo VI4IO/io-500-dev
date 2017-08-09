@@ -28,7 +28,7 @@ output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}.$$
 
   lines=`wc -l < subtree.cfg` 
 
-if [ $SLURM_JOB_NUM_NODES -le $lines ];
+if [ $lines -le $SLURM_JOB_NUM_NODES ];
 then
 	mpirun_pfind=$mpirun" --ntasks-per-node=1"
 fi
@@ -57,7 +57,7 @@ ior_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/ior
 mdtest_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest
 mdreal_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/md-real-io # set to "" to not run mdreal
 
-params_mdreal="-P=1000 -I=100"
+params_mdreal="-P=1000 -I=200"
 
 echo "System statistics"
 echo "Number of running jobs: "`squeue -t running | wc -l`
