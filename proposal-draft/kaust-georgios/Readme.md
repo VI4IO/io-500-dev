@@ -39,6 +39,10 @@ find_cmd=$PWD/../io500-pfind.sh
 run_pfind="True"
 run_find="False"
 ```
+* Modify the compile.sh file from the main folder (prposal-draft) and execute it to compile the pfind executable
+
+5) Submit the main script.
+
 ## Cray Burst Buffer:
 
 As previously but the auto-tuning tool is called startup-auto-detect-datawarp-bb.sh and the main script startup-datawarp-bb.sh
