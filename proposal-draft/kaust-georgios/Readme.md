@@ -36,7 +36,7 @@ find_cmd=$PWD/../io500-pfind.sh
 run_pfind="True"
 run_find="False"
 
-## For Cray Burst Buffer:
+## Cray Burst Buffer:
 
 As previously but the auto-tuning tool is called startup-auto-detect-datawarp-bb.sh and the main script startup-datawarp-bb.sh
 
