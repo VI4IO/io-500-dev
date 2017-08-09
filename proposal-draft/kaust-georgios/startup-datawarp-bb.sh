@@ -12,16 +12,18 @@
 # parameters that are always true
 # If hyperthreading is not active, do not divide by two in the next command
 let maxTasks=$((${SLURM_NTASKS_PER_NODE} * ${SLURM_JOB_NUM_NODES}))/2
-mpirun="srun -m block"
+mpirun="srun -m block --hint=nomultithread"
 mpirun_pfind=$mpirun
 workdir=/$DW_JOB_STRIPED/test.$$/
 output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}.$$
 
 #params_mdreal="-P=5000 -I=1000"
   subtree_to_scan_config=$PWD/subtree.cfg
+
+processes_find=200
   
   # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-  ( for I in $(seq 200) ; do 
+  ( for I in $(seq $processes_find) ; do 
     echo mdtest_tree.$I.0
   done ) > subtree.cfg
  cp subtree.cfg ../
