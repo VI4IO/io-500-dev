@@ -3,7 +3,9 @@
 
 ## Lustre:
 
-* Auto-tuning:
+It is required to execute some benchmarks for 5 minutes. Thus, an auto-tuning tool was developed to calculate the appropriate parameters depending on your system.
+
+### Auto-tuning:
 
 1) Edit the file startup-auto-detect.sh
 
@@ -13,7 +15,7 @@
  
 2) Submit the auto-tuning tool.
 
-* Main script
+### Main script
 
 3) Edit the file startup.sh
 
@@ -47,5 +49,5 @@ As previously but the auto-tuning tool is called startup-auto-detect-datawarp-bb
 
 The output files are located in the output_dir directory
 
-to be updated
+To be updated
 
