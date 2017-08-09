@@ -1,9 +1,9 @@
-## Instructions
+# Instructions
 
 
-* For Lustre:
+## Lustre:
 
-** Auto-tuning:
+* Auto-tuning:
 
 1) Edit the file startup-auto-detect.sh
 
@@ -13,7 +13,7 @@
  
 2) Submit the auto-tuning tool.
 
-** Main script
+* Main script
 
 3) Edit the file startup.sh
 
@@ -36,13 +36,13 @@ find_cmd=$PWD/../io500-pfind.sh
 run_pfind="True"
 run_find="False"
 
-* For Cray Burst Buffer:
+## For Cray Burst Buffer:
 
 As previously but the auto-tuning tool is called startup-auto-detect-datawarp-bb.sh and the main script startup-datawarp-bb.sh
 
 
 
-## Submission of results
+# Submission of results
 
 The output files are located in the output_dir directory
 
