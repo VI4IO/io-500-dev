@@ -1,4 +1,4 @@
-#!/bin/bash -e 
+#!/bin/bash -e
 #SBATCH --ntasks-per-node=16
 #SBATCH --partition=workq
 #SBATCH --nodes=1000
@@ -27,9 +27,9 @@ mdtest_hard_files_per_proc=452
 params_mdreal="-P=1000 -I=100"
 subtree_to_scan_config=$PWD/subtree.cfg
 processes_find=6000
-  
+
   # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-  ( for I in $(seq $processes_find) ; do 
+  ( for I in $(seq $processes_find) ; do
     echo mdtest_tree.$I.0
   done ) > subtree.cfg
 
@@ -55,7 +55,7 @@ lfs setstripe --stripe-count 144  ${workdir}/ior_hard
 
 # commands
 #Parallel find
-find_cmd=$PWD/../io500-pfind.sh
+find_cmd=$PWD/../../find/pfind/io500-pfind.sh
 #Serialized find
 #find_cmd=$PWD/../io500-find.sh
 

@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #SBATCH --ntasks-per-node=8
 #SBATCH --partition=workq
 #SBATCH --nodes=300
@@ -21,14 +21,14 @@ output_dir=/project/k01/markomg/bb_io500-results-${SLURM_JOB_NUM_NODES}.$$
   subtree_to_scan_config=$PWD/subtree.cfg
 
 processes_find=200
-  
+
   # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-  ( for I in $(seq $processes_find) ; do 
+  ( for I in $(seq $processes_find) ; do
     echo mdtest_tree.$I.0
   done ) > subtree.cfg
  cp subtree.cfg ../
 
-  lines=`wc -l < subtree.cfg` 
+  lines=`wc -l < subtree.cfg`
 
 if [ $lines -le $SLURM_JOB_NUM_NODES ];
 then
@@ -53,7 +53,7 @@ mkdir -p ${workdir}/ior_hard
 #Parallel find
 #find_cmd=$PWD/../io500-pfind.sh
 #Serialized find
-find_cmd=$PWD/../io500-find.sh
+find_cmd=$PWD/../../find/pfind/io500-pfind.sh
 
 ior_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/ior
 mdtest_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/mdtest

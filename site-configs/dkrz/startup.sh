@@ -11,28 +11,28 @@ module load intel
 
 # choosing parameters for DKRZ
 # throughput for independent I/O ~400 GByte/s => 300*400 == 120 TByte data to write or 120 GByte per process...
-# IOPS for random I/O (1500 IOPS per client): 5000 
+# IOPS for random I/O (1500 IOPS per client): 5000
 # metadata: 20k Ops for a single MD server (here we use only one albeit we have 5+8) => 300*20k / 10000 = 6000
-# find: roughly 12 seconds to scan a 6000 file directory => 25 directories => this can be parallelized, say 10x improvement 
+# find: roughly 12 seconds to scan a 6000 file directory => 25 directories => this can be parallelized, say 10x improvement
 
 mpirun="srun -m block"
 workdir=/mnt/lustre02/work/k20200/k202079/io500/data
 output_dir=/mnt/lustre02/work/k20200/k202079/io500/results
 ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
 ior_hard_writes_per_proc=5000               # each process writes 1000 times 47k
-mdtest_hard_files_per_proc=6000           
+mdtest_hard_files_per_proc=6000
 mdtest_easy_files_per_proc=6000
 
 #params_mdreal="-P=5000 -I=1000"
 subtree_to_scan_config=$PWD/subtree.cfg
 
 # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-( for I in $(seq 100) ; do 
+( for I in $(seq 100) ; do
   echo mdtest_tree.$I.0
 done ) > subtree.cfg
 
 # commands
-find_cmd=$PWD/../io500-find.sh
+find_cmd=$PWD/../../find/io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
 #mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/md-real-io # if set != "" then run mdreal

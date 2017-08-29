@@ -24,7 +24,7 @@ mkdir -p ${workdir}/ior_hard
 lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 
 # commands
-find_cmd=$PWD/../io500-find.sh
+find_cmd=$PWD/../../find/io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
 #mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/md-real-io # set to "" to not run mdreal
