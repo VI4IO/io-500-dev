@@ -2,7 +2,7 @@
 
 ## How to prepare an IO-500 run
 
-Please see samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
+Please see the template in site-configs/template/startup.sh or samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
 They also contain some documentation.
 The general procedure to run successfully are:
 
