@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -x
 
 echo "This script downloads the code for the benchmarks."
 echo "It will also attempt to built the benchmarks"
@@ -18,7 +18,16 @@ git clone https://github.com/JulianKunkel/md-real-io || true
 echo "Compiling benchmarks"
 
 pushd mdtest
+if [ -x "$(command -v mpicc)" ]; then
 make CC.Linux="mpicc -Wall"
+elif [ -x "$(command -v mpicc)" ]; then
+
+module swap PrgEnv-cray PrgEnv-gnu
+module swap PrgEnv-intel PrgEnv-gnu
+module load cmake
+module load autotools
+make CC.Linux="cc -Wall"
+fi
 mv mdtest $INSTALL
 popd
 
