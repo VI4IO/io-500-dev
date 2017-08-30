@@ -1,9 +1,21 @@
 # This repository contains scripts for running the IO-500
 
+## Building the necessary benchmarks
+
+Download the source code of the benchmarks:
+* mdtest
+* ior
+* md-real-io (optional)
+
+The script ./prepare.sh gives an example how to download and build these benchmarks.
+
 ## How to prepare an IO-500 run
 
 Please see the template in site-configs/template/startup.sh or samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
 They also contain some documentation.
+If you have installed the benchmarks using the ./prepare.sh script, you may use the script
+site-configs/template/startup-local.sh that runs all benchmarks in the current directory!
+
 The general procedure to run successfully are:
 
 1) Identify a suitable find command; find is part of the benchmark, we prepared several find commands.
@@ -20,7 +32,7 @@ The general procedure to run successfully are:
           Sample scripts in the directories provide examples for parameters you may want to use.
    2.3) You may add further commands to precreate directories (e.g., to place them on Lustre servers)
    2.4) You may output some key-value pairs for node information (e.g., date, ppn, number of nodes used), these key-values are not yet standardized, but will in the future.
-   2.5) Source io_500_core.sh at last to have the script run the benchmarks, do not change io_500_core.sh ! 
+   2.5) Source io_500_core.sh at last to have the script run the benchmarks, do not change io_500_core.sh !
 3) Have it run and store the output in a textfile.
 4) Submit the script to your batch system.
 
@@ -31,7 +43,7 @@ To see what the benchmark will do set find_cmd, ior_cmd, mdtest_cmd to /bin/echo
 Alternatives:
 * Manually identification, e.g., you know the parameters or tested them.
 * You may use the auto-determine-parameters.sh script which uses an explorative search to identify (nearly) suitable settings.
-  This script can be used similarly to io_500_core.sh, except that you do not have to set the parameters for the phases. 
+  This script can be used similarly to io_500_core.sh, except that you do not have to set the parameters for the phases.
 
 See again samples in site-configs/*/startup-auto-detect.sh
 
