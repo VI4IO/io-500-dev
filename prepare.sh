@@ -39,7 +39,7 @@ mv $INSTALL/bin/ior $INSTALL
 popd
 
 pushd md-real-io
-./configure --prefix=$INSTALL
+./configure --prefix=$INSTALL --minimal
 cd build
 make -j4 install
 mv $INSTALL/bin/md-real-io $INSTALL
