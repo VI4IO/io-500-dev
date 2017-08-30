@@ -13,8 +13,9 @@ The script ./prepare.sh gives an example how to download and build these benchma
 
 Please see the template in site-configs/template/startup.sh or samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
 They also contain some documentation.
-If you have installed the benchmarks using the ./prepare.sh script, you may use the script
-site-configs/template/startup-local.sh that runs all benchmarks in the current directory!
+If you have installed the benchmarks into $PWD/install/, e.g., using the ./prepare.sh script, 
+you may use the script startup-io500-locally-testmode.sh that runs all benchmarks for testing in a quick run
+in the current directory.
 
 The general procedure to run successfully are:
 
@@ -56,3 +57,8 @@ See again samples in site-configs/*/startup-auto-detect.sh
    * an MPI paralellized find version (see the directory pfind)
 * site-configs: contains the run scripts (!) for certain sites together with results.
   They provide good examples to start with.
+* prepare.sh: This script downloads and attempts to build the codes. 
+  Building may fail on certain systems, please prepare a script for your system to build correctly.
+* startup-io500-locally-testmode.sh: This script runs the IO500 benchmark on the current working directory.
+  It serves as a basis to test if everything runs correctly on your system.
+  It requires that you installed the executables into the install/ directory
