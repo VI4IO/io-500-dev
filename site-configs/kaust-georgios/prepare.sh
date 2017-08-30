@@ -20,8 +20,12 @@ echo "Compiling benchmarks"
 pushd mdtest
 if [ -x "$(command -v mpicc)" ]; then
 make CC.Linux="mpicc -Wall"
-elif [ -x "$(command -v cc)" ]; then
+elif [ -x "$(command -v mpicc)" ]; then
 
+module swap PrgEnv-cray PrgEnv-gnu
+module swap PrgEnv-intel PrgEnv-gnu
+module load cmake
+module load autotools
 make CC.Linux="cc -Wall"
 fi
 mv mdtest $INSTALL
