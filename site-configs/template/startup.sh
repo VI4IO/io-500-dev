@@ -8,6 +8,7 @@
 
 # Command to start an MPI application
 mpirun="srun -m block"
+mpirun_pfind=$mpirun
 workdir= # directory where the data will be stored
 output_dir= # the directory where the output will be kept
 
@@ -20,22 +21,32 @@ mdtest_easy_files_per_proc=6000
 # If to use mdreal
 params_mdreal="-P=5000 -I=1000"
 subtree_to_scan_config=$PWD/subtree.cfg
-
+processes_find=100 
 # If you use the find command from find/io500-find.sh, you can specify how many directories to scan to limit its runtime
 # Here scan 100 dirs
 # The subtrees to scan from md-easy, each contains mdtest_easy_files_per_proc files
-( for I in $(seq 100) ; do
+( for I in $(seq $processes_find) ; do
   echo mdtest_tree.$I.0
 done ) > subtree.cfg
 
 # Define the executables for the commands
+#Parallel find
+#find_cmd=$PWD/../../find/pfind/io500-pfind.sh
+#To execute parallel find uncomment both lines below
+#run_pfind="True"
+#run_find="False"
+#Serialized find
 find_cmd=$PWD/../../find/io500-find.sh
 ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/ior
 mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/proposal-draft/mdtest
 # if set != "" then run mdreal
 mdreal_cmd=
 
-
+lines=`wc -l < subtree.cfg`
+if [ $lines -le $SLURM_JOB_NUM_NODES ];
+then
+        mpirun_pfind=$mpirun" --ntasks-per-node=1"
+fi
 # Add whatever you want to do for preparing the workdirectory
 # Here we precreate directories for lustre with the appropriate striping
 mkdir -p ${workdir}/ior_easy
@@ -43,7 +54,6 @@ lfs setstripe --stripe-count 2  ${workdir}/ior_easy
 
 mkdir -p ${workdir}/ior_hard
 lfs setstripe --stripe-count 100  ${workdir}/ior_hard
-
 
 # Now write the output/results  file
 (
