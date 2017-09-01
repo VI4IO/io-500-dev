@@ -30,7 +30,7 @@ mdtest_hard_files_per_proc=452
 ```
 4) In the case that you want to use parallel find
 
-* Modify the parameter processes_find to the number of the MPI processes that shold participate in the parallel find
+* Modify the parameter processes_find to the number of the MPI processes that should participate in the parallel find
 * Define the following (uncomment or comment where necessary)
 
 ```bash
