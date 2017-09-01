@@ -34,7 +34,7 @@ processes_find=6000
   done ) > subtree.cfg
 
 
- cp subtree.cfg ../
+ cp subtree.cfg ../../
 
   lines=`wc -l < subtree.cfg`
 
@@ -57,7 +57,7 @@ lfs setstripe --stripe-count 144  ${workdir}/ior_hard
 #Parallel find
 find_cmd=$PWD/../../find/pfind/io500-pfind.sh
 #Serialized find
-#find_cmd=$PWD/../io500-find.sh
+#find_cmd=$PWD/../../find/io500-find.sh
 
 #To execute parallel find uncomment both lines below
 run_pfind="True"
@@ -70,7 +70,7 @@ mdreal_cmd=/project/k01/markomg/burst_test/BB_ior/io-500-dev/proposal-draft/md-r
 
 
 (
-cd ..
+cd ../../
 source io_500_core.sh
 ) 2>&1 | tee $SLURM_NNODES.txt
 
