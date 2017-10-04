@@ -136,7 +136,7 @@ if [[ "$run_ior_hard" != "False" && "$run_ior_hard_read" != "False" ]] ; then
   # ior hard read
   phase="ior-hard-read"
   startphase
-  $mpirun $ior_cmd  -R -r -C $params_ior_hard >> $output_dir/ior_hard 2>&1
+  $mpirun $ior_cmd  -r -C $params_ior_hard >> $output_dir/ior_hard 2>&1 # later use -R once fixed...
   endphase
   bw4=$(grep "Max R" $output_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1| awk '{print $5}')
   bw_dur4=$(grep "read " $output_dir/ior_hard | tail -n 1 | awk '{print $10}')
