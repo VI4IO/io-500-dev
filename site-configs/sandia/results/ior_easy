@@ -1,0 +1,280 @@
+IOR-3.1.0: MPI Coordinated Test of Parallel I/O
+
+ior WARNING: fsync() only available in POSIX.  Using value of 0.
+Began: Mon Oct 16 14:27:43 2017
+Command line used: /fscratch/gflofst/io500/ior -w -C -Q 1 -g -G 27 -k -vv -e -F -t 2048k -b 20g -o /fscratch/gflofst/io500/ior_easy/ior_file_easy
+Machine: Linux ser691 3.10.0-514.26.1.1chaos.ch6_1.x86_64 #1 SMP Thu Jun 29 15:16:26 PDT 2017 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 2087.17 sec
+
+Test 0 started: Mon Oct 16 14:27:43 2017
+Path: /fscratch/gflofst/io500/ior_easy
+FS: 1745.8 TiB   Used FS: 21.4%   Inodes: 437.7 Mi   Used Inodes: 4.7%
+Participating tasks: 100
+Using reorderTasks '-C' (expecting block, not cyclic, task assignment)
+task 0 on ser691
+task 1 on ser691
+task 10 on ser692
+task 11 on ser692
+task 12 on ser692
+task 13 on ser692
+task 14 on ser692
+task 15 on ser692
+task 16 on ser692
+task 17 on ser692
+task 18 on ser692
+task 19 on ser692
+task 2 on ser691
+task 20 on ser693
+task 21 on ser693
+task 22 on ser693
+task 23 on ser693
+task 24 on ser693
+task 25 on ser693
+task 26 on ser693
+task 27 on ser693
+task 28 on ser693
+task 29 on ser693
+task 3 on ser691
+task 30 on ser1082
+task 31 on ser1082
+task 32 on ser1082
+task 33 on ser1082
+task 34 on ser1082
+task 35 on ser1082
+task 36 on ser1082
+task 37 on ser1082
+task 38 on ser1082
+task 39 on ser1082
+task 4 on ser691
+task 40 on ser1083
+task 41 on ser1083
+task 42 on ser1083
+task 43 on ser1083
+task 44 on ser1083
+task 45 on ser1083
+task 46 on ser1083
+task 47 on ser1083
+task 48 on ser1083
+task 49 on ser1083
+task 5 on ser691
+task 50 on ser1084
+task 51 on ser1084
+task 52 on ser1084
+task 53 on ser1084
+task 54 on ser1084
+task 55 on ser1084
+task 56 on ser1084
+task 57 on ser1084
+task 58 on ser1084
+task 59 on ser1084
+task 6 on ser691
+task 60 on ser1085
+task 61 on ser1085
+task 62 on ser1085
+task 63 on ser1085
+task 64 on ser1085
+task 65 on ser1085
+task 66 on ser1085
+task 67 on ser1085
+task 68 on ser1085
+task 69 on ser1085
+task 7 on ser691
+task 70 on ser1086
+task 71 on ser1086
+task 72 on ser1086
+task 73 on ser1086
+task 74 on ser1086
+task 75 on ser1086
+task 76 on ser1086
+task 77 on ser1086
+task 78 on ser1086
+task 79 on ser1086
+task 8 on ser691
+task 80 on ser1087
+task 81 on ser1087
+task 82 on ser1087
+task 83 on ser1087
+task 84 on ser1087
+task 85 on ser1087
+task 86 on ser1087
+task 87 on ser1087
+task 88 on ser1087
+task 89 on ser1087
+task 9 on ser691
+task 90 on ser1088
+task 91 on ser1088
+task 92 on ser1088
+task 93 on ser1088
+task 94 on ser1088
+task 95 on ser1088
+task 96 on ser1088
+task 97 on ser1088
+task 98 on ser1088
+task 99 on ser1088
+Summary:
+	api                = MPIIO (version=3, subversion=0)
+	test filename      = /fscratch/gflofst/io500/ior_easy/ior_file_easy
+	access             = file-per-process, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= constant task offsets = 1
+	clients            = 100 (10 per node)
+	repetitions        = 1
+	xfersize           = 2 MiB
+	blocksize          = 20 GiB
+	aggregate filesize = 2000 GiB
+Commencing write performance test: Mon Oct 16 14:27:43 2017
+Using Time Stamp 1508185663 (0x59e5163f) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+write     5645       20971520   2048.00    0.019049   362.66     0.096078   362.78     0   
+
+Max Write: 5645.32 MiB/sec (5919.54 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write        5645.32    5645.32    5645.32       0.00  362.77869 0 100 10 1 1 1 1 0 0 1 21474836480 2097152 2147483648000 MPIIO 0
+
+Finished: Mon Oct 16 14:33:47 2017
+IOR-3.1.0: MPI Coordinated Test of Parallel I/O
+
+ior WARNING: fsync() only available in POSIX.  Using value of 0.
+Began: Mon Oct 16 14:51:13 2017
+Command line used: /fscratch/gflofst/io500/ior -r -C -C -Q 1 -g -G 27 -k -vv -e -F -t 2048k -b 20g -o /fscratch/gflofst/io500/ior_easy/ior_file_easy
+Machine: Linux ser691 3.10.0-514.26.1.1chaos.ch6_1.x86_64 #1 SMP Thu Jun 29 15:16:26 PDT 2017 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 2087.17 sec
+
+Test 0 started: Mon Oct 16 14:51:13 2017
+Path: /fscratch/gflofst/io500/ior_easy
+FS: 1745.8 TiB   Used FS: 21.5%   Inodes: 437.7 Mi   Used Inodes: 7.4%
+Participating tasks: 100
+Using reorderTasks '-C' (expecting block, not cyclic, task assignment)
+task 0 on ser691
+task 1 on ser691
+task 10 on ser692
+task 11 on ser692
+task 12 on ser692
+task 13 on ser692
+task 14 on ser692
+task 15 on ser692
+task 16 on ser692
+task 17 on ser692
+task 18 on ser692
+task 19 on ser692
+task 2 on ser691
+task 20 on ser693
+task 21 on ser693
+task 22 on ser693
+task 23 on ser693
+task 24 on ser693
+task 25 on ser693
+task 26 on ser693
+task 27 on ser693
+task 28 on ser693
+task 29 on ser693
+task 3 on ser691
+task 30 on ser1082
+task 31 on ser1082
+task 32 on ser1082
+task 33 on ser1082
+task 34 on ser1082
+task 35 on ser1082
+task 36 on ser1082
+task 37 on ser1082
+task 38 on ser1082
+task 39 on ser1082
+task 4 on ser691
+task 40 on ser1083
+task 41 on ser1083
+task 42 on ser1083
+task 43 on ser1083
+task 44 on ser1083
+task 45 on ser1083
+task 46 on ser1083
+task 47 on ser1083
+task 48 on ser1083
+task 49 on ser1083
+task 5 on ser691
+task 50 on ser1084
+task 51 on ser1084
+task 52 on ser1084
+task 53 on ser1084
+task 54 on ser1084
+task 55 on ser1084
+task 56 on ser1084
+task 57 on ser1084
+task 58 on ser1084
+task 59 on ser1084
+task 6 on ser691
+task 60 on ser1085
+task 61 on ser1085
+task 62 on ser1085
+task 63 on ser1085
+task 64 on ser1085
+task 65 on ser1085
+task 66 on ser1085
+task 67 on ser1085
+task 68 on ser1085
+task 69 on ser1085
+task 7 on ser691
+task 70 on ser1086
+task 71 on ser1086
+task 72 on ser1086
+task 73 on ser1086
+task 74 on ser1086
+task 75 on ser1086
+task 76 on ser1086
+task 77 on ser1086
+task 78 on ser1086
+task 79 on ser1086
+task 8 on ser691
+task 80 on ser1087
+task 81 on ser1087
+task 82 on ser1087
+task 83 on ser1087
+task 84 on ser1087
+task 85 on ser1087
+task 86 on ser1087
+task 87 on ser1087
+task 88 on ser1087
+task 89 on ser1087
+task 9 on ser691
+task 90 on ser1088
+task 91 on ser1088
+task 92 on ser1088
+task 93 on ser1088
+task 94 on ser1088
+task 95 on ser1088
+task 96 on ser1088
+task 97 on ser1088
+task 98 on ser1088
+task 99 on ser1088
+Summary:
+	api                = MPIIO (version=3, subversion=0)
+	test filename      = /fscratch/gflofst/io500/ior_easy/ior_file_easy
+	access             = file-per-process, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= constant task offsets = 1
+	clients            = 100 (10 per node)
+	repetitions        = 1
+	xfersize           = 2 MiB
+	blocksize          = 20 GiB
+	aggregate filesize = 2000 GiB
+Commencing read performance test: Mon Oct 16 14:51:13 2017
+Using Time Stamp 1508187073 (0x59e51bc1) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+read      4800       20971520   2048.00    0.129343   426.40     0.144514   426.67     0   
+
+Max Read:  4799.99 MiB/sec (5033.15 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read         4799.99    4799.99    4799.99       0.00  426.66776 0 100 10 1 1 1 1 0 0 1 21474836480 2097152 2147483648000 MPIIO 0
+
+Finished: Mon Oct 16 14:58:21 2017
