@@ -19,23 +19,27 @@ in the current directory.
 
 The general procedure to run successfully are:
 
-1) Identify a suitable find command; find is part of the benchmark, we prepared several find commands.
+1. Identify a suitable find command; find is part of the benchmark, we prepared several find commands.
    To identify a suitable find (see the find directory / structure of the repository below).
-2) You have to prepare a run script for your batch system
-   2.1) Set filenames for the benchmarks and find.
-   2.2) Add suitable parameters to yield a 5 minute limit for all creation/write benchmark phases.
-          You can set parameters for ior_easy, example:
-           ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
-           ior_hard_writes_per_proc=5000   #each process writes 5000 times
-           mdtest_hard_files_per_proc=6000
-           mdtest_easy_files_per_proc=6000
+1. Set filenames for the benchmarks and find.
+2. Add suitable parameters to yield a 5 minute limit for all creation/write benchmark phases.
+   You can set parameters for ior_easy, example:
+   
+   ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
+   
+   ior_hard_writes_per_proc=5000   #each process writes 5000 times
+   
+   mdtest_hard_files_per_proc=6000
+   
+   mdtest_easy_files_per_proc=6000
 
-          Sample scripts in the directories provide examples for parameters you may want to use.
-   2.3) You may add further commands to precreate directories (e.g., to place them on Lustre servers)
-   2.4) You may output some key-value pairs for node information (e.g., date, ppn, number of nodes used), these key-values are not yet standardized, but will in the future.
-   2.5) Source io_500_core.sh at last to have the script run the benchmarks, do not change io_500_core.sh !
-3) Have it run and store the output in a textfile.
-4) Submit the script to your batch system.
+   Sample scripts in the directories provide examples for parameters you may want to use.
+   
+3. You may add further commands to precreate directories (e.g., to place them on Lustre servers)
+4. You may output some key-value pairs for node information (e.g., date, ppn, number of nodes used), these key-values are not yet standardized, but will in the future.
+5. Source io_500_core.sh at last to have the script run the benchmarks, do not change io_500_core.sh !
+6. Have it run and store the output in a textfile.
+7. Submit the script to your batch system.
 
 To see what the benchmark will do set find_cmd, ior_cmd, mdtest_cmd to /bin/echo or have your jobscript use "/usr/bin/bash -x"
 
