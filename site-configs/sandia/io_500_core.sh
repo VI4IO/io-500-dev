@@ -27,15 +27,15 @@ function startphase {
   start=$(date +%s.%N)
 }
 
-function endphase  {
-  r=$?
-  if [[ "$r" != "0" ]] ; then
-     echo "Error: the benchmark returned $r"
-     exit 1
-  fi
-  end=$(date +%s.%N)
-  duration=$(printf "%.0f" $(echo "scale=2; $end - $start" | bc))
-}
+#function endphase  {
+#  r=$?
+#  if [[ "$r" != "0" ]] ; then
+#     echo "Error: the benchmark returned $r"
+#     exit 1
+#  fi
+#  end=$(date +%s.%N)
+#  duration=$(printf "%.0f" $(echo "scale=2; $end - $start" | bc))
+#}
 
 function endphase_check  {
   r=$?
@@ -63,11 +63,11 @@ if [[ "$run_ior_easy" != "False" ]] ; then
   # ior easy write
   phase="ior-easy-write"
   startphase
-  $mpirun $ior_cmd -w $params_ior_easy > $output_dir/ior_easy 2>&1
+  $mpirun $ior_cmd -w $params_ior_easy > $output_dir/ior_easy_write 2>&1
   endphase_check
-  bw1=$(grep "Max W" $output_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
+  bw1=$(grep "Max W" $output_dir/ior_easy_write | sed 's/^.*(//g' | sed 's\).*$//g' | tail -n 1 | awk '{print $5}')
 
-  bw_dur1=$(grep "write " $output_dir/ior_easy | tail -n 1 | awk '{print $10}')
+  bw_dur1=$(grep "write " $output_dir/ior_easy_write | tail -n 1 | awk '{print $10}')
   print_bw 1 $bw1 $bw_dur1 | tee   $output_dir/ior-easy-results.txt
 
 fi
@@ -77,9 +77,9 @@ if [[ "$run_md_easy" != "False" ]] ; then
   #mdtest easy create
   phase="md-easy-create"
   startphase
-  $mpirun $mdtest_cmd -C $params_md_easy > $output_dir/mdt_easy 2>&1
-  endphase
-  iops1=$(grep "File creation" $output_dir/mdt_easy | tail -n 1 | awk '{print $4}')
+  $mpirun $mdtest_cmd -C $params_md_easy > $output_dir/mdt_easy_create 2>&1
+  endphase_check
+  iops1=$(grep "File creation" $output_dir/mdt_easy_create | tail -n 1 | awk '{print $4}')
   print_iops 1 $iops1 | tee  $output_dir/mdt-easy-results.txt
 
 fi
@@ -89,11 +89,11 @@ if [[ "$run_ior_hard" != "False" ]] ; then
   # ior hard write
   phase="ior-hard-write"
   startphase
-  $mpirun $ior_cmd -w $params_ior_hard > $output_dir/ior_hard 2>&1
+  $mpirun $ior_cmd -w $params_ior_hard_write > $output_dir/ior_hard 2>&1
   endphase_check
-  bw2=$(grep "Max W" $output_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
+  bw2=$(grep "Max W" $output_dir/ior_hard_write | sed 's/^.*(//g' | sed 's/).*$//g' | tail -n 1 | awk '{print $5}')
 
-  bw_dur2=$(grep "write " $output_dir/ior_hard | tail -n 1 | awk '{print $10}')
+  bw_dur2=$(grep "write " $output_dir/ior_hard_write | tail -n 1 | awk '{print $10}')
   print_bw 2 $bw2 $bw_dur2 | tee $output_dir/ior-hard-results.txt
 fi
 
@@ -102,10 +102,10 @@ if [[ "$run_md_hard" != "False" ]] ; then
   #mdtest hard create
   phase="md-hard-create"
   startphase
-  $mpirun $mdtest_cmd -C  $params_md_hard > $output_dir/mdt_hard 2>&1
-  endphase
+  $mpirun $mdtest_cmd -C  $params_md_hard > $output_dir/mdt_hard_create 2>&1
+  endphase_check
 
-  iops2=$(grep "File creation"  $output_dir/mdt_hard | tail -n 1 | awk '{print $4}')
+  iops2=$(grep "File creation"  $output_dir/mdt_hard_create | tail -n 1 | awk '{print $4}')
   print_iops 2  $iops2 | tee $output_dir/mdt-hard-results.txt
 fi
 
@@ -114,11 +114,11 @@ fi
 if [[ "$run_ior_easy" != "False" && "$run_ior_easy_read" != "False" ]] ; then
   phase="ior-easy-read"
   startphase
-  $mpirun $ior_cmd -r -C $params_ior_easy >> $output_dir/ior_easy 2>&1
-  endphase
-  bw3=$(grep "Max R" $output_dir/ior_easy | sed 's\(\\g' | sed 's\)\\g' | tail -n 1 | awk '{print $5}')
+  $mpirun $ior_cmd -r -C $params_ior_easy > $output_dir/ior_easy_read 2>&1
+  endphase_check
+  bw3=$(grep "Max R" $output_dir/ior_easy_read | sed 's/^.*(//g' | sed 's/).*$//g' | tail -n 1 | awk '{print $5}')
 
-  bw_dur3=$(grep "read " $output_dir/ior_easy | tail -n 1 | awk '{print $10}')
+  bw_dur3=$(grep "read " $output_dir/ior_easy_read | tail -n 1 | awk '{print $10}')
   print_bw 3 $bw3 $bw_dur3 | tee -a $output_dir/ior-easy-results.txt
 fi
 
@@ -126,9 +126,9 @@ if [[ "$run_md_easy" != "False" && "$run_md_easy_read" != "False" ]] ; then
   # mdtest easy stat
   phase="md-easy-stat"
   startphase
-  $mpirun $mdtest_cmd -T $params_md_easy >> $output_dir/mdt_easy
-  endphase
-  iops3=$(grep "File stat" $output_dir/mdt_easy | tail -n 1 | awk '{print $4}')
+  $mpirun $mdtest_cmd -T $params_md_easy > $output_dir/mdt_easy_stat
+  endphase_check
+  iops3=$(grep "File stat" $output_dir/mdt_easy_stat | tail -n 1 | awk '{print $4}')
   print_iops 3 $iops3 | tee -a $output_dir/mdt-easy-results.txt
 fi
 
@@ -136,10 +136,10 @@ if [[ "$run_ior_hard" != "False" && "$run_ior_hard_read" != "False" ]] ; then
   # ior hard read
   phase="ior-hard-read"
   startphase
-  $mpirun $ior_cmd  -r -C $params_ior_hard >> $output_dir/ior_hard 2>&1 # later use -R once fixed...
-  endphase
-  bw4=$(grep "Max R" $output_dir/ior_hard | sed 's\(\\g' | sed 's\)\\g' | tail -n 1| awk '{print $5}')
-  bw_dur4=$(grep "read " $output_dir/ior_hard | tail -n 1 | awk '{print $10}')
+  $mpirun $ior_cmd  -r -C $params_ior_hard > $output_dir/ior_hard_read 2>&1 # later use -R once fixed...
+  endphase_check
+  bw4=$(grep "Max R" $output_dir/ior_hard_read | sed 's/^.*(//g' | sed 's/).*$//g' | tail -n 1| awk '{print $5}')
+  bw_dur4=$(grep "read " $output_dir/ior_hard_read | tail -n 1 | awk '{print $10}')
   print_bw 4 $bw4 $bw_dur4 | tee -a $output_dir/ior-hard-results.txt
 fi
 
@@ -147,9 +147,9 @@ if [[ "$run_md_hard" != "False" && "$run_md_hard_read" != "False" ]] ; then
   # mdtest hard stat
   phase="md-hard-stat"
   startphase
-  $mpirun $mdtest_cmd -T $params_md_hard   >> $output_dir/mdt_hard 2>&1
-  endphase
-  iops4=$(grep "File stat" $output_dir/mdt_hard | tail -n 1 | awk '{print $4}')
+  $mpirun $mdtest_cmd -T $params_md_hard   > $output_dir/mdt_hard_stat 2>&1
+  endphase_check
+  iops4=$(grep "File stat" $output_dir/mdt_hard_stat | tail -n 1 | awk '{print $4}')
   print_iops 4 $iops4 | tee -a $output_dir/mdt-hard-results.txt
 fi
 
@@ -159,7 +159,7 @@ if [[ "$run_md_easy" != "False" && "$run_pfind" == "True" ]] ; then
   find_procs=`wc -l < $find_subtree_to_scan_config`
   startphase
   $mpirun_pfind -n $find_procs pfind $find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/    >> $output_dir/find_re 2>&1
-  endphase
+  endphase_check
   found=0
   for ((i=1;i<=$find_procs;i++)); do found=$(($found + $(cat $workdir/mdt_easy/$i))); done;
   iops5=`echo "$found/$duration" |bc`
@@ -172,7 +172,7 @@ if [[ "$run_md_easy" != "False" && "$run_find" != "False" ]] ; then
   phase="find"
   startphase
   iops5=$($find_cmd $workdir/timestamp $workdir/mdt_easy/#test-dir.0/ $find_subtree_to_scan_config)
-  endphase
+  endphase_check
   print_iops 5 $iops5 | tee $output_dir/find-results.txt
 fi
 
@@ -182,9 +182,9 @@ if [[ "$run_md_easy" != "False" ]] ; then
   # mdtest easy remove
   phase="md-easy-delete"
   startphase
-  $mpirun $mdtest_cmd -r $params_md_easy >> $output_dir/mdt_easy 2>&1
-  endphase
-  iops6=$(grep "File removal" $output_dir/mdt_easy | tail -n 1 | awk '{print $4}')
+  $mpirun $mdtest_cmd -r $params_md_easy > $output_dir/mdt_easy_delete 2>&1
+  endphase_check
+  iops6=$(grep "File removal" $output_dir/mdt_easy_delete | tail -n 1 | awk '{print $4}')
   print_iops 6 $iops6 | tee -a $output_dir/mdt-easy-results.txt
 fi
 
@@ -192,9 +192,9 @@ if [[ "$run_md_hard" != "False" ]] ; then
   # mdtest hard remove
   phase="md-hard-delete"
   startphase
-  $mpirun $mdtest_cmd -r $params_md_hard   >> $output_dir/mdt_hard 2>&1
-  endphase
-  iops7=$(grep "File removal" $output_dir/mdt_hard | tail -n 1 | awk '{print $4}')
+  $mpirun $mdtest_cmd -r $params_md_hard   > $output_dir/mdt_hard_delete 2>&1
+  endphase_check
+  iops7=$(grep "File removal" $output_dir/mdt_hard_delete | tail -n 1 | awk '{print $4}')
   print_iops 7 $iops7 | tee -a $output_dir/mdt-hard-results.txt
 fi
 
@@ -202,7 +202,7 @@ if [[ $mdreal_cmd != "" ]] ; then
 	phase="md-real-io"
 	startphase
 	$mpirun $mdreal_cmd $mdreal_params > $output_dir/mdreal 2>&1
-	endphase
+	endphase_check
 	iops8=$( grep "^benchmark" $output_dir/mdreal | tail -n 1 | awk '{print $3}' ) # obj/s
 	bw8=$( grep "^benchmark" $output_dir/mdreal | tail -n 1 | awk '{print $9}' ) # in MiB/s
 	print_iops 8 $iops8 | tee -a $output_dir/mdreal-results.txt
