@@ -65,7 +65,7 @@ if [[ "$run_ior_easy" != "False" ]] ; then
   startphase
   $mpirun $ior_cmd -w $params_ior_easy > $output_dir/ior_easy_write 2>&1
   endphase_check
-  bw1=$(grep "Max W" $output_dir/ior_easy_write | sed 's/^.*(//g' | sed 's\).*$//g' | tail -n 1 | awk '{print $5}')
+  bw1=$(grep "Max W" $output_dir/ior_easy_write | sed 's/^.*(//g' | sed 's/).*$//g' | tail -n 1 | awk '{print $5}')
 
   bw_dur1=$(grep "write " $output_dir/ior_easy_write | tail -n 1 | awk '{print $10}')
   print_bw 1 $bw1 $bw_dur1 | tee   $output_dir/ior-easy-results.txt
