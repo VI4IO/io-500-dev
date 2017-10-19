@@ -3,9 +3,10 @@
 ## Building the necessary benchmarks
 
 Download the source code of the benchmarks:
-* mdtest
-* ior
-* md-real-io (optional)
+* mdtest https://github.com/LLNL/mdtest.git (hash: xxx)
+* ior https://github.com/IOR-LANL/ior.git (hash: xxx)
+* parallel find tool (optional) https://github.com/hpc/mpifileutils (hash: xxx)
+* md-real-io (optional) https://github.com/JulianKunkel/md-real-io (hash: xxx)
 
 The script ./prepare.sh gives an example how to download and build these benchmarks.
 
