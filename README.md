@@ -1,16 +1,16 @@
-# This repository contains scripts for running the IO-500
+# This repository contains scripts for running and parsing the IO-500
 
-## Building the necessary benchmarks
+## Build the necessary benchmarks
 
-Download the source code of the benchmarks:
-* mdtest https://github.com/LLNL/mdtest.git (hash: xxx)
-* ior https://github.com/IOR-LANL/ior.git (hash: xxx)
-* parallel find tool (optional) https://github.com/hpc/mpifileutils (hash: xxx)
-* md-real-io (optional) https://github.com/JulianKunkel/md-real-io (hash: xxx)
+Download and build the source code of these benchmarks into a subdirectory named 'install'.
+* REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
+* REQUIRED: ior https://github.com/IOR-LANL/ior.git 
+* OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
 
-The script ./prepare.sh gives an example how to download and build these benchmarks.
+The script ./utilities/prepare.sh attempts to download and build these. 
+If you do it yourself, please checkout the exact version of each benchmark using the hashes in the utilities/prepare.sh file.
 
-## How to prepare an IO-500 run
+## Prepare your IO-500 run
 
 Please see the template in site-configs/template/startup.sh or samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
 They also contain some documentation.
