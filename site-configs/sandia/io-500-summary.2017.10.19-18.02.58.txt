@@ -1,0 +1,75 @@
+System:  serrano-login1
+filesystem_utilization=Filesystem                                            1K-blocks         Used     Available Use% Mounted on
+10.196.135.10@o2ib1:10.196.135.11@o2ib1:/fscratch 1874496285600 424557431956 1353329399796  24% /fscratch
+date=2017-10-19
+nodes=10
+ppn=10(x10)
+nodelist=ser[327-334,631-632]
+workdir=/fscratch/gflofst/io500.2017.10.19-18.02.57
+result_dir=/fscratch/gflofst/results.2017.10.19-18.02.57
+filesys_root=/fscratch
+find_cmd=/fscratch/gflofst/io500-find.sh
+ior_cmd=/fscratch/gflofst/ior
+mdtest_cmd=/fscratch/gflofst/mdtest
+mdreal_cmd=/fscratch/gflofst/md-real-io
+ior_easy_params=-t 2048k -b 2g
+ior_hard_writes_per_proc=60
+mdtest_easy_files_per_proc=6100
+mdtest_hard_files_per_proc=6100
+mdreal_params=-P=5000 -I=1000
+[Precreating] missing directories
+[Starting] ior-easy-write
+[Warning]: the runtime is below 5 minutes
+1/ior-easy-write BW:6748.94 MB/s time: 38s
+[Starting] md-easy-create
+[Warning]: the runtime is below 5 minutes
+1/md-easy-create IOPs:4622.910 time:134s
+[Starting] ior-hard-write
+[Warning]: the runtime is below 5 minutes
+2/ior-hard-write BW:28.51 MB/s time: 11s
+[Starting] md-hard-create
+[Warning]: the runtime is below 5 minutes
+2/md-hard-create IOPs:4776.750 time:130s
+[Starting] ior-easy-read
+[Warning]: the runtime is below 5 minutes
+3/ior-easy-read BW:19033.31 MB/s time: 18s
+[Starting] md-easy-stat
+[Warning]: the runtime is below 5 minutes
+3/md-easy-stat IOPs:43055.683 time:15s
+[Starting] ior-hard-read
+[Warning]: the runtime is below 5 minutes
+4/ior-hard-read BW:1898.47 MB/s time: 1s
+[Starting] md-hard-stat
+[Warning]: the runtime is below 5 minutes
+4/md-hard-stat IOPs:6369.167 time:97s
+[Starting] find
+find: ‘/fscratch/gflofst/io500.2017.10.19-18.02.57/mdt_easy/#test-dir.0//mdtest_tree.100.0’: No such file or directory
+[Warning]: the runtime is below 5 minutes
+5/find IOPs:5613 time:108s
+[Starting] md-easy-delete
+[Warning]: the runtime is below 5 minutes
+6/md-easy-delete IOPs:4725.326 time:131s
+[Starting] md-hard-delete
+[Warning]: the runtime is below 5 minutes
+7/md-hard-delete IOPs:4764.602 time:130s
+[Starting] md-real-io
+8/md-real-io IOPs:5956.3 time:414s
+bw1=6748.94		ior-easy-write
+iops1=4622.910	md-easy-create
+bw2=28.51		ior-hard-write
+iops2=4776.750	md-hard-create
+bw3=19033.31		ior-easy-read
+iops3=43055.683	md-easy-stat
+bw4=1898.47		ior-hard-read
+iops4=6369.167	md-hard-stat
+iops5=5613	find (parallel or serial)
+iops6=4725.326	md-easy-delete
+iops7=4764.602	md-hard-delete
+Not included in final score
+bw5=11.1		md-real-bw
+iops8=5956.3		md-real-iops
+
+IO-500 bw score: 1623.82 MB/s
+IO-500 md score: 6927 IOPS
+
+IO-500 score:  11248201.14

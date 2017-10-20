@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # INSTRUCTIONS:
-# Edit the 6 steps below as needed for your machine
+# Edit the 7 steps below as needed for your machine
 #
 # 1. Set the nodes, tasks per node, and time to work for the job (may take
 #    some fiddling).
@@ -15,12 +15,16 @@
 #SBATCH -e io_500_err_%J
 
 #
-# 2. change the directories for filesys_root, workdir, and output_dir
+# 2. change the directories for filesys_root, workdir, and result_dir
 filesys_root=/fscratch
 #filesys_root=/gscratch
 #filesys_root=/gpfs1
-workdir=${filesys_root}/gflofst/io500 # directory where the data will be stored
-output_dir=${filesys_root}/gflofst/results  # the directory where the output will be kept
+basedir=${filesys_root}/gflofst
+workdir=${basedir}/io500.`date +%Y.%m.%d-%H.%M.%S` # directory where the data will be stored
+result_dir=${basedir}/results.`date +%Y.%m.%d-%H.%M.%S`  # the directory where the output will be kept
+mkdir -p $workdir
+mkdir -p $result_dir
+
 #
 # 3. set command to run MPI
 # Command to start an MPI application
@@ -28,32 +32,41 @@ mpirun="srun -m block --mpi=pmi2 "
 mpirun_pfind=$mpirun
 #
 # 4. Set the different commands to run
-# Define the executables for the commands
+ior_cmd=${basedir}/ior
+mdtest_cmd=${basedir}/mdtest
+# if set != "" then run mdreal
+mdreal_cmd=${basedir}/md-real-io
+
+#
+# 5. setup the find command. This is an area where innovation is allowed.
+#    There are two default options provided. One is a serial find and the other
+#    is a parallel version. If neither of these is used. The source code for
+#    the alternative version must be provided along with building scripts and
+#    proper runtime parameters and setup commands.
 #Parallel find
 #find_cmd=$PWD/../../find/pfind/io500-pfind.sh
 #To execute parallel find uncomment both lines below
 #run_pfind="True"
 #run_find="False"
 #Serialized find
-#find_cmd=$PWD/../../find/io500-find.sh
-find_cmd=find
-ior_cmd=${workdir}/ior
-mdtest_cmd=${workdir}/mdtest
-# if set != "" then run mdreal
-mdreal_cmd=${workdir}/md-real-io
+find_cmd=${basedir}/io500-find.sh
 
 #
-# 5. Set the tunable parameters (easy, hard, and directories to use)
+# 6. Set the tunable parameters (easy, hard, and directories to use)
 #    Also set the directory parameters (Lustre). Each of these must enable it
 #    to run for more than 5 minutes.
 #
 # Tunable parameters, feel free to change them
 # The write phase for each benchmark (ior_easy, ior_hard, mdtest_easy, mdtest_hard) must be 5 minutes
 #ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
-ior_easy_params="-t 2048k -b 20g" # file per proc is already configured
-ior_hard_writes_per_proc=6000     
-mdtest_easy_files_per_proc=61000  
-mdtest_hard_files_per_proc=61000
+ior_easy_params="-t 2048k -b 2g" # file per proc is already configured
+ior_hard_writes_per_proc=60
+mdtest_easy_files_per_proc=6100
+mdtest_hard_files_per_proc=6100
+#ior_easy_params="-t 2048k -b 20g" # file per proc is already configured
+#ior_hard_writes_per_proc=6000     
+#mdtest_easy_files_per_proc=61000  
+#mdtest_hard_files_per_proc=61000
 # If to use mdreal
 mdreal_params="-P=5000 -I=1000"
 find_subtree_to_scan_config=$PWD/find_subtree.cfg
@@ -79,7 +92,7 @@ mkdir -p ${workdir}/ior_hard
 lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 
 #
-# 6. Run the core script
+# 7. Run the core script
 #
 # Now write the output/results  file
 (
@@ -89,26 +102,27 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 echo "System: " `uname -n`
 echo "filesystem_utilization=$(df ${filesys_root})"
 echo "date=$(date -I)"
-echo "queue="
+#echo "queue="
 echo "nodes=$SLURM_NNODES"
 echo "ppn=$SLURM_TASKS_PER_NODE"
 echo "nodelist=$SLURM_NODELIST"
 echo "workdir=$workdir"
-echo "output_dir=$output_dir"
+echo "result_dir=$result_dir"
 echo "filesys_root=$filesys_root"
-echo "find_cmd=$find"
+echo "find_cmd=$find_cmd"
 echo "ior_cmd=$ior_cmd"
 echo "mdtest_cmd=$mdtest_cmd"
 echo "mdreal_cmd=$mdreal_cmd"
 echo "ior_easy_params=$ior_easy_params"
-echo "ior_hard_write_per_proc=$io_hard_writes_per_proc"
+echo "ior_hard_writes_per_proc=$ior_hard_writes_per_proc"
 echo "mdtest_easy_files_per_proc=$mdtest_easy_files_per_proc"
 echo "mdtest_hard_files_per_proc=$mdtest_hard_files_per_proc"
 echo "mdreal_params=$mdreal_params"
 
 # Important: source the io 500 script:
 source io_500_core.sh # Do not change the script
-) 2>&1 | tee $SLURM_NNODES.txt
+) 2>&1 | tee io-500-summary.`date +%Y.%m.%d-%H.%M.%S`.txt
 
-# Cleanup some leftovers
-rm -rf $workdir/
+# Cleanup
+rmdir -f $workdir
+rm -f find_subtree.cfg
