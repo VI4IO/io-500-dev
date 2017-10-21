@@ -1,8 +1,19 @@
 # This repository contains scripts for running and parsing the IO-500
 
+The goal of this benchmark is to both offer a competitive contest for the best overall storage system as well as to collect best practices for achieving that performance. With those best practices, people can try those techniques on their own systems to try to improve their IO behavior.
+
+The standard is to do both easy and hard tests using IOR. Hard is preconfigured. Easy is up to the benchmark runner. For metadata operations, each of create, stat, and delete are tested using both an easy and a hard setup.
+
+The last test is a find across a large set of files. The provided utility in this archive can hopefully offer a much improved performance approach to this operation compared with a serial tool. Substituting your own tool is acceptable--as long as it is released as part of your benchmark results.
+
+Each of the tests is required to run for a minimum of 5 minutes to ensure that any caches are flushed and to represent the allowed time for large scale runs for checkpoint operations on a per hour basis. A warning is generated if a test fails to meet this standard. Since the easy tests are user configured, we require that all configuration information be provided along with the results so that others can hopefully duplicate the technique and also improve their IO performance. Overall, we encourage gaming the easy tests as long as full instructions for how that was done is provided as part of the benchmark submission.
+
+A final, but optional, part of the benchmark is the proposed md-real-io that seeks to offer a more accurate test than mdtest. If users running this benchmark could also run md-real-io to offer a comparison, it will help with validating the approach. Publication credit is available for those that participate. Please mention this in your submission if you wish to participate.
+
 ## Build the necessary benchmarks
 
-Download and build the source code of these benchmarks into a subdirectory named 'bin'.
+Download and build the source code of these benchmarks into a subdirectory named 'bin'. Specific repo version hash codes are provided in the prepare.sh script. If you wish to do this manually, please ensure that the same repo versions are used for consistency. If your file system requires custom code not offered in the selected repo versions, please contact us. We want to expand the coverage, but work to ensure that results are comparable.
+
 * REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
 * REQUIRED: ior https://github.com/IOR-LANL/ior.git 
 * OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
@@ -67,3 +78,18 @@ See again samples in site-configs/*/startup-auto-detect.sh
 * startup-io500-locally-testmode.sh: This script runs the IO500 benchmark on the current working directory.
   It serves as a basis to test if everything runs correctly on your system.
   It requires that you installed the executables into the install/ directory
+  
+  ## Submitting your results
+  To submit results, prepare a directory under site-config, appropriately name, containing the following items:
+  1. The results directory
+  2. The overall output file
+  3. Scripts used to run the tests
+  4. Source code for custom tools used for the easy tests or find operation
+  5. if a different version of any repo is used to source the code than the ones listed in prepare.sh, include those repo hash keys.
+  
+  Make a separate submission directory for each file system (or storage layer) tested. Please use a site-fs naming convention as a pattern. Other parts are probably required. Use good judgement.
+  
+  Generate a pull request to vi4io/io-500-dev to start the process.
+  
+  Thank you for participating and good luck!
+  
