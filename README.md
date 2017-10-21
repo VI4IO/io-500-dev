@@ -79,17 +79,17 @@ See again samples in site-configs/*/startup-auto-detect.sh
   It serves as a basis to test if everything runs correctly on your system.
   It requires that you installed the executables into the install/ directory
   
-  ## Submitting your results
-  To submit results, prepare a directory under site-config, appropriately name, containing the following items:
-  1. The results directory
-  2. The overall output file
-  3. Scripts used to run the tests
-  4. Source code for custom tools used for the easy tests or find operation
-  5. if a different version of any repo is used to source the code than the ones listed in prepare.sh, include those repo hash keys.
+## Submitting your results
+To submit results, prepare a directory under site-config, appropriately name, containing the following items:
+1. The results directory
+2. The overall output file
+3. Scripts used to run the tests
+4. Source code for custom tools used for the easy tests or find operation
+5. if a different version of any repo is used to source the code than the ones listed in prepare.sh, include those repo hash keys.
   
-  Make a separate submission directory for each file system (or storage layer) tested. Please use a site-fs naming convention as a pattern. Other parts are probably required. Use good judgement.
+Make a separate submission directory for each file system (or storage layer) tested. Please use a site-fs naming convention as a pattern. Other parts are probably required. Use good judgement.
   
-  Generate a pull request to vi4io/io-500-dev to start the process.
+Generate a pull request to vi4io/io-500-dev to start the process.
   
-  Thank you for participating and good luck!
+Thank you for participating and good luck!
   
