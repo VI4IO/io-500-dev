@@ -31,10 +31,10 @@ mkdir $workdir 2>/dev/null
 done ) > $workdir/subtree.cfg
 
 # Define the executables for the commands
-find_cmd=$PWD/find/io500-find.sh
-ior_cmd=$PWD/install/ior
-mdtest_cmd=$PWD/install/mdtest
-mdreal_cmd=$PWD/install/md-real-io # if set != "" then run mdreal
+find_cmd=$PWD/utilities/find/io500-find.sh
+ior_cmd=$PWD/bin/ior
+mdtest_cmd=$PWD/bin/mdtest
+mdreal_cmd=$PWD/bin/md-real-io # if set != "" then run mdreal
 
 
 # Add whatever you want to do for preparing the workdirectory
