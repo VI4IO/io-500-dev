@@ -10,38 +10,48 @@ MDTEST_HASH=7c0ec411c762d65db137997526b9feca9d2d0046
 IOR_HASH=2541bfea7bd6c8d85f928e7f64f55e7ae02b5e3a 
 MDREAL_HASH=f1f4269666bc58056a122a742dc5ca13be5a79f5 
 
-# Install and build dirs
-BIN=$PWD/bin
+INSTALL_DIR=$PWD
 BUILD=$PWD/build
-
 MAKE="make -j4"
 
-rm -rf $BUILD
-mkdir -p $BUILD $BIN 2>/dev/null || true
+function main {
+  setup
+  get_build_ior
+  get_build_mdtest
+  #get_build_mdrealio
+  ls $INSTALL_DIR/bin
+}
 
-cd $BUILD
-git clone https://github.com/MDTEST-LANL/mdtest || true
-git clone https://github.com/IOR-LANL/ior || true
-git clone https://github.com/JulianKunkel/md-real-io || true
+function setup {
+  rm -rf $BUILD
+  mkdir -p $BUILD $INSTALL_DIR/bin 
+}
 
-echo "Compiling benchmarks"
+function git_co {
+  cd $BUILD
+  git clone $1
+  cd $2
+  git checkout $3
+}
 
-cd $BUILD/mdtest
-git checkout $MDTEST_HASH
-$MAKE CC.Linux="mpicc -Wall"
-mv mdtest $BIN
+function get_build_ior {
+  git_co https://github.com/IOR-LANL/ior ior $IOR_HASH
+  ./bootstrap
+  ./configure --prefix=$INSTALL_DIR
+  cd src # just build the source
+  $MAKE install
+}
 
-cd $BUILD/ior
-git checkout $IOR_HASH
-./bootstrap
-./configure --prefix=$PWD
-cd src # just build the source
-$MAKE install
-cd $BUILD
+function get_build_mdtest {
+  git_co https://github.com/MDTEST-LANL/mdtest mdtest $MDTEST_HASH
+  $MAKE CC.Linux="mpicc"
+  mv mdtest $INSTALL_DIR/bin
+}
 
-cd md-real-io
-git checkout $MDREAL_HASH
-#./configure --prefix=$PWD --minimal
-#$MAKE install
+function get_build_mdrealio {
+  git_co https://github.com/JulianKunkel/md-real-io md-real-io $MDREAL_HASH
+  ./configure --prefix=$PWD --minimal
+  $MAKE install
+}
 
-ls $BIN
+main
