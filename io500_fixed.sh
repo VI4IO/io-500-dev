@@ -208,7 +208,6 @@ function myfind {
   echo "[EXEC] $command"
   matches=$( $command | tail -1 )
 
-  echo "[FIND] output: $matches"
   endphase_check "find"
   totalfiles=`echo $matches | cut -d \/ -f 2`
   iops3=`echo "scale = 2; $totalfiles / $duration" | bc`

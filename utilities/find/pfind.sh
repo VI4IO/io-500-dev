@@ -7,9 +7,9 @@ target_size=$3
 # also an environment variable is set containing $IO500_MPI
 # which contains any values for $io500_mpirun and $io500_mpiargs set in io500.sh
 
-# others will need to change gstat to stat.  Stupid mac issue.
-timestamp=`gstat -c %Y $timestamp_file`
-pfind=`dirname $0`/pwalk/pfind
+timestamp=`stat -c %Y $timestamp_file`  # take the target file and get the mtime from it
+
+pfind=`dirname $0`/pwalk/pfind          # ensure that the git repo has been cloned
 
 if [ -x "$pfind" ] ; then
   $IO500_MPI $pfind -newer $timestamp -name "01" -size $target_size -silent $searchdir 

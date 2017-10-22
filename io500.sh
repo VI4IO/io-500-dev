@@ -77,19 +77,15 @@ function setup_find {
   #
   # setup the find command. This is an area where innovation is allowed.
   #    There are two default options provided. One is a serial find and the other
-  #    is a parallel version. The parallel version is in ./utilities/find.
-  #    If neither of these is used, enough information must
-  #    be provided so that others can reproduce your results.
-  #    This is the simple serial find.  If you want to optimize it, start by reading
-  #    it so you know what parameters it needs to input and what its output format must be.
+  #    is a parallel version. 
+  #    If a custom approach is used, please provide enough info so others can reproduce.
 
   # the serial version that should run (SLOWLY) without modification
-  io500_find_cmd=$PWD/io500_find.sh
+  io500_find_cmd=$PWD/utilities/find/sfind.sh
 
   # a parallel version that might require some work, it requires python3 and needs
-  # to be checked out from a different repo.  See utilities/find/README.md for more info
-  # and the main tool doesn't run it in MPIRUN by itself, you need to modify that yourself.
-  io500_find_cmd=$PWD/utilities/find/pfind.sh
+  # to be checked out from a different repo.  See utilities/find/README.md for more info.
+  #io500_find_cmd=$PWD/utilities/find/pfind.sh
 }
 
 function setup_mdreal {
