@@ -12,9 +12,9 @@ If you do it yourself, please checkout the exact version of each benchmark using
 
 ## Prepare and run your IO-500 submision
 
-Edit io500.sh.  We have attempted to make it self-explanatory.  Note that it is intended to run from a command prompt.  If you want to run it with a job scheduler, we assume you know how to do that.  It is also intended to just run very small test amounts.  You will need to increase the amount of data being written and files being created until you satisfy the rules.
+Edit io500.sh.  We have attempted to make it self-explanatory.  Note that it is intended to run from a command prompt.  If you want to run it with a job scheduler, we assume you know how to do that.  It is also intended to just run very small test amounts.  You will need to increase the amount of data being written and files being created until you satisfy the rules.  Once you are done with your edits, merely run it.  The way it works is that it then calls io500_fixed.sh which actually runs all of the benchmarks using the parameters and configuration that you set in io500.sh.  The intent is that io500_fixed.sh should *not* be edited.  If you discover a need to edit it, please contact us on our communication channels, <https://www.vi4io.org/std/io500/start#communication_contribution>, to discuss.
 
-There are examples in site-configs/\*/startup.sh that show how others have done this.
+There are examples in site-configs/\*/startup.sh that show how others have edited the io500.sh to tune, to size, and to get it working with a job scheduler.
 
 You will also probably want to make extensive edits to ./io500_find.sh as it is currently a single threaded serial find command that will take a very long time to run if you create any reasonably large quantities of files.
 
