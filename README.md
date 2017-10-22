@@ -69,9 +69,6 @@ We thank you for your interest in the IO500.  We appreciate that there is some e
 5. To foster a research community dedicated to the improvement of HPC storage systems.
 
 The overall goal of this benchmark is to both offer a competitive contest for the best overall storage system as well as to collect best practices for achieving that performance. With those best practices, people can try those techniques on their own systems to try to improve their IO behavior.
-
   
-## Submitting your results
-  
-Thank you for participating and good luck!
+**Thank you for participating and good luck!**
   
