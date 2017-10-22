@@ -151,7 +151,7 @@ function ior_hard {
   else
     [ "$io500_run_ior_hard_read" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
     startphase
-    myrun "$io500_ior_cmd -r $params_ior_hard" $result_file 
+    myrun "$io500_ior_cmd -r -R $params_ior_hard" $result_file 
     endphase_check "read"
     bw4=$(get_ior_bw $result_file "read")
     dur=$(get_ior_time $result_file "read")
