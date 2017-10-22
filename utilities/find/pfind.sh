@@ -9,7 +9,7 @@ target_size=$3
 
 # others will need to change gstat to stat.  Stupid mac issue.
 timestamp=`gstat -c %Y $timestamp_file`
-pfind=`dirname $0`/pwalk/pfind.py
+pfind=`dirname $0`/pwalk/pfind
 
 if [ -x "$pfind" ] ; then
   $IO500_MPI $pfind -newer $timestamp -name "01" -size $target_size -silent $searchdir 
