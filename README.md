@@ -1,12 +1,11 @@
-## How to run the IO500
 
 ## Build the necessary benchmarks
 
-Download and build the source code of these benchmarks into a subdirectory named 'install'.
+Download and build the source code of these benchmarks.  Specific repo version hash codes are provided in the prepare.sh script. If you wish to do this manually, please ensure that the same repo versions are used for consistency. If your file system requires custom code not offered in the selected repo versions, please contact us. We want to expand the coverage, while also working to ensure that results are comparable.
 
-*  REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
-*  REQUIRED: ior https://github.com/IOR-LANL/ior.git 
-*  OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
+* REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
+* REQUIRED: ior https://github.com/IOR-LANL/ior.git 
+* OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
 
 The script ./utilities/prepare.sh attempts to download and build these. 
 If you do it yourself, please checkout the exact version of each benchmark using the hashes in the utilities/prepare.sh file.
@@ -15,7 +14,7 @@ If you do it yourself, please checkout the exact version of each benchmark using
 
 Edit io500.sh.  We have attempted to make it self-explanatory.  Note that it is intended to run from a command prompt.  If you want to run it with a job scheduler, we assume you know how to do that.  It is also intended to just run very small test amounts.  You will need to increase the amount of data being written and files being created until you satisfy the rules.
 
-There are in site-configs/*/startup.sh that show how others have done this.
+There are examples in site-configs/\*/startup.sh that show how others have done this.
 
 You will also probably want to make extensive edits to ./io500_find.sh as it is currently a single threaded serial find command that will take a very long time to run if you create any reasonably large quantities of files.
 
@@ -33,16 +32,32 @@ The complete test includes the following benchmarks:
  You can set the parameters to be whatever you would like.  Any module and any other parameters.  Typically performance is maximized with using a unique directory by process and doing empty files. 
 4. **mdtest hard**.  We enforce a particular set of parameters.  Specifically, all the processes create files in a single shared directory and they write 3900 bytes to them.  Your only control is to specify how many files each process creates.
 5. **find**. This benchmark allows the most flexibility.  See the default ./io500_find.sh to understand the required input arguments and output format.  Then you can edit it in whatever way maximizes performance for your particular system.
-6. **md-real-io**. This benchmark is optional.
+6. **md-real-io**. This benchmark is optional; it seeks to offer a more accurate test than mdtest. Anyone running this helps explore whether this is needed. The author plans to publish and will share authorship with those participating. 
+
 
 ## IO500 Rules and submission instructions
 
-The rules are simple.  You can submit whatever you want and we will include it in the community repository of results.  But if you would like an official score and a place on the official scored list, you must run all of the required benchmarks and your write/create phases must run for at least five minutes.
+The rules are simple.  You can submit whatever you want and we will include it in the community repository of results.  But if you would like an official score and a place on the official scored list, you must run all of the required benchmarks and your write/create phases must run for at least five minutes; this is intended ensure that any caches are flushed and to represent the typical checkpoint time of large systems. A warning is generated if a test fails to meet this standard. 
 
-To submit your results, email your tarballed results directory to <submit@io500.org>.
+Since the easy tests are user configured, we request that all configuration information be provided along with the results so that others can hopefully duplicate the technique and also improve their IO performance. 
+
+Overall, we encourage *gaming* the easy tests as long as full instructions for how that was done is provided as part of the benchmark submission.
+
+To submit results, prepare a directory under site-config, appropriately name, containing the following items:
+1. The results directory
+2. The overall output file
+3. Scripts used to run the tests
+4. Source code for custom tools used for the easy tests or find operation
+5. If a different version of any repo is used than the ones listed in prepare.sh, include those repo hash keys.
+  
+Make a separate submission directory for each file system (or storage layer) tested. Please use a site-fs naming convention as a pattern. Other parts are probably required. Use good judgement.
+  
+Generate a pull request to vi4io/io-500-dev to start the process.
 
 ## IO500 Help
-For help, we offer multiple communications channels: <https://www.vi4io.org/std/io500/start#communication_contribution>.
+For users needing help, we offer multiple communications channels: <https://www.vi4io.org/std/io500/start#communication_contribution>.
+
+This is a new benchmark and we also ask you to please help us with any feedback you might have by posting it to our communication channels: <https://www.vi4io.org/std/io500/start#communication_contribution>. 
 
 ## IO500 Motivation
 We thank you for your interest in the IO500.  We appreciate that there is some effort involved and we thank you in advance for it.  We believe that this effort is worthwhile for the following reasons:
@@ -52,3 +67,11 @@ We thank you for your interest in the IO500.  We appreciate that there is some e
 3. To create bounded sets of IO performance for users.
 4. To create a documentation repository of how others are tuning their systems and their IO workloads.
 5. To foster a research community dedicated to the improvement of HPC storage systems.
+
+The overall goal of this benchmark is to both offer a competitive contest for the best overall storage system as well as to collect best practices for achieving that performance. With those best practices, people can try those techniques on their own systems to try to improve their IO behavior.
+
+  
+## Submitting your results
+  
+Thank you for participating and good luck!
+  

@@ -51,7 +51,9 @@ function get_build_mdtest {
 function get_build_mdrealio {
   git_co https://github.com/JulianKunkel/md-real-io md-real-io $MDREAL_HASH
   ./configure --prefix=$PWD --minimal
+  cd build
   $MAKE install
+  mv src/md-real-io $INSTALL_DIR/bin
 }
 
 main

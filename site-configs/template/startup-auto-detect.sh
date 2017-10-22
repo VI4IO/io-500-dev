@@ -49,4 +49,4 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 
 cd ../../
 # Run the script to explore parameters
-source ./auto-determine-parameters.sh | tee auto-${SLURM_JOB_NUM_NODES}-${SLURM_JOB_CPUS_PER_NODE}.txt
+source ./utilities/auto-determine-parameters.sh | tee auto-${SLURM_JOB_NUM_NODES}-${SLURM_JOB_CPUS_PER_NODE}.txt
