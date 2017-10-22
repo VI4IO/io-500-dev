@@ -3,6 +3,7 @@ bin
 build
 datafiles
 results
+utilities/find/pwalk/
 
 # Prerequisites
 *.d

@@ -199,8 +199,16 @@ function mdreal {
 function myfind {
   phase="find"
   [ "$io500_run_find" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
+  result_file=$io500_result_dir/$phase.txt
   startphase $phase
-  matches=$( $io500_find_cmd $io500_workdir $timestamp_file $mdt_hard_fsize )
+
+  command="$io500_find_cmd $io500_workdir $timestamp_file $mdt_hard_fsize" 
+  export IO500_MPI="$io500_mpirun $io500_mpiargs"
+
+  echo "[EXEC] $command"
+  matches=$( $command | tail -1 )
+
+  echo "[FIND] output: $matches"
   endphase_check "find"
   totalfiles=`echo $matches | cut -d \/ -f 2`
   iops3=`echo "scale = 2; $totalfiles / $duration" | bc`
@@ -210,7 +218,9 @@ function myfind {
 
 function output_score {
   echo "[Summary] Results files in $io500_result_dir"
-  echo "[Summary] Data files in $io500_workdir"
+  if [ "$io500_cleanup_workdir" != "True" ] ; then 
+    echo "[Summary] Data files in $io500_workdir"
+  fi
   cat $summary_file
   bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
   md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
