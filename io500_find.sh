@@ -20,7 +20,7 @@ function parse_rates {
   echo $rates | tr " " "\n" | grep '/' | $1 -1 | cut -d \/ -f 2 | cut -d = -f 1
 }
 
-rates=`find -D rates $searchdir -name '*01*' -newer $timestamp_file -size 3900c 2>&1 | grep -A1 Predicate | tail -1` 
+rates=`find -D rates $searchdir -name '*01*' -newer $timestamp_file -size ${target_size}c 2>&1 | grep -A1 Predicate | tail -1` 
 total_files=$(parse_rates 'head')
 match_files=$(parse_rates 'tail')
 echo "$match_files/$total_files"

@@ -30,7 +30,7 @@ The complete test includes the following benchmarks:
 2. **IOR hard**.  We enforce a particular set of parameters.  Specifically, the IOs are 47008 bytes each interspersed in a single shared file.  Your only control is to specify how many writes each thread does.
 3. **mdtest easy**.
  You can set the parameters to be whatever you would like.  Any module and any other parameters.  Typically performance is maximized with using a unique directory by process and doing empty files. 
-4. **mdtest hard**.  We enforce a particular set of parameters.  Specifically, all the processes create files in a single shared directory and they write 3900 bytes to them.  Your only control is to specify how many files each process creates.
+4. **mdtest hard**.  We enforce a particular set of parameters.  Specifically, all the processes create files in a single shared directory and they write 3901 bytes to them.  Your only control is to specify how many files each process creates.
 5. **find**. This benchmark allows the most flexibility.  See the default ./io500_find.sh to understand the required input arguments and output format.  Then you can edit it in whatever way maximizes performance for your particular system.
 6. **md-real-io**. This benchmark is optional; it seeks to offer a more accurate test than mdtest. Anyone running this helps explore whether this is needed. The author plans to publish and will share authorship with those participating. 
 

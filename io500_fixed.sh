@@ -163,7 +163,7 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
 
-  params_md_hard="-t -F -w 3900 -e 3900 -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc"
+  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
@@ -200,7 +200,7 @@ function myfind {
   phase="find"
   [ "$io500_run_find" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
   startphase $phase
-  matches=$( $io500_find_cmd $io500_workdir $timestamp_file )
+  matches=$( $io500_find_cmd $io500_workdir $timestamp_file $mdt_hard_fsize )
   endphase_check "find"
   totalfiles=`echo $matches | cut -d \/ -f 2`
   iops3=`echo "scale = 2; $totalfiles / $duration" | bc`
@@ -229,6 +229,7 @@ function core_setup {
   summary_file=$io500_result_dir/result_summary.txt
   iops1=0;iops2=0;iops3=0;iops4=0;iops5=0;iops6=0;iops7=0
   bw1=0;bw2=0;bw3=0;bw4=0
+  mdt_hard_fsize=3901
 }
 
 function print_bw  {
