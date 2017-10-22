@@ -1,69 +1,54 @@
-# This repository contains scripts for running and parsing the IO-500
+## How to run the IO500
 
 ## Build the necessary benchmarks
 
 Download and build the source code of these benchmarks into a subdirectory named 'install'.
-* REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
-* REQUIRED: ior https://github.com/IOR-LANL/ior.git 
-* OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
+
+*  REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
+*  REQUIRED: ior https://github.com/IOR-LANL/ior.git 
+*  OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
 
 The script ./utilities/prepare.sh attempts to download and build these. 
 If you do it yourself, please checkout the exact version of each benchmark using the hashes in the utilities/prepare.sh file.
 
-## Prepare your IO-500 run
+## Prepare and run your IO-500 submision
 
-Please see the template in site-configs/template/startup.sh or samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
-They also contain some documentation.
-If you have installed the benchmarks into $PWD/install/, e.g., using the ./prepare.sh script, 
-you may use the script startup-io500-locally-testmode.sh that runs all benchmarks for testing in a quick run
-in the current directory.
+Edit io500.sh.  We have attempted to make it self-explanatory.  Note that it is intended to run from a command prompt.  If you want to run it with a job scheduler, we assume you know how to do that.  It is also intended to just run very small test amounts.  You will need to increase the amount of data being written and files being created until you satisfy the rules.
 
-The general procedure to run successfully are:
+There are in site-configs/*/startup.sh that show how others have done this.
 
-1. Identify a suitable find command; find is part of the benchmark, we prepared several find commands.
-   To identify a suitable find (see the find directory / structure of the repository below).
-1. Set filenames for the benchmarks and find.
-2. Add suitable parameters to yield a 5 minute limit for all creation/write benchmark phases.
-   You can set parameters for ior_easy, example:
-   
-   ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
-   
-   ior_hard_writes_per_proc=5000   #each process writes 5000 times
-   
-   mdtest_hard_files_per_proc=6000
-   
-   mdtest_easy_files_per_proc=6000
+You will also probably want to make extensive edits to ./io500_find.sh as it is currently a single threaded serial find command that will take a very long time to run if you create any reasonably large quantities of files.
 
-   Sample scripts in the directories provide examples for parameters you may want to use.
-   
-3. You may add further commands to precreate directories (e.g., to place them on Lustre servers)
-4. You may output some key-value pairs for node information (e.g., date, ppn, number of nodes used), these key-values are not yet standardized, but will in the future.
-5. Source io_500_core.sh at last to have the script run the benchmarks, do not change io_500_core.sh !
-6. Have it run and store the output in a textfile.
-7. Submit the script to your batch system.
+## Tuning suggestions
 
-To see what the benchmark will do set find_cmd, ior_cmd, mdtest_cmd to /bin/echo or have your jobscript use "/usr/bin/bash -x"
+It is recommended that you tune your system for maximum performance.  For example, setting different striping parameters for your IOR hard and easy directories and mdtest easy and hard as well.  If you do so, you are encouraged to include your configuration with your submission to help the entire community.
 
-## How to identify suitable settings
+## IO500 Individual benchmarks
 
-Alternatives:
-* Manually identification, e.g., you know the parameters or tested them.
-* You may use the auto-determine-parameters.sh script which uses an explorative search to identify (nearly) suitable settings.
-  This script can be used similarly to io_500_core.sh, except that you do not have to set the parameters for the phases.
+The complete test includes the following benchmarks:
 
-See again samples in site-configs/*/startup-auto-detect.sh
+1. **IOR easy**. You can set the parameters to be whatever you would like.  You can use any of the modules such as HDF5 or MPI-IO.  Typically people maximize performance by doing file-per-process and large aligned IO.
+2. **IOR hard**.  We enforce a particular set of parameters.  Specifically, the IOs are 47008 bytes each interspersed in a single shared file.  Your only control is to specify how many writes each thread does.
+3. **mdtest easy**.
+ You can set the parameters to be whatever you would like.  Any module and any other parameters.  Typically performance is maximized with using a unique directory by process and doing empty files. 
+4. **mdtest hard**.  We enforce a particular set of parameters.  Specifically, all the processes create files in a single shared directory and they write 3900 bytes to them.  Your only control is to specify how many files each process creates.
+5. **find**. This benchmark allows the most flexibility.  See the default ./io500_find.sh to understand the required input arguments and output format.  Then you can edit it in whatever way maximizes performance for your particular system.
+6. **md-real-io**. This benchmark is optional.
 
-## Structure of the repository
+## IO500 Rules and submission instructions
 
-### Directories
+The rules are simple.  You can submit whatever you want and we will include it in the community repository of results.  But if you would like an official score and a place on the official scored list, you must run all of the required benchmarks and your write/create phases must run for at least five minutes.
 
-* find: contains all alternatives for find, currently:
-   * a bash paralellized version (single node)
-   * an MPI paralellized find version (see the directory pfind)
-* site-configs: contains the run scripts (!) for certain sites together with results.
-  They provide good examples to start with.
-* prepare.sh: This script downloads and attempts to build the codes. 
-  Building may fail on certain systems, please prepare a script for your system to build correctly.
-* startup-io500-locally-testmode.sh: This script runs the IO500 benchmark on the current working directory.
-  It serves as a basis to test if everything runs correctly on your system.
-  It requires that you installed the executables into the install/ directory
+To submit your results, email your tarballed results directory to <submit@io500.org>.
+
+## IO500 Help
+For help, we offer multiple communications channels: <https://www.vi4io.org/std/io500/start#communication_contribution>.
+
+## IO500 Motivation
+We thank you for your interest in the IO500.  We appreciate that there is some effort involved and we thank you in advance for it.  We believe that this effort is worthwhile for the following reasons:
+
+1. To create an historical repository of HPC IO performance over time.
+2. To encourage the community and storage system developers to focus on more than just the *hero* runs.
+3. To create bounded sets of IO performance for users.
+4. To create a documentation repository of how others are tuning their systems and their IO workloads.
+5. To foster a research community dedicated to the improvement of HPC storage systems.

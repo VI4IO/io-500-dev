@@ -17,6 +17,14 @@ int main (argc, argv)
   MPI_Comm_size (MPI_COMM_WORLD, &size);        /* get number of processes */
 
 
+    /* this program doesn't work anymore I'm afraid.
+       It was written for an early version where only mdtest_easy directories
+       were searched.  Now it is required to search all of them.
+       So it needs to be revised.  Probably the way it needs to be done is
+       for rank 0 to do some readdirs and ship out responsibility.
+       Check the default ./io500_find.sh script to see the required input/output
+    */
+       
  rank=rank+1;
  sprintf(cmd2,"%s%s%d%s",argv[3],"mdtest_tree.",rank,".0");
  sprintf(output,"%s%s%d",argv[3],"../",rank);

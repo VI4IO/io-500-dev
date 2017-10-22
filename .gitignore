@@ -1,3 +1,9 @@
+# IO500 typically working directories
+bin
+build
+datafiles
+results
+
 # Prerequisites
 *.d
 

@@ -3,6 +3,9 @@
 # This script automatically identifies the parameters for the IO-500 benchmark
 # It will determine the number of directories, files and data for the creation phase and the find.
 
+# Unfortunately I broke this script when I cleaned up the base code.
+# I'm very sorry George.  --John
+
 if [[ "$workdir" == "" ]] ; then
 	echo "Invalid workdir!"
 	exit 1
