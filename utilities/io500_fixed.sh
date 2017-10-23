@@ -222,7 +222,8 @@ function output_score {
   if [ "$io500_cleanup_workdir" != "True" ] ; then 
     echo "[Summary] Data files in $io500_workdir"
   fi
-  cat $summary_file
+  cat $summary_file | grep BW
+  cat $summary_file | grep IOPS
   bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
   md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
   tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
