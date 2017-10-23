@@ -3,10 +3,9 @@
 
 Download and build the source code of these benchmarks.  Specific repo version hash codes are provided in the prepare.sh script. If you wish to do this manually, please ensure that the same repo versions are used for consistency. If your file system requires custom code not offered in the selected repo versions, please contact us. We want to expand the coverage, while also working to ensure that results are comparable.
 
-* REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
-* REQUIRED: ior https://github.com/IOR-LANL/ior.git 
-* USEFUL: pfind https://github.com/johnbent/pwalk.git
-* OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
+* REQUIRED: ior and mdtest : https://github.com/IOR-LANL/ior.git 
+* USEFUL: pfind : https://github.com/johnbent/pwalk.git
+* OPTIONAL: md-real-io : https://github.com/JulianKunkel/md-real-io 
 
 The script ./utilities/prepare.sh attempts to download and build these. 
 If you do it yourself, please checkout the exact version of each benchmark using the hashes in the utilities/prepare.sh file.

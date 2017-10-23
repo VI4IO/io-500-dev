@@ -6,8 +6,10 @@ echo This script downloads the code for the benchmarks
 echo It will also attempt to build the benchmarks
 echo It will output OK at the end if builds succeed
 
-MDTEST_HASH=7c0ec411c762d65db137997526b9feca9d2d0046 
-IOR_HASH=2541bfea7bd6c8d85f928e7f64f55e7ae02b5e3a 
+# mdtest has been moved into IOR now.  No need for separate.
+#MDTEST_HASH=7c0ec411c762d65db137997526b9feca9d2d0046 
+#IOR_HASH=2541bfea7bd6c8d85f928e7f64f55e7ae02b5e3a 
+IOR_HASH=e1968cd4ad50d3d5dee853ae3b1a8724f4f072c7
 MDREAL_HASH=f1f4269666bc58056a122a742dc5ca13be5a79f5 
 
 INSTALL_DIR=$PWD
@@ -17,7 +19,7 @@ MAKE="make -j4"
 function main {
   setup
   get_build_ior
-  get_build_mdtest
+  #get_build_mdtest
   get_pfind
   #get_build_mdrealio
   ls $INSTALL_DIR/bin
