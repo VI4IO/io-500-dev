@@ -5,6 +5,9 @@ datafiles
 results
 utilities/find/pwalk/
 
+# Temporary vim files
+*.swp
+
 # Prerequisites
 *.d
 
