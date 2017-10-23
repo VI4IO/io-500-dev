@@ -1,69 +1,16 @@
-# This repository contains scripts for running and parsing the IO-500
+## IO 500 in Four Easy Steps
 
-## Build the necessary benchmarks
+```bash
+git clone https://github.com/VI4IO/io-500-dev
+cd io-500-dev
+./utilities/prepare.sh
+./io500.sh
+```
 
-Download and build the source code of these benchmarks into a subdirectory named 'bin'.
-* REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
-* REQUIRED: ior https://github.com/IOR-LANL/ior.git 
-* OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
+This is designed to work from an interactive login (e.g. it won't work from a login node) and uses 'mpirun -np 2' to do the simplest possible MPI run.  It runs a trivially sized problem and uses a serial implementation of find.  Hopefully it just works for you; if it doesn't, please let us know.
 
-The script ./utilities/prepare.sh attempts to download and build these. 
-If you do it yourself, please checkout the exact version of each benchmark using the hashes in the utilities/prepare.sh file.
+To improve it, edit i0500.sh one function at a time to grow the problem size and to switch to the provided python parallel find. You may also need to take whatever steps necessary to run it with a job scheduler. 
 
-## Prepare your IO-500 run
+[Our documents directory](https://github.com/VI4IO/io-500-dev/tree/master/doc) has more detailed instructions including how to submit once you have successfully run.
 
-Please see the template in site-configs/template/startup.sh or samples in site-configs/*/startup.sh, as those contain all necessary parameters and have been run successfully!
-They also contain some documentation.
-If you have installed the benchmarks into $PWD/install/, e.g., using the ./prepare.sh script, 
-you may use the script startup-io500-locally-testmode.sh that runs all benchmarks for testing in a quick run
-in the current directory.
-
-The general procedure to run successfully are:
-
-1. Identify a suitable find command; find is part of the benchmark, we prepared several find commands.
-   To identify a suitable find (see the find directory / structure of the repository below).
-1. Set filenames for the benchmarks and find.
-2. Add suitable parameters to yield a 5 minute limit for all creation/write benchmark phases.
-   You can set parameters for ior_easy, example:
-   
-   ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
-   
-   ior_hard_writes_per_proc=5000   #each process writes 5000 times
-   
-   mdtest_hard_files_per_proc=6000
-   
-   mdtest_easy_files_per_proc=6000
-
-   Sample scripts in the directories provide examples for parameters you may want to use.
-   
-3. You may add further commands to precreate directories (e.g., to place them on Lustre servers)
-4. You may output some key-value pairs for node information (e.g., date, ppn, number of nodes used), these key-values are not yet standardized, but will in the future.
-5. Source io_500_core.sh at last to have the script run the benchmarks, do not change io_500_core.sh !
-6. Have it run and store the output in a textfile.
-7. Submit the script to your batch system.
-
-To see what the benchmark will do set find_cmd, ior_cmd, mdtest_cmd to /bin/echo or have your jobscript use "/usr/bin/bash -x"
-
-## How to identify suitable settings
-
-Alternatives:
-* Manually identification, e.g., you know the parameters or tested them.
-* You may use the auto-determine-parameters.sh script which uses an explorative search to identify (nearly) suitable settings.
-  This script can be used similarly to io_500_core.sh, except that you do not have to set the parameters for the phases.
-
-See again samples in site-configs/*/startup-auto-detect.sh
-
-## Structure of the repository
-
-### Directories
-
-* find: contains all alternatives for find, currently:
-   * a bash paralellized version (single node)
-   * an MPI paralellized find version (see the directory pfind)
-* site-configs: contains the run scripts (!) for certain sites together with results.
-  They provide good examples to start with.
-* prepare.sh: This script downloads and attempts to build the codes. 
-  Building may fail on certain systems, please prepare a script for your system to build correctly.
-* startup-io500-locally-testmode.sh: This script runs the IO500 benchmark on the current working directory.
-  It serves as a basis to test if everything runs correctly on your system.
-  It requires that you installed the executables into the install/ directory
+Thanks for your participation and good luck!  

@@ -7,6 +7,11 @@ timestamp=$1
 workdir="$2"
 subtree_to_scan_config="$3"
 
+# unfortunately this script has been deprecated.
+# we need a better default find that we currently have.
+# hopefully someone creates one.
+# when you do, please use the required input/output as described in ./io500_find.sh
+
 start=$(date +%s.%N)
 C=0
 # trivial parallelism of the find command across the directories

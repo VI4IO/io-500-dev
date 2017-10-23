@@ -18,6 +18,7 @@ function main {
   setup
   get_build_ior
   get_build_mdtest
+  get_pfind
   #get_build_mdrealio
   ls $INSTALL_DIR/bin
 }
@@ -32,6 +33,12 @@ function git_co {
   git clone $1
   cd $2
   git checkout $3
+}
+
+function get_pfind {
+  cd $INSTALL_DIR/utilities/find
+  \rm -rf pwalk
+  git clone https://github.com/johnbent/pwalk.git
 }
 
 function get_build_ior {

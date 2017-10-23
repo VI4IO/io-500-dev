@@ -1,3 +1,13 @@
+# IO500 typically working directories
+bin
+build
+datafiles
+results
+utilities/find/pwalk/
+
+# Temporary vim files
+*.swp
+
 # Prerequisites
 *.d
 
