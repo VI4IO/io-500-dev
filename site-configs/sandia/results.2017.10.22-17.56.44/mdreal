@@ -1,0 +1,25 @@
+MD-REAL-IO total objects: 1280000 workingset size: 2975.464 MiB (version: f1f4269@master) time: 2017-10-22 18:58:57
+	offset=1 
+	interface=posix
+	obj-per-proc=1000 
+	latency=/fscratch/gflofst/results.2017.10.22-17.56.44/mdreal
+	precreate-per-set=5000 
+	data-sets=1 
+	lim-free-mem=0 
+	lim-free-mem-phase=0 
+	object-size=3900 
+	iterations=3 
+	run-info-file=mdtest.status
+	run-precreate
+	run-benchmark
+	run-cleanup
+
+	root-dir=/fscratch/gflofst/io500.2017.10.22-17.56.44/mdreal
+
+WARN: Will use the existing (empty) directory
+precreate 63.3s 12639.7 iops/s 160 dset 800000 obj 2.527 dset/s 12637.2 obj/s 47.0 Mib/s max 1.3580e+00s (0 errs)
+benchmark 39.4s 16226.9 iops/s 160000 obj 4056.7 obj/s 30.2 Mib/s max 1.2489e+00s (0 errs)
+benchmark 40.8s 15681.8 iops/s 160000 obj 3920.5 obj/s 29.2 Mib/s max 2.6247e+00s (0 errs)
+benchmark 40.9s 15638.5 iops/s 160000 obj 3909.6 obj/s 29.1 Mib/s max 1.8546e+00s (0 errs)
+cleanup 76.5s 10458.5 iops/s 800000 obj 160 dset 10456.4 obj/s 2.091 dset/s max 2.5614e+00s (0 errs)
+Total runtime: 261s time: 2017-10-22 19:03:18

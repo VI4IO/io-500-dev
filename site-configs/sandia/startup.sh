@@ -8,9 +8,9 @@
 #
 #SBATCH --account=FY140262
 #SBATCH --ntasks-per-node=10
-#SBATCH --nodes=10
+#SBATCH --nodes=16
 #SBATCH --job-name=IO-500
-#SBATCH --time=00:20:00
+#SBATCH --time=00:40:00
 #SBATCH -o io_500_out_%J
 #SBATCH -e io_500_err_%J
 
@@ -59,14 +59,18 @@ find_cmd=${basedir}/io500-find.sh
 # Tunable parameters, feel free to change them
 # The write phase for each benchmark (ior_easy, ior_hard, mdtest_easy, mdtest_hard) must be 5 minutes
 #ior_easy_params="-t 2048k -b 122880000k" # 120 GBytes per process, file per proc is already configured
+#define QUICK_RUN 0
+#if QUICK_RUN
 ior_easy_params="-t 2048k -b 2g" # file per proc is already configured
 ior_hard_writes_per_proc=60
 mdtest_easy_files_per_proc=6100
 mdtest_hard_files_per_proc=6100
-#ior_easy_params="-t 2048k -b 20g" # file per proc is already configured
-#ior_hard_writes_per_proc=6000     
-#mdtest_easy_files_per_proc=61000  
-#mdtest_hard_files_per_proc=61000
+#else
+ior_easy_params="-t 2048k -b 20g" # file per proc is already configured
+ior_hard_writes_per_proc=7000     
+mdtest_easy_files_per_proc=25000
+mdtest_hard_files_per_proc=25000
+#endif
 # If to use mdreal
 mdreal_params="-P=5000 -I=1000"
 find_subtree_to_scan_config=$PWD/find_subtree.cfg
@@ -89,7 +93,9 @@ mkdir -p ${workdir}/ior_easy
 lfs setstripe --stripe-count 2  ${workdir}/ior_easy
 
 mkdir -p ${workdir}/ior_hard
-lfs setstripe --stripe-count 100  ${workdir}/ior_hard
+let "total_stripes = ${SLRUM_NNODES} * ${SLURM_TASKS_PER_NODE}"
+# alternatively, make this the number of storage targets
+lfs setstripe --stripe-count ${total_stripes} ${workdir}/ior_hard
 
 #
 # 7. Run the core script
@@ -99,6 +105,7 @@ lfs setstripe --stripe-count 100  ${workdir}/ior_hard
 #cd ../../ # walk to the directory with the io_500_core script
 
 # Add key/value pairs defining your system if you want
+echo Started at `date +%Y.%m.%d-%H.%M.%S`
 echo "System: " `uname -n`
 echo "filesystem_utilization=$(df ${filesys_root})"
 echo "date=$(date -I)"
@@ -124,5 +131,8 @@ source io_500_core.sh # Do not change the script
 ) 2>&1 | tee io-500-summary.`date +%Y.%m.%d-%H.%M.%S`.txt
 
 # Cleanup
-rmdir -f $workdir
+rmdir $workdir
 rm -f find_subtree.cfg
+
+# Give a completion time
+echo Finished at `date +%Y.%m.%d-%H.%M.%S`

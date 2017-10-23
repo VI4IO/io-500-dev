@@ -83,9 +83,10 @@ function setup_find {
   # the serial version that should run (SLOWLY) without modification
   io500_find_cmd=$PWD/utilities/find/sfind.sh
 
-  # a parallel version that might require some work, it requires python3 and needs
-  # to be checked out from a different repo.  See utilities/find/README.md for more info.
-  #io500_find_cmd=$PWD/utilities/find/pfind.sh
+  # a parallel version that might require some work, it calls a python3 program 
+  # that needs to be located at utilities/find/pwalk/pfind 
+  # if you used utilities/prepare.sh, it should already be there. 
+  io500_find_cmd=$PWD/utilities/find/pfind.sh
 }
 
 function setup_mdreal {

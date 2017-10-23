@@ -1,0 +1,69 @@
+Started at 2017.10.22-17.56.44
+System:  serrano-login1
+filesystem_utilization=Filesystem                                            1K-blocks         Used     Available Use% Mounted on
+10.196.135.10@o2ib1:10.196.135.11@o2ib1:/fscratch 1874496285600 494932522116 1283053433440  28% /fscratch
+date=2017-10-22
+nodes=16
+ppn=10(x16)
+nodelist=ser[127,129-130,134,148,165,223-224,906-907,919-920,972-973,1017-1018]
+workdir=/fscratch/gflofst/io500.2017.10.22-17.56.44
+result_dir=/fscratch/gflofst/results.2017.10.22-17.56.44
+filesys_root=/fscratch
+find_cmd=/fscratch/gflofst/io500-find.sh
+ior_cmd=/fscratch/gflofst/ior
+mdtest_cmd=/fscratch/gflofst/mdtest
+mdreal_cmd=/fscratch/gflofst/md-real-io
+ior_easy_params=-t 2048k -b 20g
+ior_hard_writes_per_proc=7000
+mdtest_easy_files_per_proc=25000
+mdtest_hard_files_per_proc=25000
+mdreal_params=-P=5000 -I=1000
+[Precreating] missing directories
+[Starting] ior-easy-write
+1/ior-easy-write BW:8117.92 MB/s time: 449s
+[Starting] md-easy-create
+1/md-easy-create IOPs:11575.339 time:349s
+[Starting] ior-hard-write
+2/ior-hard-write BW:151.59 MB/s time: 350s
+[Starting] md-hard-create
+2/md-hard-create IOPs:10397.300 time:387s
+[Starting] ior-easy-read
+3/ior-easy-read BW:7462.85 MB/s time: 488s
+[Starting] md-easy-stat
+[Warning]: the runtime is below 5 minutes
+3/md-easy-stat IOPs:77345.686 time:59s
+[Starting] ior-hard-read
+[Warning]: the runtime is below 5 minutes
+4/ior-hard-read BW:491.53 MB/s time: 116s
+[Starting] md-hard-stat
+[Warning]: the runtime is below 5 minutes
+4/md-hard-stat IOPs:18073.783 time:226s
+[Starting] find (serial)
+[Warning]: the runtime is below 5 minutes
+5/find (serial) IOPs:10769 time:232s
+[Starting] md-easy-delete
+6/md-easy-delete IOPs:9276.540 time:436s
+[Starting] md-hard-delete
+7/md-hard-delete IOPs:6297.860 time:639s
+[Starting] md-real-io
+[Warning]: the runtime is below 5 minutes
+8/md-real-io IOPs:15638.5 time:263s
+bw1=8117.92		ior-easy-write
+iops1=11575.339		md-easy-create
+bw2=151.59		ior-hard-write
+iops2=10397.300		md-hard-create
+bw3=7462.85		ior-easy-read
+iops3=77345.686		md-easy-stat
+bw4=491.53		ior-hard-read
+iops4=18073.783		md-hard-stat
+iops5=10769		find (parallel or serial)
+iops6=9276.540		md-easy-delete
+iops7=6297.860		md-hard-delete
+Not included in final score
+bw5=29.1		md-real-bw
+iops8=15638.5		md-real-iops
+
+IO-500 bw score: 1457.61 MB/s
+IO-500 md score: 14008.3 IOPS
+
+IO-500 score:  20418638.16

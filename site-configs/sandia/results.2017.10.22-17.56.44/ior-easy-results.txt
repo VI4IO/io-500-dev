@@ -1,0 +1,2 @@
+1/ior-easy-write BW:8117.92 MB/s time: 449s
+3/ior-easy-read BW:7462.85 MB/s time: 488s

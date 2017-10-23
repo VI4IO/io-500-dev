@@ -5,6 +5,7 @@ Download and build the source code of these benchmarks.  Specific repo version h
 
 * REQUIRED: mdtest https://github.com/LLNL/mdtest.git 
 * REQUIRED: ior https://github.com/IOR-LANL/ior.git 
+* USEFUL: pfind https://github.com/johnbent/pwalk.git
 * OPTIONAL: md-real-io https://github.com/JulianKunkel/md-real-io 
 
 The script ./utilities/prepare.sh attempts to download and build these. 
