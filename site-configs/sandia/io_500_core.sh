@@ -68,7 +68,7 @@ if [[ "$run_ior_easy" != "False" ]] ; then
 
   bw_dur1=$(grep "write " $result_dir/ior_easy_write | tail -n 1 | awk '{print $10}')
   print_bw 1 $bw1 $bw_dur1 | tee   $result_dir/ior-easy-results.txt
-
+  ## NOTE: CLEANUP AT THE END OF THE SCRIPT
 fi
 
 ### MDTEST EASY CREATE
@@ -79,7 +79,6 @@ if [[ "$run_md_easy" != "False" ]] ; then
   endphase_check
   iops1=$(grep "File creation" $result_dir/mdt_easy_create | tail -n 1 | awk '{print $4}')
   print_iops 1 $iops1 | tee  $result_dir/mdt-easy-results.txt
-
 fi
 
 ### IOR HARD CREATE
@@ -92,6 +91,7 @@ if [[ "$run_ior_hard" != "False" ]] ; then
 
   bw_dur2=$(grep "write " $result_dir/ior_hard_write | tail -n 1 | awk '{print $10}')
   print_bw 2 $bw2 $bw_dur2 | tee $result_dir/ior-hard-results.txt
+  ## NOTE: CLEANUP AT THE END OF THE SCRIPT
 fi
 
 ### MDTEST HARD CREATE
@@ -230,5 +230,5 @@ echo
 echo "IO-500 score: " $final_score
 
 rm $workdir/ior_easy/ior_file_easy* $workdir/ior_hard/IOR_file
-echo "figure out what is left in workdir (hidden files)"
-#rm -rf $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $workdir/mdreal $workdir/timestamp 2>/dev/null
+rmdir $workdir/ior_easy $workdir/mdt_easy  $workdir/mdt_hard $workdir/ior_hard $workdir/mdreal
+rm $workdir/timestamp

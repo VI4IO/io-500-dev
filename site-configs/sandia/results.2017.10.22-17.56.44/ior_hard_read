@@ -1,0 +1,200 @@
+IOR-3.1.0: MPI Coordinated Test of Parallel I/O
+
+ior WARNING: fsync() only available in POSIX.  Using value of 0.
+Began: Sun Oct 22 18:31:34 2017
+Command line used: /fscratch/gflofst/ior -r -C -C -Q 1 -g -G 27 -k -vv -e -t 47000 -b 47000 -s 7000 -o /fscratch/gflofst/io500.2017.10.22-17.56.44/ior_hard/IOR_file
+Machine: Linux ser127 3.10.0-514.26.1.1chaos.ch6_1.x86_64 #1 SMP Thu Jun 29 15:16:26 PDT 2017 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 6542.20 sec
+
+Test 0 started: Sun Oct 22 18:31:34 2017
+Path: /fscratch/gflofst/io500.2017.10.22-17.56.44/ior_hard
+FS: 1745.8 TiB   Used FS: 26.6%   Inodes: 437.7 Mi   Used Inodes: 13.8%
+Participating tasks: 160
+Using reorderTasks '-C' (expecting block, not cyclic, task assignment)
+task 0 on ser127
+task 1 on ser127
+task 10 on ser129
+task 100 on ser919
+task 101 on ser919
+task 102 on ser919
+task 103 on ser919
+task 104 on ser919
+task 105 on ser919
+task 106 on ser919
+task 107 on ser919
+task 108 on ser919
+task 109 on ser919
+task 11 on ser129
+task 110 on ser920
+task 111 on ser920
+task 112 on ser920
+task 113 on ser920
+task 114 on ser920
+task 115 on ser920
+task 116 on ser920
+task 117 on ser920
+task 118 on ser920
+task 119 on ser920
+task 12 on ser129
+task 120 on ser972
+task 121 on ser972
+task 122 on ser972
+task 123 on ser972
+task 124 on ser972
+task 125 on ser972
+task 126 on ser972
+task 127 on ser972
+task 128 on ser972
+task 129 on ser972
+task 13 on ser129
+task 130 on ser973
+task 131 on ser973
+task 132 on ser973
+task 133 on ser973
+task 134 on ser973
+task 135 on ser973
+task 136 on ser973
+task 137 on ser973
+task 138 on ser973
+task 139 on ser973
+task 14 on ser129
+task 140 on ser1017
+task 141 on ser1017
+task 142 on ser1017
+task 143 on ser1017
+task 144 on ser1017
+task 145 on ser1017
+task 146 on ser1017
+task 147 on ser1017
+task 148 on ser1017
+task 149 on ser1017
+task 15 on ser129
+task 150 on ser1018
+task 151 on ser1018
+task 152 on ser1018
+task 153 on ser1018
+task 154 on ser1018
+task 155 on ser1018
+task 156 on ser1018
+task 157 on ser1018
+task 158 on ser1018
+task 159 on ser1018
+task 16 on ser129
+task 17 on ser129
+task 18 on ser129
+task 19 on ser129
+task 2 on ser127
+task 20 on ser130
+task 21 on ser130
+task 22 on ser130
+task 23 on ser130
+task 24 on ser130
+task 25 on ser130
+task 26 on ser130
+task 27 on ser130
+task 28 on ser130
+task 29 on ser130
+task 3 on ser127
+task 30 on ser134
+task 31 on ser134
+task 32 on ser134
+task 33 on ser134
+task 34 on ser134
+task 35 on ser134
+task 36 on ser134
+task 37 on ser134
+task 38 on ser134
+task 39 on ser134
+task 4 on ser127
+task 40 on ser148
+task 41 on ser148
+task 42 on ser148
+task 43 on ser148
+task 44 on ser148
+task 45 on ser148
+task 46 on ser148
+task 47 on ser148
+task 48 on ser148
+task 49 on ser148
+task 5 on ser127
+task 50 on ser165
+task 51 on ser165
+task 52 on ser165
+task 53 on ser165
+task 54 on ser165
+task 55 on ser165
+task 56 on ser165
+task 57 on ser165
+task 58 on ser165
+task 59 on ser165
+task 6 on ser127
+task 60 on ser223
+task 61 on ser223
+task 62 on ser223
+task 63 on ser223
+task 64 on ser223
+task 65 on ser223
+task 66 on ser223
+task 67 on ser223
+task 68 on ser223
+task 69 on ser223
+task 7 on ser127
+task 70 on ser224
+task 71 on ser224
+task 72 on ser224
+task 73 on ser224
+task 74 on ser224
+task 75 on ser224
+task 76 on ser224
+task 77 on ser224
+task 78 on ser224
+task 79 on ser224
+task 8 on ser127
+task 80 on ser906
+task 81 on ser906
+task 82 on ser906
+task 83 on ser906
+task 84 on ser906
+task 85 on ser906
+task 86 on ser906
+task 87 on ser906
+task 88 on ser906
+task 89 on ser906
+task 9 on ser127
+task 90 on ser907
+task 91 on ser907
+task 92 on ser907
+task 93 on ser907
+task 94 on ser907
+task 95 on ser907
+task 96 on ser907
+task 97 on ser907
+task 98 on ser907
+task 99 on ser907
+Summary:
+	api                = MPIIO (version=3, subversion=0)
+	test filename      = /fscratch/gflofst/io500.2017.10.22-17.56.44/ior_hard/IOR_file
+	access             = single-shared-file, independent
+	pattern            = strided (7000 segments)
+	ordering in a file = sequential offsets
+	ordering inter file= constant task offsets = 1
+	clients            = 160 (10 per node)
+	repetitions        = 1
+	xfersize           = 47000 bytes
+	blocksize          = 47000 bytes
+	aggregate filesize = 49.02 GiB
+Commencing read performance test: Sun Oct 22 18:31:34 2017
+Using Time Stamp 1508718694 (0x59ed3866) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+read      468.76     45.90      45.90      0.051306   107.04     0.001986   107.09     0   
+
+Max Read:  468.76 MiB/sec (491.53 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          468.76     468.76     468.76       0.00  107.09451 0 160 10 1 0 1 1 0 0 7000 47000 47000 52640000000 MPIIO 0
+
+Finished: Sun Oct 22 18:33:21 2017
