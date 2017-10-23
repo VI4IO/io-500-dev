@@ -86,7 +86,7 @@ function setup_find {
   # a parallel version that might require some work, it calls a python3 program 
   # that needs to be located at utilities/find/pwalk/pfind 
   # if you used utilities/prepare.sh, it should already be there. 
-  io500_find_cmd=$PWD/utilities/find/pfind.sh
+  #io500_find_cmd=$PWD/utilities/find/pfind.sh
 }
 
 function setup_mdreal {
