@@ -202,7 +202,9 @@ function myfind {
   result_file=$io500_result_dir/$phase.txt
   startphase $phase
 
-  command="$io500_find_cmd $io500_workdir $timestamp_file $mdt_hard_fsize" 
+  command="$io500_find_cmd $io500_workdir $timestamp_file $mdt_hard_fsize 01" 
+
+  # this is currently how we get the mpirun info to the parallel find tool
   export IO500_MPI="$io500_mpirun $io500_mpiargs"
 
   echo "[EXEC] $command"
