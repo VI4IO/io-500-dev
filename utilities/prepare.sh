@@ -10,6 +10,7 @@ IOR_HASH=e1968cd4ad50d3d5dee853ae3b1a8724f4f072c7
 MDREAL_HASH=f1f4269666bc58056a122a742dc5ca13be5a79f5 
 
 INSTALL_DIR=$PWD
+BIN=$INSTALL_DIR/bin
 BUILD=$PWD/build
 MAKE="make -j4"
 
@@ -17,12 +18,12 @@ function main {
   setup
   get_build_ior
   get_pfind
-  ls $INSTALL_DIR/bin
+  ls $BIN
 }
 
 function setup {
   rm -rf $BUILD
-  mkdir -p $BUILD $INSTALL_DIR/bin 
+  mkdir -p $BUILD $BIN 
 }
 
 function git_co {
@@ -33,9 +34,11 @@ function git_co {
 }
 
 function get_pfind {
-  cd $INSTALL_DIR/utilities/find
+  cd $BUILD
   \rm -rf pwalk
   git clone https://github.com/johnbent/pwalk.git
+  cp -r pwalk/pfind pwalk/lib $BIN
+  cp $INSTALL_DIR/utilities/find/pfind.sh $INSTALL_DIR/utilities/find/sfind.sh $BIN
 }
 
 function get_build_ior {
@@ -51,7 +54,7 @@ function get_build_mdrealio {
   ./configure --prefix=$PWD --minimal
   cd build
   $MAKE install
-  mv src/md-real-io $INSTALL_DIR/bin
+  mv src/md-real-io $BIN 
 }
 
 main
