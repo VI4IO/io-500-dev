@@ -224,10 +224,10 @@ function output_score {
   fi
   cat $summary_file | grep BW
   cat $summary_file | grep IOPS
-  bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
-  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
+  bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print (($1*$2*$3*$4)^(1/4))/1024}'`
+  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print (($1*$2*$3*$4*$5*$6*$7)^(1/7))/1000}'`
   tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
-  echo "[SCORE] Bandwidth $bw_score MB/s : IOPS $md_score iops : TOTAL $tot_score" | tee -a $summary_file
+  echo "[SCORE] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
 }
 
 function core_setup {
