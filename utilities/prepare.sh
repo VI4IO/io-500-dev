@@ -18,8 +18,14 @@ MAKE="make -j4"
 function main {
   # listed here, easier to spot and run if something fails
   setup
-  get_build_ior
+
+  get_ior
   get_pfind
+  get_mdrealio
+
+  build_ior
+#  build_pfind   # unnecessary since it is a Python 3 program
+  build_mdrealio
 
   echo
   echo "OK: All required software packages are now prepared"
@@ -39,6 +45,14 @@ function git_co {
   git checkout $3
 }
 
+###### GET FUNCTIONS
+function get_ior {
+  echo "Getting IOR"
+  git_co https://github.com/IOR-LANL/ior ior $IOR_HASH
+  ./bootstrap
+  ./configure --prefix=$INSTALL_DIR
+}
+
 function get_pfind {
   echo "Preparing parallel find"
   pushd $BUILD
@@ -51,11 +65,14 @@ function get_pfind {
   popd
 }
 
-function get_build_ior {
-  echo "Preparing IOR"
-  git_co https://github.com/IOR-LANL/ior ior $IOR_HASH
-  ./bootstrap
-  ./configure --prefix=$INSTALL_DIR
+function get_mdrealio {
+  echo "Preparing MD-REAL-IO"
+  git_co https://github.com/JulianKunkel/md-real-io md-real-io $MDREAL_HASH
+  ./configure --prefix=$PWD --minimal
+}
+
+###### BUILD FUNCTIONS
+function build_ior {
   pushd src # just build the source
   $MAKE install
   echo "IOR: OK"
@@ -63,10 +80,7 @@ function get_build_ior {
   popd
 }
 
-function get_build_mdrealio {
-  echo "Preparing MD-REAL-IO"
-  git_co https://github.com/JulianKunkel/md-real-io md-real-io $MDREAL_HASH
-  ./configure --prefix=$PWD --minimal
+function build_mdrealio {
   pushd build
   $MAKE install
   mv src/md-real-io $BIN
@@ -75,4 +89,5 @@ function get_build_mdrealio {
   popd
 }
 
+###### CALL MAIN
 main
