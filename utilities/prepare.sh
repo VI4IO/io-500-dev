@@ -33,24 +33,27 @@ function main {
 }
 
 function setup {
-  rm -rf $BUILD
+  rm -rf $BUILD $BIN
   mkdir -p $BUILD $BIN 
-  cp utilities/io500_fixed.sh $BIN
+  cp utilities/io500_fixed.sh utilities/find/sfind.sh $BIN
 }
 
 function git_co {
-  cd $BUILD
+  pushd $BUILD
   git clone $1
   cd $2
   git checkout $3
+  popd
 }
 
 ###### GET FUNCTIONS
 function get_ior {
   echo "Getting IOR and mdtest"
   git_co https://github.com/IOR-LANL/ior ior $IOR_HASH
+  pushd $BUILD/ior
   ./bootstrap
   ./configure --prefix=$INSTALL_DIR
+  popd
 }
 
 function get_pfind {
@@ -59,7 +62,6 @@ function get_pfind {
   rm -rf pwalk
   git clone https://github.com/johnbent/pwalk.git
   cp -r pwalk/pfind pwalk/lib $BIN
-  cp $INSTALL_DIR/utilities/find/pfind.sh $INSTALL_DIR/utilities/find/sfind.sh $BIN
   echo "Pfind: OK"
   echo
   popd
@@ -68,12 +70,15 @@ function get_pfind {
 function get_mdrealio {
   echo "Preparing MD-REAL-IO"
   git_co https://github.com/JulianKunkel/md-real-io md-real-io $MDREAL_HASH
-  ./configure --prefix=$PWD --minimal
+  pushd $BUILD/md-real-io
+  #./configure --prefix=$PWD --minimal
+  popd
 }
 
 ###### BUILD FUNCTIONS
 function build_ior {
-  pushd src # just build the source
+  pushd $BUILD
+  cd ior/src # just build the source
   $MAKE install
   echo "IOR: OK"
   echo
@@ -81,10 +86,11 @@ function build_ior {
 }
 
 function build_mdrealio {
-  pushd build
-  $MAKE install
-  mv src/md-real-io $BIN
-  echo "MD-REAL-IO: OK"
+  cd $BUILD/md-real-io
+  pushd $BUILD
+  #$MAKE install
+  #mv src/md-real-io $BIN
+  echo "MD-REAL-IO: Not built"
   echo
   popd
 }
