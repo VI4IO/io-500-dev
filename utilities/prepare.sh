@@ -15,9 +15,21 @@ BIN=$INSTALL_DIR/bin
 BUILD=$PWD/build
 MAKE="make -j4"
 
+function main {
+  # listed here, easier to spot and run if something fails
+  setup
+  get_build_ior
+  get_pfind
+
+  echo
+  echo "OK: All required software packages are now prepared"
+  ls $BIN
+}
+
 function setup {
   rm -rf $BUILD
-  mkdir -p $BUILD $INSTALL_DIR/bin
+  mkdir -p $BUILD $BIN 
+  cp utilities/io500_fixed.sh $BIN
 }
 
 function git_co {
@@ -57,18 +69,10 @@ function get_build_mdrealio {
   ./configure --prefix=$PWD --minimal
   pushd build
   $MAKE install
-  mv src/md-real-io $INSTALL_DIR/bin
+  mv src/md-real-io $BIN
   echo "MD-REAL-IO: OK"
   echo
   popd
 }
 
-
-# listed here, easier to spot and run if something fails
-setup
-get_build_ior
-get_pfind
-
-echo
-echo "OK: All required software packages are now prepared"
-ls $BIN
+main
