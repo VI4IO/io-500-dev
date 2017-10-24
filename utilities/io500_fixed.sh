@@ -83,7 +83,7 @@ function ior_easy {
   phase="ior_easy_$1"
   [ "$io500_run_ior_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
 
-  params_ior_easy="-C -Q 1 -g -G 27 -k -vv -e $io500_ior_easy_params -o $io500_workdir/ior_easy/ior_file_easy" 
+  params_ior_easy="-C -Q 1 -g -G 27 -k -e $io500_ior_easy_params -o $io500_workdir/ior_easy/ior_file_easy" 
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
