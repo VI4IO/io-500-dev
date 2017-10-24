@@ -21,10 +21,10 @@ io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
 io500_run_md_hard_stat="True"
-io500_run_md_easy_delete="False"
-io500_run_md_hard_delete="False"
+io500_run_md_easy_delete="True" # turn this off if you want to just run find by itself
+io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
 io500_run_mdreal="False"  # this one is optional
-io500_cleanup_workdir="False"
+io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
 
 function main {
   setup_directories
