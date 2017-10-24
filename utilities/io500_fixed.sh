@@ -207,8 +207,8 @@ function myfind {
   # this is currently how we get the mpirun info to the parallel find tool
   export IO500_MPI="$io500_mpirun $io500_mpiargs"
 
-  echo "[EXEC] $command"
-  matches=$( $command | tail -1 )
+  echo "[EXEC] $IO500_MPI $command"
+  matches=$( $IO500_MPI $command | tail -1 )
 
   endphase_check "find"
   totalfiles=`echo $matches | cut -d \/ -f 2`
