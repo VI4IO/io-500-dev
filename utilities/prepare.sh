@@ -15,13 +15,6 @@ BIN=$INSTALL_DIR/bin
 BUILD=$PWD/build
 MAKE="make -j4"
 
-function main {
-  setup
-  get_build_ior
-  get_pfind
-  ls $BIN
-}
-
 function setup {
   rm -rf $BUILD
   mkdir -p $BUILD $INSTALL_DIR/bin
@@ -70,4 +63,12 @@ function get_build_mdrealio {
   popd
 }
 
-main
+
+# listed here, easier to spot and run if something fails
+setup
+get_build_ior
+get_pfind
+
+echo
+echo "OK: All required software packages are now prepared"
+ls $BIN
