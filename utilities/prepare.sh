@@ -47,7 +47,7 @@ function git_co {
 
 ###### GET FUNCTIONS
 function get_ior {
-  echo "Getting IOR"
+  echo "Getting IOR and mdtest"
   git_co https://github.com/IOR-LANL/ior ior $IOR_HASH
   ./bootstrap
   ./configure --prefix=$INSTALL_DIR
