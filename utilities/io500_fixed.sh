@@ -64,7 +64,7 @@ function myrun {
 function get_ior_bw {
   file=$1
   operation=$2
-  grep '^'$operation $file | head -1 | awk '{print $2}'
+  grep '^'$operation $file | head -1 | awk '{print $2/1024}'
 }
 
 function get_ior_time {
@@ -76,7 +76,7 @@ function get_ior_time {
 function get_mdt_iops {
   file=$1
   op=$2
-  grep '^ *File '$op $file | awk '{print $4}'
+  grep '^ *File '$op $file | awk '{print $4/1000}'
 }
 
 function ior_easy {
@@ -212,7 +212,7 @@ function myfind {
 
   endphase_check "find"
   totalfiles=`echo $matches | cut -d \/ -f 2`
-  iops3=`echo "scale = 2; $totalfiles / $duration" | bc`
+  iops3=`echo "scale = 2; ($totalfiles / $duration)/1000" | bc`
   echo "[FIND] $matches in $duration seconds"
   print_iops 3 $iops3 $duration
 }
@@ -224,8 +224,8 @@ function output_score {
   fi
   cat $summary_file | grep BW
   cat $summary_file | grep IOPS
-  bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print (($1*$2*$3*$4)^(1/4))/1024}'`
-  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print (($1*$2*$3*$4*$5*$6*$7)^(1/7))/1000}'`
+  bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
+  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
   tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
   echo "[SCORE] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
 }
@@ -245,11 +245,11 @@ function core_setup {
 }
 
 function print_bw  {
-  printf "[RESULT] BW   phase $1 %25s %20.3f MB/s : time %6.2f seconds\n" $phase $2 $3 | tee -a $summary_file
+  printf "[RESULT] BW   phase $1 %25s %20.3f GB/s : time %6.2f seconds\n" $phase $2 $3 | tee -a $summary_file
 }
 
 function print_iops  {
-  printf "[RESULT] IOPS phase $1 %25s %20.3f iops : time %6.2f seconds\n" $phase $2 $3 | tee -a $summary_file 
+  printf "[RESULT] IOPS phase $1 %25s %20.3f kiops : time %6.2f seconds\n" $phase $2 $3 | tee -a $summary_file 
 }
 
 function startphase {
