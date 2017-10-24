@@ -84,11 +84,10 @@ function setup_find {
   io500_find_mpi="False"
   io500_find_cmd=$PWD/bin/sfind.sh
 
-  # a parallel version that might require some work, it calls a python3 program 
-  # that needs to be located at utilities/find/pwalk/pfind 
+  # a parallel version that might require some work, it is a python3 program 
   # if you used utilities/prepare.sh, it should already be there. 
-  io500_find_mpi="True"
-  io500_find_cmd=$PWD/bin/pfind
+  #io500_find_mpi="True"
+  #io500_find_cmd=$PWD/bin/pfind
 }
 
 function setup_mdreal {
