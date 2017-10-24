@@ -16,5 +16,5 @@ pfind=`dirname $0`/pfind          # ensure that the git repo has been cloned
 if [ -x "$pfind" ] ; then
   $IO500_MPI $pfind -newer $timestamp_file -name "$target_string" -size $target_size -silent $searchdir 
 else
-  echo "ERROR: Need to install pfind.py from pwalk github repo"
+  echo "ERROR: $pfind not found; Need to install pfind.py from pwalk github repo"
 fi
