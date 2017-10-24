@@ -21,10 +21,10 @@ io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
 io500_run_md_hard_stat="True"
-io500_run_md_easy_delete="True"
-io500_run_md_hard_delete="True"
+io500_run_md_easy_delete="False"
+io500_run_md_hard_delete="False"
 io500_run_mdreal="False"  # this one is optional
-io500_cleanup_workdir="True"
+io500_cleanup_workdir="False"
 
 function main {
   setup_directories
@@ -81,12 +81,14 @@ function setup_find {
   #    If a custom approach is used, please provide enough info so others can reproduce.
 
   # the serial version that should run (SLOWLY) without modification
+  io500_find_mpi="False"
   io500_find_cmd=$PWD/bin/sfind.sh
 
   # a parallel version that might require some work, it calls a python3 program 
   # that needs to be located at utilities/find/pwalk/pfind 
   # if you used utilities/prepare.sh, it should already be there. 
-  #io500_find_cmd=$PWD/bin/pfind.sh
+  io500_find_mpi="True"
+  io500_find_cmd=$PWD/bin/pfind
 }
 
 function setup_mdreal {
