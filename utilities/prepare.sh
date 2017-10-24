@@ -24,6 +24,7 @@ function main {
 function setup {
   rm -rf $BUILD
   mkdir -p $BUILD $BIN 
+  cp utilities/io500_fixed.sh $BIN
 }
 
 function git_co {
