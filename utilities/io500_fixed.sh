@@ -200,15 +200,17 @@ function myfind {
   phase="find"
   [ "$io500_run_find" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
   result_file=$io500_result_dir/$phase.txt
+
+  command="$io500_find_cmd $io500_workdir -newer $timestamp_file -size ${mdt_hard_fsize}c -name *01*" 
+
   startphase $phase
-
-  command="$io500_find_cmd $io500_workdir $timestamp_file $mdt_hard_fsize 01" 
-
-  # this is currently how we get the mpirun info to the parallel find tool
-  export IO500_MPI="$io500_mpirun $io500_mpiargs"
-
-  echo "[EXEC] $IO500_MPI $command"
-  matches=$( $IO500_MPI $command | tail -1 )
+  if [ "$io500_find_mpi" != "True" ] ; then
+    echo "[EXEC] $command"
+    matches=$( $command | grep MATCHED )
+  else
+    myrun "$command" $result_file 
+    matches=$( grep MATCHED $result_file )
+  fi
 
   endphase_check "find"
   totalfiles=`echo $matches | cut -d \/ -f 2`
