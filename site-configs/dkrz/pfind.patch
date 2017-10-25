@@ -1,0 +1,11 @@
+--- pfind	2017-10-25 13:13:17.452815588 +0200
++++ pfind	2017-10-25 13:13:19.788832395 +0200
+@@ -191,7 +191,7 @@
+             total_entries += 1
+             if check_match(e.path):
+               total_matches += 1
+-    d_ents.close()
++    #d_ents.close()
+
+     comm.bcast("shutdown", root=0)
+     comm.barrier()

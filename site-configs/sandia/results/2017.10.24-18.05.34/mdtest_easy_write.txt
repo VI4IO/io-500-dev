@@ -1,0 +1,20 @@
+-- started at 10/24/2017 18:05:45 --
+
+mdtest-1.9.3 was launched with 2 total task(s) on 1 node(s)
+Command line used: /fscratch/gflofst/bin/mdtest -C -F -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_easy -n 610 -u -L
+Path: 
+FS: 1745.8 TiB   Used FS: 24.6%   Inodes: 437.7 Mi   Used Inodes: 5.2%
+
+2 tasks, 1220 files
+
+SUMMARY: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :        222.391        222.391        222.391          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :        334.784        334.784        334.784          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+
+-- finished at 10/24/2017 18:05:51 --

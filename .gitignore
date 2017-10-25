@@ -3,6 +3,7 @@ bin
 build
 datafiles
 results
+share
 utilities/find/pwalk/
 
 # Temporary vim files

@@ -8,6 +8,8 @@
 
 set -euo pipefail  # better error handling
 
+QUICK_RUN="True"
+
 # turn these to True successively while you debug and tune this benchmark.
 # for each one that you turn to true, go and edit the appropriate function.
 # to find the function name, see the 'main' function.
@@ -21,10 +23,10 @@ io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
 io500_run_md_hard_stat="True"
-io500_run_md_easy_delete="True" # turn this off if you want to just run find by itself
-io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
-io500_run_mdreal="False"  # this one is optional
-io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
+io500_run_md_easy_delete="True"
+io500_run_md_hard_delete="True"
+io500_run_mdreal="True"  # this one is optional
+io500_cleanup_workdir="True"
 
 function main {
   setup_directories
@@ -57,23 +59,42 @@ function setup_paths {
 }
 
 function setup_ior_easy {
+if [ "$QUICK_RUN" = "True" ]; then
   io500_ior_easy_params="-t 2048k -b 2g -F" # 2M writes, 2 GB per proc, file per proc 
+else
+  io500_ior_easy_params="-t 2048k -b 20g -F" # 2M writes, 20 GB per proc, file per proc 
+fi
 }
 
 function setup_mdt_easy {
+if [ "$QUICK_RUN" = "True" ]; then
   io500_mdtest_easy_params="-u -L" # unique dir per thread, files only at leaves
-  io500_mdtest_easy_files_per_proc=6100
+  io500_mdtest_easy_files_per_proc=610
+else
+  io500_mdtest_easy_params="-u -L" # unique dir per thread, files only at leaves
+  io500_mdtest_easy_files_per_proc=25000
+fi
 }
 
 function setup_ior_hard {
+if [ "$QUICK_RUN" = "True" ]; then
   io500_ior_hard_writes_per_proc=60
+else
+  io500_ior_hard_writes_per_proc=7000
+fi
 }
 
 function setup_mdt_hard {
-  io500_mdtest_hard_files_per_proc=6100
+if [ "$QUICK_RUN" = "True" ]; then
+  io500_mdtest_hard_files_per_proc=610
+else
+  io500_mdtest_hard_files_per_proc=25000
+fi
 }
 
 function setup_find {
+SERIAL_FIND="True"
+if [ "$SERIAL_FIND" = "True" ]; then
   #
   # setup the find command. This is an area where innovation is allowed.
   #    There are two default options provided. One is a serial find and the other
@@ -82,12 +103,14 @@ function setup_find {
 
   # the serial version that should run (SLOWLY) without modification
   io500_find_mpi="False"
-  io500_find_cmd=$PWD/bin/sfind.sh
+  io500_find_cmd="$PWD/bin/sfind.sh"
+else
 
   # a parallel version that might require some work, it is a python3 program 
   # if you used utilities/prepare.sh, it should already be there. 
-  #io500_find_mpi="True"
-  #io500_find_cmd=$PWD/bin/pfind
+  io500_find_mpi="True"
+  io500_find_cmd=$PWD/bin/pfind
+fi
 }
 
 function setup_mdreal {
@@ -103,7 +126,7 @@ function run_benchmarks {
 # Add key/value pairs defining your system if you want
 # This function needs to exist although it doesn't have to output anything if you don't want
 function extra_description {
-  echo "System_name='JohnBentLaptop'"
+  echo "System_name='Serrano Fscratch'"
 }
 
 main

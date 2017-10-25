@@ -193,7 +193,7 @@ function mdreal {
   phase="mdreal"
   [ "$io500_run_mdreal" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
   echo "Running mdreal"
-  params_mdreal="-I=3 -L=$result_dir/mdreal -D=1 $params_mdreal  -- -D=${workdir}/mdreal"
+  io500_mdreal_params="-I=3 -L=$io500_result_dir/mdreal -D=1 $io500_mdreal_params  -- -D=${io500_workdir}/mdreal"
 }
 
 function myfind {
@@ -230,6 +230,39 @@ function output_score {
   md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
   tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
   echo "[SCORE] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
+  if [ "$io500_run_ior_easy" != "True" ] ; then
+    echo "IOR Easy Write skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_easy" != "True" ] ; then
+    echo "MD Easy Create skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_ior_hard" != "True" ] ; then
+    echo "IOR Hard Write skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_hard" != "True" ] ; then
+    echo "MD Hard Create skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_find" != "True" ] ; then
+    echo "Find skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_ior_easy_read" != "True" ] ; then
+    echo "IOR Easy Read skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_easy_stat" != "True" ] ; then
+    echo "MD Easy Stat skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_ior_hard_read" != "True" ] ; then
+    echo "IOR Hard Read skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_hard_stat" != "True" ] ; then
+    echo "MD Hard Stat skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_easy_delete" != "True" ] ; then
+    echo "MD Easy Delete skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_hard_delete" != "True" ] ; then
+    echo "MD Hard Delete skipped. No aggregate score possible."
+  fi
 }
 
 function core_setup {

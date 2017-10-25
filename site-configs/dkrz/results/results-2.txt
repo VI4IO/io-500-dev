@@ -1,0 +1,135 @@
+System:  mistralpp4
+filesystem_utilization=                     35883121604096 17166881830972 18321184444336  49% /mnt/lustre02
+date=2017.10.25-15.09.38
+io500_cleanup_workdir=False
+io500_find_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/bin/pfind
+io500_find_mpi=True
+io500_ior_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/bin/ior
+io500_ior_easy_params='-t 2048k -b 122880000k -F'
+io500_ior_hard_writes_per_proc=5000
+io500_mdreal_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/bin/md-real-io
+io500_mdreal_params='-P=5000 -I=1000'
+io500_mdtest_cmd=/home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest
+io500_mdtest_easy_files_per_proc=6000
+io500_mdtest_easy_params='-u -L'
+io500_mdtest_hard_files_per_proc=6000
+io500_mpiargs=
+io500_mpirun='srun -m block'
+io500_result_dir=/mnt/lustre02/work/k20200/k202079/io500/results
+io500_run_find=True
+io500_run_ior_easy_read=True
+io500_run_ior_easy=True
+io500_run_ior_hard_read=True
+io500_run_ior_hard=True
+io500_run_md_easy_delete=True
+io500_run_md_easy_stat=True
+io500_run_md_easy=True
+io500_run_md_hard_delete=True
+io500_run_md_hard_stat=True
+io500_run_md_hard=True
+io500_run_mdreal=False
+io500_workdir=/mnt/lustre02/work/k20200/k202079/io500/data
+System_name='DKRZ Mistral Phase2'
+Running the IO500 Benchmark now
+[Creating] directories
+
+[Starting] ior_easy_write
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/ior -w -C -Q 1 -g -G 27 -k -e -t 2048k -b 122880000k -F -o /mnt/lustre02/work/k20200/k202079/io500/data/ior_easy/ior_file_easy
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/ior_easy_write.txt.
+[Warning] This cannot be official score. The runtime of 113.9517 seconds is below 5 minutes
+[RESULT] BW   phase 1            ior_easy_write                2.070 GB/s : time 113.25 seconds
+
+[Starting] mdtest_easy_write
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest -C -F -d /mnt/lustre02/work/k20200/k202079/io500/data/mdt_easy -n 6000 -u -L
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/mdtest_easy_write.txt.
+[Warning] This cannot be official score. The runtime of 2.4338 seconds is below 5 minutes
+[RESULT] IOPS phase 1         mdtest_easy_write                7.297 kiops : time   2.43 seconds
+
+[Starting] ior_hard_write
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/ior -w -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s 5000 -o /mnt/lustre02/work/k20200/k202079/io500/data/ior_hard/IOR_file
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/ior_hard_write.txt.
+[Warning] This cannot be official score. The runtime of 65.3457 seconds is below 5 minutes
+[RESULT] BW   phase 2            ior_hard_write                0.007 GB/s : time  62.66 seconds
+
+[Starting] mdtest_hard_write
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest -C -t -F -w 3901 -e 3901 -d /mnt/lustre02/work/k20200/k202079/io500/data/mdt_hard -n 6000
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/mdtest_hard_write.txt.
+[Warning] This cannot be official score. The runtime of 5.7077 seconds is below 5 minutes
+[RESULT] IOPS phase 2         mdtest_hard_write                4.005 kiops : time   5.71 seconds
+
+[Starting] find
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/pfind /mnt/lustre02/work/k20200/k202079/io500/data -newer /mnt/lustre02/work/k20200/k202079/io500/data/timestampfile -size 3901c -name *01*
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/find.txt.
+[FIND] MATCHED 218/24004 in 3.0372 seconds
+[RESULT] IOPS phase 3                      find                7.900 kiops : time   3.04 seconds
+
+[Starting] ior_easy_read
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/ior -r -R -C -Q 1 -g -G 27 -k -e -t 2048k -b 122880000k -F -o /mnt/lustre02/work/k20200/k202079/io500/data/ior_easy/ior_file_easy
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/ior_easy_read.txt.
+[RESULT] BW   phase 3             ior_easy_read                1.760 GB/s : time 133.19 seconds
+
+[Starting] mdtest_easy_stat
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest -T -F -d /mnt/lustre02/work/k20200/k202079/io500/data/mdt_easy -n 6000 -u -L
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/mdtest_easy_stat.txt.
+[RESULT] IOPS phase 4          mdtest_easy_stat                8.634 kiops : time   2.04 seconds
+
+[Starting] ior_hard_read
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/ior -r -R -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s 5000 -o /mnt/lustre02/work/k20200/k202079/io500/data/ior_hard/IOR_file
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/ior_hard_read.txt.
+[RESULT] BW   phase 4             ior_hard_read                0.008 GB/s : time  54.22 seconds
+
+[Starting] mdtest_hard_stat
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest -T -t -F -w 3901 -e 3901 -d /mnt/lustre02/work/k20200/k202079/io500/data/mdt_hard -n 6000
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/mdtest_hard_stat.txt.
+[RESULT] IOPS phase 5          mdtest_hard_stat               17.326 kiops : time   1.32 seconds
+
+[Starting] mdtest_easy_delete
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest -r -F -d /mnt/lustre02/work/k20200/k202079/io500/data/mdt_easy -n 6000 -u -L
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/mdtest_easy_delete.txt.
+[RESULT] IOPS phase 6        mdtest_easy_delete                6.816 kiops : time   2.39 seconds
+
+[Starting] mdtest_hard_delete
+[Exec] srun -m block  /home/dkrz/k202079/work/io-500/io-500-dev/bin/mdtest -r -t -F -w 3901 -e 3901 -d /mnt/lustre02/work/k20200/k202079/io500/data/mdt_hard -n 6000
+[Results] in /mnt/lustre02/work/k20200/k202079/io500/results/mdtest_hard_delete.txt.
+[RESULT] IOPS phase 7        mdtest_hard_delete                7.667 kiops : time   2.19 seconds
+
+[Skipping] mdreal
+
+[Leaving] datafiles in /mnt/lustre02/work/k20200/k202079/io500/data
+[Summary] Results files in /mnt/lustre02/work/k20200/k202079/io500/results
+[Summary] Data files in /mnt/lustre02/work/k20200/k202079/io500/data
+[RESULT] BW   phase 1            ior_easy_write                1.341 GB/s : time  87.37 seconds
+[RESULT] BW   phase 2            ior_hard_write                0.176 GB/s : time   1.24 seconds
+[RESULT] BW   phase 1            ior_easy_write                1.289 GB/s : time  90.89 seconds
+[RESULT] BW   phase 1            ior_easy_write                1.227 GB/s : time  95.53 seconds
+[RESULT] BW   phase 2            ior_hard_write                0.491 GB/s : time   0.45 seconds
+[RESULT] BW   phase 3             ior_easy_read                1.358 GB/s : time  86.28 seconds
+[RESULT] BW   phase 4             ior_hard_read                0.938 GB/s : time   0.23 seconds
+[RESULT] BW   phase 1            ior_easy_write                2.002 GB/s : time 117.05 seconds
+[RESULT] BW   phase 2            ior_hard_write                0.007 GB/s : time  63.83 seconds
+[RESULT] BW   phase 1            ior_easy_write                2.061 GB/s : time 113.70 seconds
+[RESULT] BW   phase 1            ior_easy_write                2.070 GB/s : time 113.25 seconds
+[RESULT] BW   phase 2            ior_hard_write                0.007 GB/s : time  62.66 seconds
+[RESULT] BW   phase 3             ior_easy_read                1.760 GB/s : time 133.19 seconds
+[RESULT] BW   phase 4             ior_hard_read                0.008 GB/s : time  54.22 seconds
+[RESULT] IOPS phase 1         mdtest_easy_write                3.728 kiops : time   2.09 seconds
+[RESULT] IOPS phase 2         mdtest_hard_write                1.068 kiops : time   6.27 seconds
+[RESULT] IOPS phase 1         mdtest_easy_write                3.918 kiops : time   1.83 seconds
+[RESULT] IOPS phase 2         mdtest_hard_write                1.960 kiops : time   3.39 seconds
+[RESULT] IOPS phase 3                      find               23.820 kiops : time   0.50 seconds
+[RESULT] IOPS phase 4          mdtest_easy_stat                3.684 kiops : time   1.92 seconds
+[RESULT] IOPS phase 5          mdtest_hard_stat                8.696 kiops : time   0.98 seconds
+[RESULT] IOPS phase 6        mdtest_easy_delete                3.190 kiops : time   2.26 seconds
+[RESULT] IOPS phase 7        mdtest_hard_delete                3.179 kiops : time   2.20 seconds
+[SCORE] Bandwidth 0.935725 GB/s : IOPS 4.80813 kiops : TOTAL 4.499087
+[RESULT] IOPS phase 1         mdtest_easy_write                7.308 kiops : time   2.68 seconds
+[RESULT] IOPS phase 2         mdtest_hard_write                3.879 kiops : time   3.72 seconds
+[RESULT] IOPS phase 3                      find                8.790 kiops : time   2.73 seconds
+[RESULT] IOPS phase 1         mdtest_easy_write                7.297 kiops : time   2.43 seconds
+[RESULT] IOPS phase 2         mdtest_hard_write                4.005 kiops : time   5.71 seconds
+[RESULT] IOPS phase 3                      find                7.900 kiops : time   3.04 seconds
+[RESULT] IOPS phase 4          mdtest_easy_stat                8.634 kiops : time   2.04 seconds
+[RESULT] IOPS phase 5          mdtest_hard_stat               17.326 kiops : time   1.32 seconds
+[RESULT] IOPS phase 6        mdtest_easy_delete                6.816 kiops : time   2.39 seconds
+[RESULT] IOPS phase 7        mdtest_hard_delete                7.667 kiops : time   2.19 seconds
+[SCORE] Bandwidth 0.119711 GB/s : IOPS 7.83042 kiops : TOTAL .937387
