@@ -1,6 +1,6 @@
 There is a python parallel version here:
 git@github.com:johnbent/pwalk.git
-It requires python 3.
+It requires python 3.5 or 3.6.
 
 Everything you need to do to run it is done by the prepare.sh script.
 
