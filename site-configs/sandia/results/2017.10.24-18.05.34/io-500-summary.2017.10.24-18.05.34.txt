@@ -1,0 +1,108 @@
+System:  serrano-login1
+filesystem_utilization=10.196.135.10@o2ib1:10.196.135.11@o2ib1:/fscratch 1874496285600 461152705272 1316809299232  26% /fscratch
+date=2017.10.24-18.05.34
+io500_cleanup_workdir=True
+io500_find_cmd=/fscratch/gflofst/bin/sfind.sh
+io500_find_mpi=False
+io500_ior_cmd=/fscratch/gflofst/bin/ior
+io500_ior_easy_params='-t 2048k -b 2g -F'
+io500_ior_hard_writes_per_proc=60
+io500_mdreal_cmd=/fscratch/gflofst/bin/md-real-io
+io500_mdreal_params='-P=5000 -I=1000'
+io500_mdtest_cmd=/fscratch/gflofst/bin/mdtest
+io500_mdtest_easy_files_per_proc=610
+io500_mdtest_easy_params='-u -L'
+io500_mdtest_hard_files_per_proc=610
+io500_mpiargs='-np 2'
+io500_mpirun=mpirun
+io500_result_dir=/fscratch/gflofst/results/2017.10.24-18.05.34
+io500_run_find=True
+io500_run_ior_easy_read=True
+io500_run_ior_easy=True
+io500_run_ior_hard_read=True
+io500_run_ior_hard=True
+io500_run_md_easy_delete=True
+io500_run_md_easy_stat=True
+io500_run_md_easy=True
+io500_run_md_hard_delete=True
+io500_run_md_hard_stat=True
+io500_run_md_hard=True
+io500_run_mdreal=True
+io500_workdir=/fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34
+System_name='Serrano Fscratch'
+Running the IO500 Benchmark now
+[Creating] directories
+
+[Starting] ior_easy_write
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/ior -w -C -Q 1 -g -G 27 -k -e -t 2048k -b 2g -F -o /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/ior_easy/ior_file_easy
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/ior_easy_write.txt.
+[Warning] This cannot be official score. The runtime of 10.2901 seconds is below 5 minutes
+[RESULT] BW   phase 1            ior_easy_write                0.411 GB/s : time   9.73 seconds
+
+[Starting] mdtest_easy_write
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/mdtest -C -F -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_easy -n 610 -u -L
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/mdtest_easy_write.txt.
+[Warning] This cannot be official score. The runtime of 6.5047 seconds is below 5 minutes
+[RESULT] IOPS phase 1         mdtest_easy_write                0.222 kiops : time   6.50 seconds
+
+[Starting] ior_hard_write
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/ior -w -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s 60 -o /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/ior_hard/IOR_file
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/ior_hard_write.txt.
+[Warning] This cannot be official score. The runtime of 0.4560 seconds is below 5 minutes
+[RESULT] BW   phase 2            ior_hard_write                0.126 GB/s : time   0.04 seconds
+
+[Starting] mdtest_hard_write
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/mdtest -C -t -F -w 3901 -e 3901 -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_hard -n 610
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/mdtest_hard_write.txt.
+[Warning] This cannot be official score. The runtime of 5.4469 seconds is below 5 minutes
+[RESULT] IOPS phase 2         mdtest_hard_write                0.243 kiops : time   5.45 seconds
+
+[Starting] find
+[EXEC] /fscratch/gflofst/bin/sfind.sh /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34 -newer /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/timestampfile -size 3901c -name *01*
+[FIND] MATCHED 12/2455 in 0.2679 seconds
+[RESULT] IOPS phase 3                      find                9.160 kiops : time   0.27 seconds
+
+[Starting] ior_easy_read
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/ior -r -R -C -Q 1 -g -G 27 -k -e -t 2048k -b 2g -F -o /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/ior_easy/ior_file_easy
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/ior_easy_read.txt.
+[RESULT] BW   phase 3             ior_easy_read                1.062 GB/s : time   3.77 seconds
+
+[Starting] mdtest_easy_stat
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/mdtest -T -F -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_easy -n 610 -u -L
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/mdtest_easy_stat.txt.
+[RESULT] IOPS phase 4          mdtest_easy_stat                0.701 kiops : time   2.44 seconds
+
+[Starting] ior_hard_read
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/ior -r -R -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s 60 -o /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/ior_hard/IOR_file
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/ior_hard_read.txt.
+[RESULT] BW   phase 4             ior_hard_read                0.301 GB/s : time   0.02 seconds
+
+[Starting] mdtest_hard_stat
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/mdtest -T -t -F -w 3901 -e 3901 -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_hard -n 610
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/mdtest_hard_stat.txt.
+[RESULT] IOPS phase 5          mdtest_hard_stat                0.409 kiops : time   3.39 seconds
+
+[Starting] mdtest_easy_delete
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/mdtest -r -F -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_easy -n 610 -u -L
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/mdtest_easy_delete.txt.
+[RESULT] IOPS phase 6        mdtest_easy_delete                0.461 kiops : time   3.07 seconds
+
+[Starting] mdtest_hard_delete
+[Exec] mpirun -np 2 /fscratch/gflofst/bin/mdtest -r -t -F -w 3901 -e 3901 -d /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34/mdt_hard -n 610
+[Results] in /fscratch/gflofst/results/2017.10.24-18.05.34/mdtest_hard_delete.txt.
+[RESULT] IOPS phase 7        mdtest_hard_delete                0.351 kiops : time   3.90 seconds
+Running mdreal
+[Removing] all files in /fscratch/gflofst/datafiles/io500.2017.10.24-18.05.34
+[Summary] Results files in /fscratch/gflofst/results/2017.10.24-18.05.34
+[RESULT] BW   phase 1            ior_easy_write                0.411 GB/s : time   9.73 seconds
+[RESULT] BW   phase 2            ior_hard_write                0.126 GB/s : time   0.04 seconds
+[RESULT] BW   phase 3             ior_easy_read                1.062 GB/s : time   3.77 seconds
+[RESULT] BW   phase 4             ior_hard_read                0.301 GB/s : time   0.02 seconds
+[RESULT] IOPS phase 1         mdtest_easy_write                0.222 kiops : time   6.50 seconds
+[RESULT] IOPS phase 2         mdtest_hard_write                0.243 kiops : time   5.45 seconds
+[RESULT] IOPS phase 3                      find                9.160 kiops : time   0.27 seconds
+[RESULT] IOPS phase 4          mdtest_easy_stat                0.701 kiops : time   2.44 seconds
+[RESULT] IOPS phase 5          mdtest_hard_stat                0.409 kiops : time   3.39 seconds
+[RESULT] IOPS phase 6        mdtest_easy_delete                0.461 kiops : time   3.07 seconds
+[RESULT] IOPS phase 7        mdtest_hard_delete                0.351 kiops : time   3.90 seconds
+[SCORE] Bandwidth 0.358461 GB/s : IOPS 0.583244 kiops : TOTAL .209070
