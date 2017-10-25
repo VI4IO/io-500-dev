@@ -1,14 +1,8 @@
 #!/bin/bash
-#SBATCH --ntasks-per-node=10
-#SBATCH --nodes=100
-#SBATCH --job-name=IO-500
-#SBATCH --time=02:50:00
-#SBATCH -o io_500_out_%J
-#SBATCH -e io_500_err_%J
-
 ROOT=/home/dkrz/k202079/work/io-500/io-500-dev
 module load intel mxm/3.4.3082 fca/2.5.2431 bullxmpi_mlx/bullxmpi_mlx-1.2.9.2 cmake/3.2.3 gcc/7.1.0
 module load python/3.5.2
+workdir=/mnt/lustre02/work/k20200/k202079/io500/data
 
 source $ROOT/venv/bin/activate
 
@@ -34,7 +28,7 @@ function setup_directories {
   # set directories for where the benchmark files are created and where the results will go.
   # If you want to set up stripe tuning on your output directories or anything similar, then this is good place to do it.
   timestamp=`date +%Y.%m.%d-%H.%M.%S`           # create a uniquifier
-  io500_workdir=/mnt/lustre02/work/k20200/k202079/io500/data # directory where the data will be stored
+  io500_workdir=$workdir # directory where the data will be stored
   io500_result_dir=/mnt/lustre02/work/k20200/k202079/io500/results      # the directory where the output results will be kept
   mkdir -p $io500_workdir $io500_result_dir
 
@@ -104,6 +98,8 @@ function run_benchmarks {
 function extra_description {
   echo "System_name='DKRZ Mistral Phase2'"
 }
+
+rm -rf $workdir
 
 setup_directories
 setup_paths
