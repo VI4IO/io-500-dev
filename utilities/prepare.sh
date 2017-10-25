@@ -42,7 +42,8 @@ function git_co {
   pushd $BUILD
   git clone $1
   cd $2
-  git checkout $3
+  # turning off the hash thing for now because too many changes happening too quickly
+  #git checkout $3
   popd
 }
 
