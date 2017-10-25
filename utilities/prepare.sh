@@ -21,11 +21,11 @@ function main {
 
   get_ior
   get_pfind
-  get_mdrealio
+#  get_mdrealio
 
   build_ior
 #  build_pfind   # unnecessary since it is a Python 3 program
-  build_mdrealio
+#  build_mdrealio
 
   echo
   echo "OK: All required software packages are now prepared"
