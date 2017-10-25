@@ -71,7 +71,7 @@ function get_mdrealio {
   echo "Preparing MD-REAL-IO"
   git_co https://github.com/JulianKunkel/md-real-io md-real-io $MDREAL_HASH
   pushd $BUILD/md-real-io
-  #./configure --prefix=$PWD --minimal
+  ./configure --prefix=$INSTALL_DIR --minimal
   popd
 }
 
@@ -87,10 +87,10 @@ function build_ior {
 
 function build_mdrealio {
   cd $BUILD/md-real-io
-  pushd $BUILD
-  #$MAKE install
+  pushd build
+  $MAKE install
   #mv src/md-real-io $BIN
-  echo "MD-REAL-IO: Not built"
+  echo "MD-REAL-IO: OK"
   echo
   popd
 }
