@@ -6,6 +6,15 @@
 typedef struct{
   char * backend_name;
   char * workdir;
+
+  char * ior_easy_options;
+
+  int ioreasy_max_segments;
+  int iorhard_max_segments;
+  int mdhard_max_files;
+  int mdeasy_max_files;
+  int stonewall_timer;
+
   int verbosity;
 } io500_options_t;
 

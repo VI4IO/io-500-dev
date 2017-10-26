@@ -1,6 +1,6 @@
 #!/bin/bash -e
 CC=mpicc
-CFLAGS="-g -O2"
+CFLAGS="-g -O2 -DMDTEST_LIBRARY"
 
 pushd ior-1
 echo "Building IOR + MDTEST"
