@@ -87,15 +87,17 @@ static IOR_test_t * io500_io_easy_create(io500_options_t * options){
   char args[10000];
   int argc_count;
   int pos;
-  char ** args;
   pos = sprintf(args, "ior\n-w\n-k\n-s\n1");
   pos += sprintf(& args[pos], "\n-o\n%s/file", options->workdir);
   pos += sprintf(& args[pos], "\n-a\n%s", options->backend_name);
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], "\n-v");
   }
-  args = io500_str_to_arr(args, & argc_count);
-  return ior_run(argc_count, args);
+  char ** args_array;
+  args_array = io500_str_to_arr(args, & argc_count);
+  IOR_test_t * res = ior_run(argc_count, args_array);
+  free(args_array);
+  return res;
 }
 
 static IOR_test_t * io500_io_hard_create(io500_options_t * options){
@@ -115,15 +117,17 @@ static table_t * io500_md_easy_create(io500_options_t * options){
   char args[10000];
   int argc_count;
   int pos;
-  char ** args;
   pos = sprintf(args, "mdtest\n-i\n1\n-n\n1");
   pos += sprintf(& args[pos], "\n-d\n%s", options->workdir);
   pos += sprintf(& args[pos], "\n-a\n%s", options->backend_name);
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], "\n-v");
   }
-  args = io500_str_to_arr(args, & argc_count);
-  return mdtest_run(argc_count, args);
+  char ** args_array;
+  args_array = io500_str_to_arr(args, & argc_count);
+  table_t * table = mdtest_run(argc_count, args_array);
+  free(args_array);
+  return table;
 }
 
 static table_t * io500_md_easy_read(io500_options_t * options, table_t * create_stat){
@@ -166,18 +170,18 @@ int main(int argc, char ** argv){
   IOR_test_t * io_easy_read = io500_io_easy_read(options, io_easy_create);
   IOR_test_t * io_hard_read = io500_io_hard_read(options, io_hard_create);
 
-  table_t *    md_easy_read = io500_md_easy_read(options, io_easy_create);
-  table_t *    md_hard_read = io500_md_hard_read(options, io_hard_create);
+  table_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
+  table_t *    md_hard_read = io500_md_hard_read(options, md_hard_create);
 
-  table_t *    md_easy_delete = io500_md_easy_delete(options, io_easy_create);
-  table_t *    md_hard_delete = io500_md_hard_delete(options, io_hard_create);
+  table_t *    md_easy_delete = io500_md_easy_delete(options, md_easy_create);
+  table_t *    md_hard_delete = io500_md_hard_delete(options, md_hard_create);
 
   printf("IOR create count: %ld errors: %ld time: %fs size: %ld bytes \n", io_easy_create->results->pairs_accessed, totalErrorCount,
   io_easy_create->results->writeTime[0],
   io_easy_create->results->aggFileSizeFromXfer[0] );
 
   for(int i=0; i < 10; i++){
-    printf("%d = %f\n", i, mdtable->entry[i]);
+    printf("%d = %f\n", i, md_easy_create->entry[i]);
   }
 
   if(rank == 0){
