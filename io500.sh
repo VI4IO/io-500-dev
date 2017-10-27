@@ -87,10 +87,10 @@ function setup_find {
 
   # a parallel version that might require some work, it is a python3 program 
   # if you used utilities/prepare.sh, it should already be there. 
-  set +u
-  export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
-  io500_find_mpi="True"
-  io500_find_cmd=$PWD/bin/pfind
+  #set +u
+  #export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
+  #io500_find_mpi="True"
+  #io500_find_cmd=$PWD/bin/pfind
 }
 
 function setup_mdreal {
