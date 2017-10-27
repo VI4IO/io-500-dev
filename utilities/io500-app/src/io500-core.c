@@ -260,23 +260,31 @@ static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int
 }
 
 static table_t * io500_md_easy_create(io500_options_t * options){
-  printf("Running MD_EASY_CREATE\n");
+  if(rank == 0){
+    printf("Running MD_EASY_CREATE: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_easy(options, 'C', options->mdeasy_max_files, 1, "");
 }
 
 static table_t * io500_md_easy_read(io500_options_t * options, table_t * create_read){
-  printf("Running MD_EASY_READ\n");
+  if(rank == 0){
+    printf("Running MD_EASY_READ: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_easy(options, 'E', create_read->items, 0, "");
 }
 
 static table_t * io500_md_easy_stat(io500_options_t * options, table_t * create_read){
-  printf("Running MD_EASY_STAT\n");
+  if(rank == 0){
+    printf("Running MD_EASY_STAT: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_easy(options, 'T', create_read->items, 0, "");
 }
 
 
 static table_t * io500_md_easy_delete(io500_options_t * options, table_t * create_read){
-  printf("Running MD_EASY_DELETE\n");
+  if(rank == 0){
+    printf("Running MD_EASY_DELETE: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_easy(options, 'r', create_read->items, 0, "");
 }
 
@@ -306,22 +314,30 @@ static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int
 }
 
 static table_t * io500_md_hard_create(io500_options_t * options){
-  printf("Running MD_HARD_CREATE\n");
+  if(rank == 0){
+    printf("Running MD_HARD_CREATE: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_hard(options, 'C', options->mdhard_max_files, 1, "");
 }
 
 static table_t * io500_md_hard_read(io500_options_t * options, table_t * create_read){
-  printf("Running MD_HARD_READ\n");
+  if(rank == 0){
+    printf("Running MD_HARD_READ: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_hard(options, 'E', create_read->items, 0, "");
 }
 
 static table_t * io500_md_hard_stat(io500_options_t * options, table_t * create_read){
-  printf("Running MD_HARD_Stat\n");
+  if(rank == 0){
+    printf("Running MD_HARD_Stat: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_hard(options, 'T', create_read->items, 0, "");
 }
 
 static table_t * io500_md_hard_delete(io500_options_t * options, table_t * create_read){
-  printf("Running MD_HARD_DELETE\n");
+  if(rank == 0){
+    printf("Running MD_HARD_DELETE: %s\n", CurrentTimeString());
+  }
   return io500_run_mdtest_hard(options, 'r', create_read->items, 0, "");
 }
 
@@ -434,7 +450,7 @@ int main(int argc, char ** argv){
 
     io500_print_md("mdtest_hard_create", 5, 4, md_hard_create);
     io500_print_md("mdtest_hard_read",   6, 6, md_hard_read);
-    io500_print_md("mdtest_hard_stat",   6, 5, md_hard_stat);
+    io500_print_md("mdtest_hard_stat",   7, 5, md_hard_stat);
     io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
     io500_cleanup();
   }
