@@ -8,6 +8,8 @@ typedef struct{
   char * workdir;
 
   char * ior_easy_options;
+  char * ior_hard_options;
+  char * mdtest_easy_options;
 
   int ioreasy_max_segments;
   int iorhard_max_segments;
