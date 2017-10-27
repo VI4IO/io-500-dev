@@ -21,6 +21,7 @@ function main {
   ior_hard "read"
   mdt_hard "stat"
   mdt_easy "delete"
+  mdt_hard "read"
   mdt_hard "delete"
   mdreal
   cleanup
@@ -179,13 +180,20 @@ function mdt_hard {
     endphase_check "stat"
     iops5=$( get_mdt_iops $result_file "stat" ) 
     print_iops 5 $iops5 $duration 
+  elif [[ "$1" == "read" ]] ; then
+    [ "$io500_run_md_hard_read" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
+    startphase
+    myrun "$io500_mdtest_cmd -E $params_md_hard" $result_file 
+    endphase_check "read"
+    iops7=$( get_mdt_iops $result_file "read" ) 
+    print_iops 7 $iops7 $duration 
   else
     [ "$io500_run_md_hard_delete" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
     startphase
     myrun "$io500_mdtest_cmd -r $params_md_hard" $result_file 
     endphase_check "delete"
-    iops7=$( get_mdt_iops $result_file "removal" ) 
-    print_iops 7 $iops7 $duration 
+    iops8=$( get_mdt_iops $result_file "removal" ) 
+    print_iops 8 $iops8 $duration 
   fi
 }
 
@@ -227,7 +235,8 @@ function output_score {
   cat $summary_file | grep BW
   cat $summary_file | grep IOPS
   bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
-  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
+  #md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 $iops8 | awk '{print ($1*$2*$3*$4*$5*$6*$7*$8)^(1/8)}'`
+  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops8 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
   tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
   echo "[SCORE] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
   if [ "$io500_run_ior_easy" != "True" ] ; then
@@ -274,7 +283,7 @@ function core_setup {
   popd > /dev/null
   timestamp_file=$io500_workdir/timestampfile  # this file is used by the find command
   summary_file=$io500_result_dir/result_summary.txt
-  iops1=0;iops2=0;iops3=0;iops4=0;iops5=0;iops6=0;iops7=0
+  iops1=0;iops2=0;iops3=0;iops4=0;iops5=0;iops6=0;iops7=0;iops8=0
   bw1=0;bw2=0;bw3=0;bw4=0
   mdt_hard_fsize=3901
 }

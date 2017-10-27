@@ -21,6 +21,7 @@ io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
 io500_run_md_hard_stat="True"
+io500_run_md_hard_read="False"  # this is currently optional
 io500_run_md_easy_delete="True" # turn this off if you want to just run find by itself
 io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
 io500_run_mdreal="False"  # this one is optional
@@ -86,8 +87,10 @@ function setup_find {
 
   # a parallel version that might require some work, it is a python3 program 
   # if you used utilities/prepare.sh, it should already be there. 
-  #io500_find_mpi="True"
-  #io500_find_cmd=$PWD/bin/pfind
+  set +u
+  export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
+  io500_find_mpi="True"
+  io500_find_cmd=$PWD/bin/pfind
 }
 
 function setup_mdreal {
