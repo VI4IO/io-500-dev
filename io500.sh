@@ -4,7 +4,7 @@
 # Edit this file as needed for your machine.
 # This simplified version is just for running on a single node.
 # It is a simplified version of the site-configs/sandia/startup.sh which include SLURM directives.
-# Most of the variables set in here are needed for io500_core.sh which gets sourced at the end of this.
+# Most of the variables set in here are needed for io500_fixed.sh which gets sourced at the end of this.
 
 set -euo pipefail  # better error handling
 
@@ -98,7 +98,7 @@ function setup_mdreal {
 }
 
 function run_benchmarks {
-  # Important: source the io500_core.sh script.  Do not change it. If you discover
+  # Important: source the io500_fixed.sh script.  Do not change it. If you discover
   # a need to change it, please email the mailing list to discuss
   source ./bin/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
 }
