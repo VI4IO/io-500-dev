@@ -235,8 +235,7 @@ function output_score {
   cat $summary_file | grep BW
   cat $summary_file | grep IOPS
   bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
-  #md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 $iops8 | awk '{print ($1*$2*$3*$4*$5*$6*$7*$8)^(1/8)}'`
-  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops8 | awk '{print ($1*$2*$3*$4*$5*$6*$7)^(1/7)}'`
+  md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 $iops8 | awk '{print ($1*$2*$3*$4*$5*$6*$7*$8)^(1/8)}'`
   tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
   echo "[SCORE] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
   if [ "$io500_run_ior_easy" != "True" ] ; then
@@ -265,6 +264,9 @@ function output_score {
   fi
   if [ "$io500_run_md_hard_stat" != "True" ] ; then
     echo "MD Hard Stat skipped. No aggregate score possible."
+  fi
+  if [ "$io500_run_md_hard_read" != "True" ] ; then
+    echo "MD Hard Read skipped. No aggregate score possible."
   fi
   if [ "$io500_run_md_easy_delete" != "True" ] ; then
     echo "MD Easy Delete skipped. No aggregate score possible."
