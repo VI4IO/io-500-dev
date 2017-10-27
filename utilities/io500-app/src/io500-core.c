@@ -391,7 +391,9 @@ int main(int argc, char ** argv){
   }
   io500_options_t * options = io500_parse_args(argc, argv);
 
-  io500_check_workdir(options);
+  if(rank == 0){
+    io500_check_workdir(options);
+  }
 
   IOR_test_t * io_easy_create = io500_io_easy_create(options);
   table_t *    md_easy_create = io500_md_easy_create(options);
@@ -414,28 +416,27 @@ int main(int argc, char ** argv){
   table_t *    md_hard_delete = io500_md_hard_delete(options, md_hard_create);
   table_t *    md_easy_delete = io500_md_easy_delete(options, md_easy_create);
 
-  printf("\n");
-  printf("=== IO-500 submission ===\n");
-
-  io500_print_bw("ior_easy_write", 1, io_easy_create, 0);
-  io500_print_bw("ior_easy_read", 2, io_easy_read, 1);
-  io500_print_bw("ior_hard_write", 3, io_hard_create, 0);
-  io500_print_bw("ior_hard_read", 4, io_hard_read, 1);
-
-  io500_print_md("mdtest_easy_create", 1, 4, md_easy_create);
-  io500_print_md("mdtest_easy_read",   2, 6, md_easy_read);
-  io500_print_md("mdtest_easy_stat",   3, 5, md_easy_stat);
-  io500_print_md("mdtest_easy_delete", 4, 7, md_easy_delete);
-
-  io500_print_md("mdtest_hard_create", 5, 4, md_hard_create);
-  io500_print_md("mdtest_hard_read",   6, 6, md_hard_read);
-  io500_print_md("mdtest_hard_stat",   6, 5, md_hard_stat);
-  io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
-
-  io500_cleanup();
-
   if(rank == 0){
     printf("IO500 complete: %s\n", CurrentTimeString());
+
+    printf("\n");
+    printf("=== IO-500 submission ===\n");
+
+    io500_print_bw("ior_easy_write", 1, io_easy_create, 0);
+    io500_print_bw("ior_easy_read", 2, io_easy_read, 1);
+    io500_print_bw("ior_hard_write", 3, io_hard_create, 0);
+    io500_print_bw("ior_hard_read", 4, io_hard_read, 1);
+
+    io500_print_md("mdtest_easy_create", 1, 4, md_easy_create);
+    io500_print_md("mdtest_easy_read",   2, 6, md_easy_read);
+    io500_print_md("mdtest_easy_stat",   3, 5, md_easy_stat);
+    io500_print_md("mdtest_easy_delete", 4, 7, md_easy_delete);
+
+    io500_print_md("mdtest_hard_create", 5, 4, md_hard_create);
+    io500_print_md("mdtest_hard_read",   6, 6, md_hard_read);
+    io500_print_md("mdtest_hard_stat",   6, 5, md_hard_stat);
+    io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
+    io500_cleanup();
   }
   MPI_Finalize();
   return 0;
