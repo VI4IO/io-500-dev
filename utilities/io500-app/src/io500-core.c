@@ -12,7 +12,7 @@
 
 
 #define IOR_HARD_OPTIONS "ior -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008"
-#define IOR_EASY_OPTIONS "ior -k "
+#define IOR_EASY_OPTIONS "ior -k"
 #define MDTEST_EASY_OPTIONS "mdtest -F"
 #define MDTEST_HARD_OPTIONS "mdtest -w 3901 -e 3901 -t -F"
 
@@ -159,7 +159,7 @@ static IOR_test_t * io500_io_hard_create(io500_options_t * options){
 }
 
 
-static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * create_stat){
+static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * create_read){
   //generic array holding the arguments to the subtests
   char args[10000];
   int argc_count;
@@ -169,7 +169,7 @@ static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * c
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], " -v");
   }
-  pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOutIterations=%d", create_stat->results->pairs_accessed);
+  pos += sprintf(& args[pos], " -O stoneWallingWearOutIterations=%d", create_read->results->pairs_accessed);
   pos += sprintf(& args[pos], " -s %d", options->ioreasy_max_segments);
 
   io500_replace_str(args); // make sure workdirs with space works
@@ -208,17 +208,17 @@ static IOR_test_t * io500_io_easy_create(io500_options_t * options){
   return res;
 }
 
-static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * create_stat){
+static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * create_read){
   //generic array holding the arguments to the subtests
   char args[10000];
   int argc_count;
   int pos;
-  pos = sprintf(args, IOR_EASY_OPTIONS" -R");
+  pos = sprintf(args, IOR_EASY_OPTIONS" -r");
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], " -v");
   }
-  pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOutIterations=%d", create_stat->results->pairs_accessed);
+  pos += sprintf(& args[pos], " -O stoneWallingWearOutIterations=%d", create_read->results->pairs_accessed);
   pos += sprintf(& args[pos], " -s %d", options->ioreasy_max_segments);
 
   io500_replace_str(args); // make sure workdirs with space works
@@ -232,7 +232,7 @@ static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * c
   return res;
 }
 
-static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int maxfiles, int use_stonewall){
+static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int maxfiles, int use_stonewall, const char * extra){
   char args[10000];
   memset(args, 0, 10000);
 
@@ -247,6 +247,7 @@ static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], " -v");
   }
+  pos += sprintf(& args[pos], "%s", extra);
   io500_replace_str(args);
   pos += sprintf(& args[pos], "\n-d\n%s/mdtest_easy", options->workdir);
   pos += sprintf(& args[pos], "\n%s", options->mdtest_easy_options);
@@ -260,21 +261,27 @@ static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int
 
 static table_t * io500_md_easy_create(io500_options_t * options){
   printf("Running MD_EASY_CREATE\n");
-  return io500_run_mdtest_easy(options, 'C', options->mdeasy_max_files, 1);
+  return io500_run_mdtest_easy(options, 'C', options->mdeasy_max_files, 1, "");
 }
 
-static table_t * io500_md_easy_stat(io500_options_t * options, table_t * create_stat){
+static table_t * io500_md_easy_read(io500_options_t * options, table_t * create_read){
+  printf("Running MD_EASY_READ\n");
+  return io500_run_mdtest_easy(options, 'E', create_read->items, 0, "");
+}
+
+static table_t * io500_md_easy_stat(io500_options_t * options, table_t * create_read){
   printf("Running MD_EASY_STAT\n");
-  return io500_run_mdtest_easy(options, 'T', create_stat->items, 0);
+  return io500_run_mdtest_easy(options, 'T', create_read->items, 0, "");
 }
 
-static table_t * io500_md_easy_delete(io500_options_t * options, table_t * create_stat){
+
+static table_t * io500_md_easy_delete(io500_options_t * options, table_t * create_read){
   printf("Running MD_EASY_DELETE\n");
-  return io500_run_mdtest_easy(options, 'r', create_stat->items, 0);
+  return io500_run_mdtest_easy(options, 'r', create_read->items, 0, "");
 }
 
 
-static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int maxfiles, int use_stonewall){
+static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int maxfiles, int use_stonewall, const char * extra){
   char args[10000];
   int argc_count;
   int pos;
@@ -287,6 +294,7 @@ static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], " -v");
   }
+  pos += sprintf(& args[pos], "%s", extra);
   io500_replace_str(args);
   pos += sprintf(& args[pos], "\n-d\n%s/mdtest_hard", options->workdir);
   //pos += sprintf(& args[pos], "\n%s", options->mdtest_easy_options);
@@ -299,17 +307,22 @@ static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int
 
 static table_t * io500_md_hard_create(io500_options_t * options){
   printf("Running MD_HARD_CREATE\n");
-  return io500_run_mdtest_hard(options, 'C', options->mdhard_max_files, 1);
+  return io500_run_mdtest_hard(options, 'C', options->mdhard_max_files, 1, "");
 }
 
-static table_t * io500_md_hard_stat(io500_options_t * options, table_t * create_stat){
-  printf("Running MD_HARD_STAT\n");
-  return io500_run_mdtest_hard(options, 'T', create_stat->items, 0);
+static table_t * io500_md_hard_read(io500_options_t * options, table_t * create_read){
+  printf("Running MD_HARD_READ\n");
+  return io500_run_mdtest_hard(options, 'E', create_read->items, 0, "");
 }
 
-static table_t * io500_md_hard_delete(io500_options_t * options, table_t * create_stat){
+static table_t * io500_md_hard_stat(io500_options_t * options, table_t * create_read){
+  printf("Running MD_HARD_Stat\n");
+  return io500_run_mdtest_hard(options, 'T', create_read->items, 0, "");
+}
+
+static table_t * io500_md_hard_delete(io500_options_t * options, table_t * create_read){
   printf("Running MD_HARD_DELETE\n");
-  return io500_run_mdtest_hard(options, 'r', create_stat->items, 0);
+  return io500_run_mdtest_hard(options, 'r', create_read->items, 0, "");
 }
 
 static void io500_recursively_create(const char * dir){
@@ -348,9 +361,28 @@ static void io500_cleanup(){
   printf("TODO cleanup !\n");
 }
 
-int main(int argc, char ** argv){
-  stdin_cp = dup(stdin);
+static void io500_print_bw(const char * prefix, int id, IOR_test_t * stat, int read){
+  double timer = read ? stat->results->readTime[0] : stat->results->writeTime[0];
+  printf("IOR %d %s time: %fs size: %ld bytes bw: %.3f GiB/s\n",
+  id, prefix,
+  timer,
+  stat->results->aggFileSizeFromXfer[0],
+  stat->results->aggFileSizeFromXfer[0] / 1024.0 / 1024.0 / 1024.0 / timer);
+}
 
+static void io500_print_md(const char * prefix, int id, int pos, table_t * stat){
+  double val = stat->entry[pos] / 1000;
+  //for(int i=0; i < 10; i++){
+  //  if(stat->entry[i] != 0){
+  //    printf("%d %f\n", i, stat->entry[i]);
+  //  }
+  //}
+
+  printf("mdtest %d %s %.3f kioops\n", id, prefix, val);
+}
+
+
+int main(int argc, char ** argv){
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -372,22 +404,33 @@ int main(int argc, char ** argv){
   io500_find_results_t* io500_find(options);
 
   IOR_test_t * io_easy_read = io500_io_easy_read(options, io_easy_create);
-  table_t *    md_easy_read = io500_md_easy_stat(options, md_easy_create);
+  table_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
+  table_t *    md_hard_stat = io500_md_hard_stat(options, md_hard_create);
 
   IOR_test_t * io_hard_read = io500_io_hard_read(options, io_hard_create);
-  table_t *    md_hard_read = io500_md_hard_stat(options, md_hard_create);
+  table_t *    md_hard_read = io500_md_hard_read(options, md_hard_create);
+  table_t *    md_easy_stat = io500_md_easy_stat(options, md_easy_create);
 
   table_t *    md_hard_delete = io500_md_hard_delete(options, md_hard_create);
   table_t *    md_easy_delete = io500_md_easy_delete(options, md_easy_create);
 
-  printf("IOR create count: %ld errors: %ld time: %fs size: %ld bytes \n", io_easy_create->results->pairs_accessed, totalErrorCount,
-  io_easy_create->results->writeTime[0],
-  io_easy_create->results->aggFileSizeFromXfer[0] );
+  printf("\n");
+  printf("=== IO-500 submission ===\n");
 
-  printf("Items: %lld\n", md_easy_create->items);
-  for(int i=0; i < 10; i++){
-    printf("%d = %f\n", i, md_easy_create->entry[i]);
-  }
+  io500_print_bw("ior_easy_write", 1, io_easy_create, 0);
+  io500_print_bw("ior_easy_read", 2, io_easy_read, 1);
+  io500_print_bw("ior_hard_write", 3, io_hard_create, 0);
+  io500_print_bw("ior_hard_read", 4, io_hard_read, 1);
+
+  io500_print_md("mdtest_easy_create", 1, 4, md_easy_create);
+  io500_print_md("mdtest_easy_read",   2, 6, md_easy_read);
+  io500_print_md("mdtest_easy_stat",   3, 5, md_easy_stat);
+  io500_print_md("mdtest_easy_delete", 4, 7, md_easy_delete);
+
+  io500_print_md("mdtest_hard_create", 5, 4, md_hard_create);
+  io500_print_md("mdtest_hard_read",   6, 6, md_hard_read);
+  io500_print_md("mdtest_hard_stat",   6, 5, md_hard_stat);
+  io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
 
   io500_cleanup();
 

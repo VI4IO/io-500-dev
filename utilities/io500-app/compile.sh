@@ -5,7 +5,8 @@ CFLAGS="-g -O2 -DMDTEST_LIBRARY -fstack-protector-all -Wextra"
 pushd ior-1
 echo "Building IOR + MDTEST"
 
-$CC $CFLAGS -DLinux -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1 -D__USE_LARGEFILE64=1 -Dmain=main_mdtest -c src/mdtest.c
+$CC $CFLAGS -c -o ior-opt.o getopt/optlist.c
+$CC $CFLAGS -I. -DLinux -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1 -D__USE_LARGEFILE64=1 -Dmain=main_mdtest -c src/mdtest.c
 
 $CC -DHAVE_CONFIG_H -I. $CFLAGS -Dmain=main_ior -c -o ior-ior.o src/ior.c
 $CC -DHAVE_CONFIG_H -I. $CFLAGS -c -o ior-utilities.o src/utilities.c
