@@ -17,6 +17,7 @@ typedef struct{
   int mdeasy_max_files;
   int stonewall_timer;
   int stonewall_timer_reads;
+  int stonewall_timer_delete;
 
   int verbosity;
 } io500_options_t;

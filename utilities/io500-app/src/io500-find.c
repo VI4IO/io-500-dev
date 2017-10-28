@@ -10,7 +10,8 @@
 #include <aiori.h>
 #include <libcircle.h>
 
-// version is based on mpistat
+// this version is based on mpistat
+#include <utilities.h>
 
 #include "io500.h"
 
@@ -19,6 +20,9 @@ static int find(char * workdir);
 static io500_find_results_t * res;
 
 io500_find_results_t* io500_find(io500_options_t * opt){
+  if(rank == 0){
+    printf("Running find: %s\n", CurrentTimeString());
+  }
   res = malloc(sizeof(io500_find_results_t));
   memset(res, 0, sizeof(*res));
 
@@ -59,7 +63,7 @@ static char  find_file_type(unsigned char c) {
 }
 
 static void find_do_lstat(char *path) {
-  printf("%s\n", path);
+  printf("LSTAT \"%s\"\n", path);
     static struct stat buf;
     if (lstat(path+1,&buf) == 0) {
       res->found_files++;
@@ -122,9 +126,10 @@ static void find_process_work(CIRCLE_handle *handle)
 // first argument is data directory to store the lstat files
 // second argument is directory to start lstating from
 static int find(char * workdir) {
-  realpath(workdir, start_dir);
+  char * err = realpath(workdir, start_dir);
+
   DIR *sd=opendir(start_dir);
-  if (!sd) {
+  if (err == NULL || ! sd) {
       fprintf (stderr, "Cannot open directory '%s': %s\n",
           start_dir, strerror (errno));
       exit (EXIT_FAILURE);
@@ -133,7 +138,7 @@ static int find(char * workdir) {
 	// initialise MPI and the libcircle stuff
   int argc = 1;
   char *argv[] = {"test"};
-	int rank = CIRCLE_init(argc, argv, CIRCLE_SPLIT_RANDOM);
+	CIRCLE_init(argc, argv, CIRCLE_SPLIT_RANDOM);
 	// set the create work callback
   CIRCLE_cb_create(& find_create_work);
 

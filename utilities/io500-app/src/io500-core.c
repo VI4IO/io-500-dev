@@ -10,15 +10,12 @@
 #include <mdtest.h>
 #include "io500.h"
 
-
 #define IOR_HARD_OPTIONS "ior -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008"
 #define IOR_EASY_OPTIONS "ior -k"
 #define MDTEST_EASY_OPTIONS "mdtest -F"
 #define MDTEST_HARD_OPTIONS "mdtest -w 3901 -e 3901 -t -F"
 
 static int size;
-static char * workdir = "";
-static int stdin_cp;
 
 static void io500_replace_str(char * str){
   for( ; *str != 0 ; str++ ){
@@ -74,6 +71,7 @@ static void io500_print_help(io500_options_t * res){
 
 static io500_options_t * io500_parse_args(int argc, char ** argv){
   io500_options_t * res = malloc(sizeof(io500_options_t));
+  memset(res, 0, sizeof(io500_options_t));
 
   res->backend_name = "POSIX";
   res->workdir = ".";
@@ -172,7 +170,7 @@ static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * c
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], " -v");
   }
-  pos += sprintf(& args[pos], " -O stoneWallingWearOutIterations=%d", create_read->results->pairs_accessed);
+  pos += sprintf(& args[pos], " -O stoneWallingWearOutIterations=%zu", create_read->results->pairs_accessed);
   if (options->stonewall_timer_reads){
     pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOut=1", options->stonewall_timer);
   }
@@ -225,7 +223,7 @@ static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * c
   for(int i=0; i < options->verbosity; i++){
     pos += sprintf(& args[pos], " -v");
   }
-  pos += sprintf(& args[pos], " -O stoneWallingWearOutIterations=%d", create_read->results->pairs_accessed);
+  pos += sprintf(& args[pos], " -O stoneWallingWearOutIterations=%zu", create_read->results->pairs_accessed);
   if (options->stonewall_timer_reads){
     pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOut=1", options->stonewall_timer);
   }
@@ -389,7 +387,7 @@ static void io500_cleanup(){
 
 static void io500_print_bw(const char * prefix, int id, IOR_test_t * stat, int read){
   double timer = read ? stat->results->readTime[0] : stat->results->writeTime[0];
-  printf("IOR %d %s time: %fs size: %ld bytes bw: %.3f GiB/s\n",
+  printf("IOR %d %s time: %fs size: %lld bytes bw: %.3f GiB/s\n",
   id, prefix,
   timer,
   stat->results->aggFileSizeFromXfer[0],
