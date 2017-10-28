@@ -87,10 +87,11 @@ function setup_find {
 
   # a parallel version that might require some work, it is a python3 program 
   # if you used utilities/prepare.sh, it should already be there. 
+  # change the stonewall to 300 to get a valid score
   #set +u
   #export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
   #io500_find_mpi="True"
-  #io500_find_cmd=$PWD/bin/pfind
+  #io500_find_cmd="$PWD/bin/pfind -stonewall 1"
 }
 
 function setup_mdreal {
