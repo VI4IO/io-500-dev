@@ -18,7 +18,7 @@ popd
 
 echo "Building IO500"
 $CC $CFLAGS -Wall -I ior-1/src -c src/io500-core.c || exit 1
-$CC $CFLAGS -Wall -I ior-1/src -c src/io500-find.c || exit 1
-$CC $CFLAGS -o io500 ior-1/*.o *.o -lm || exit 1
+$CC $CFLAGS -Wall -I ior-1/src -I libcircle/libcircle/ -c src/io500-find.c || exit 1
+$CC $CFLAGS -o io500 ior-1/*.o *.o libcircle/.libs/libcircle.a -lm  || exit 1
 
 echo "[OK]"
