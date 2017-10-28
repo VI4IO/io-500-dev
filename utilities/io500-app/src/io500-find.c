@@ -26,7 +26,7 @@ static int glob_delete;
 static int glob_stonewall_timer;
 static double glob_endtime;
 
-static io500_find_results_t * res;
+static io500_find_results_t * res = NULL;
 
 io500_find_results_t* io500_find(io500_options_t * opt){
   if(rank == 0){
@@ -44,13 +44,9 @@ io500_find_results_t* io500_find(io500_options_t * opt){
     }
   }
 
-
-  res = malloc(sizeof(io500_find_results_t));
-  memset(res, 0, sizeof(*res));
-
   //ior_aiori_t * backend = aiori_select(opt->backend_name);
   double start = GetTimeStamp();
-  io500_parallel_find_or_delete(opt->workdir, "01", 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
+  io500_find_results_t * res = io500_parallel_find_or_delete(opt->workdir, "01", 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
   double end = GetTimeStamp();
   res->runtime = end - start;
 
@@ -186,9 +182,12 @@ static void find_process_work(CIRCLE_handle *handle)
 // arguments :
 // first argument is data directory to store the lstat files
 // second argument is directory to start lstating from
-int io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s) {
+io500_find_results_t * io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s) {
   char * err = realpath(workdir, start_dir);
   glob_compare_str = filename_pattern;
+
+  res = malloc(sizeof(io500_find_results_t));
+  memset(res, 0, sizeof(*res));
 
   glob_delete = delete;
   glob_stonewall_timer = stonewall_timer_s;
@@ -221,5 +220,5 @@ int io500_parallel_find_or_delete(char * workdir, char * const filename_pattern,
 	// wait for all processing to finish and then clean up
 	CIRCLE_finalize();
 
-	return 0;
+	return res;
 }

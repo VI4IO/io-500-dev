@@ -458,6 +458,7 @@ int main(int argc, char ** argv){
 
   if(rank == 0){
     printf("IO500 starting: %s\n", CurrentTimeString());
+    printf("nproc=%d\n", size);
   }
   io500_options_t * options = io500_parse_args(argc, argv);
 

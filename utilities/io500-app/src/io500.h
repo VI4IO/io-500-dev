@@ -37,5 +37,5 @@ typedef struct{
 io500_find_results_t* io500_find(io500_options_t * opt);
 
 void io500_error(char * const str);
-int io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s);
+io500_find_results_t * io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s);
 #endif
