@@ -14,7 +14,7 @@
 #define IOR_HARD_OPTIONS "ior -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008"
 #define IOR_EASY_OPTIONS "ior -k"
 #define MDTEST_EASY_OPTIONS "mdtest -F"
-#define MDTEST_HARD_OPTIONS "mdtest -w 3901 -e 3901 -t -F"
+#define MDTEST_HARD_OPTIONS "mdtest -w 3900 -e 3900 -t -F"
 
 static int size;
 
@@ -391,7 +391,10 @@ static void io500_check_workdir(io500_options_t * options){
 }
 
 static void io500_cleanup(io500_options_t* options){
-  io500_parallel_find_or_delete(options->workdir, 1, 0);
+  if(rank == 0){
+    printf("\nCleaning working directory\n");
+  }
+  io500_parallel_find_or_delete(options->workdir, NULL, 1, 0);
 }
 
 static void io500_touch(io500_options_t* options){
@@ -439,9 +442,6 @@ int main(int argc, char ** argv){
   io500_options_t * options = io500_parse_args(argc, argv);
 
   if(options->only_cleanup){
-    if(rank == 0){
-      printf("Cleaning working directory\n");
-    }
     io500_cleanup(options);
     MPI_Abort(MPI_COMM_WORLD, 0);
   }

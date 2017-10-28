@@ -17,10 +17,11 @@
 
 // parallel recursive find
 
-static struct timespec compare_time;
-static off_t expected_size;
-static char * compare_str = "01";
+static struct stat compare_time_newer;
+static off_t glob_expected_size;
+static char * glob_compare_str;
 
+static int glob_verbosity = 0;
 static int glob_delete;
 static int glob_stonewall_timer;
 static double glob_endtime;
@@ -32,16 +33,15 @@ io500_find_results_t* io500_find(io500_options_t * opt){
     printf("Running find: %s\n", CurrentTimeString());
   }
 
-  expected_size = 3900; // TODO make that adjustable
+  glob_expected_size = 3900; // TODO make that adjustable
+  glob_verbosity = opt->verbosity;
 
   {
     char fname[4096];
     sprintf(fname, "%s/TIMESTAMP", opt->workdir);
-    struct stat buf;
-    if(lstat(fname, & buf) != 0) {
+    if(lstat(fname, & compare_time_newer) != 0) {
       io500_error("Could not read timestamp file!");
     }
-    compare_time = buf.st_ctim;
   }
 
 
@@ -50,7 +50,7 @@ io500_find_results_t* io500_find(io500_options_t * opt){
 
   //ior_aiori_t * backend = aiori_select(opt->backend_name);
   double start = GetTimeStamp();
-  io500_parallel_find_or_delete(opt->workdir, 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
+  io500_parallel_find_or_delete(opt->workdir, "01", 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
   double end = GetTimeStamp();
   res->runtime = end - start;
   res->rate = res->found_files / res->runtime;
@@ -84,22 +84,42 @@ static char  find_file_type(unsigned char c) {
 }
 
 static void find_do_lstat(char *path) {
-  printf("LSTAT \"%s\"\n", path);
   static struct stat buf;
-  if (lstat(path+1,&buf) == 0) {
+  // filename comparison has been done already
+  if(glob_verbosity >= 2){
+    printf("STAT: %s\n", path);
+  }
+
+  if (lstat(path+1, & buf) == 0) {
+    // compare values
+    if(buf.st_size != glob_expected_size){
+      if(glob_verbosity >= 2){
+        printf("Size does not match: %s has %zu bytes\n", path, (size_t) buf.st_size);
+      }
+      return;
+    }
+    if( buf.st_ctime < compare_time_newer.st_ctime ){
+      if(glob_verbosity >= 2){
+        printf("Timestamp too small: %s\n", path);
+      }
+      return;
+    }
+
+    if(glob_verbosity >= 2){
+      printf("Found acceptable file: %s\n", path);
+    }
     res->found_files++;
-      //fprintf(out,"%s\t%c\t%d\t%d\t%d\t%d\t%d\t%d\n", path+1, *path,
-      //        buf.st_size, buf.st_uid, buf.st_gid, buf.st_atime,
-      //        buf.st_mtime, buf.st_ctime);
   } else {
     res->errors++;
-      //fprintf (stderr, "Cannot lstat '%s': %s\n", path+1, strerror (errno));
+    if(glob_verbosity >= 1){
+      printf("Error stating file: %s\n", path);
+    }
   }
 }
 
 static void find_do_readdir(char *path, CIRCLE_handle *handle) {
-    int path_len=strlen(path+1);
-    DIR *d = opendir (path+1);
+    int path_len = strlen(path+1);
+    DIR *d = opendir(path+1);
     if (!d) {
         fprintf (stderr, "Cannot open '%s': %s\n", path+1, strerror (errno));
         return;
@@ -113,11 +133,16 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
         if (entry==0) {
             break;
         }
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") ==0) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
+        char typ = find_file_type(entry->d_type);
+        // compare file name
+        if( typ != 'd' && glob_compare_str != NULL && strstr(entry->d_name, glob_compare_str) == NULL){
+          continue;
+        }
         char *tmp=(char*) malloc(path_len+strlen(entry->d_name)+3);
-        *tmp= find_file_type(entry->d_type);
+        *tmp = typ;
         strcpy(tmp+1,path+1);
         *(tmp+path_len+1)='/';
         strcpy(tmp+path_len+2,entry->d_name);
@@ -152,8 +177,9 @@ static void find_process_work(CIRCLE_handle *handle)
 // arguments :
 // first argument is data directory to store the lstat files
 // second argument is directory to start lstating from
-int io500_parallel_find_or_delete(char * workdir, int delete, int stonewall_timer_s) {
+int io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s) {
   char * err = realpath(workdir, start_dir);
+  glob_compare_str = filename_pattern;
 
   glob_delete = delete;
   glob_stonewall_timer = stonewall_timer_s;
@@ -171,6 +197,9 @@ int io500_parallel_find_or_delete(char * workdir, int delete, int stonewall_time
   char *argv[] = {"test"};
 
 	CIRCLE_init(argc, argv, CIRCLE_SPLIT_RANDOM);
+
+  CIRCLE_enable_logging(CIRCLE_LOG_FATAL);
+
 	// set the create work callback
   CIRCLE_cb_create(& find_create_work);
 
