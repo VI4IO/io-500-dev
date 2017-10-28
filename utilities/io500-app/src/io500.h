@@ -16,12 +16,18 @@ typedef struct{
   int mdhard_max_files;
   int mdeasy_max_files;
   int stonewall_timer;
+  int stonewall_timer_reads;
 
   int verbosity;
 } io500_options_t;
 
 typedef struct{
   uint64_t errors;
+
+  uint64_t found_files;
+
+  double rate;
+  double runtime;
 } io500_find_results_t;
 
 io500_find_results_t* io500_find(io500_options_t * opt);
