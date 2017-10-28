@@ -80,6 +80,7 @@ static char  find_file_type(unsigned char c) {
         case DT_LNK :
             return 'l';
         case DT_REG :
+            res->total_files++;
             return 'f';
         case DT_SOCK :
             return 's';

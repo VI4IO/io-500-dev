@@ -535,7 +535,7 @@ int main(int argc, char ** argv){
     io500_print_md("mdtest_hard_stat",   7, 5, md_hard_stat);
     io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
 
-    printf("find err: %ld found: %ld time: %fs rate: %f kops/s\n", find->errors, find->found_files, find->runtime, find->rate / 1000);
+    printf("find err: %ld found: %ld (scanned %ld files) time: %fs rate: %f kops/s\n", find->errors, find->found_files, find->total_files, find->runtime, find->rate / 1000);
   }
   if(! options->stonewall_timer_delete){
     io500_cleanup(options);
