@@ -360,7 +360,6 @@ static table_t * io500_md_hard_delete(io500_options_t * options, table_t * creat
 }
 
 static void io500_touch(char * const filename){
-  MPI_Barrier(MPI_COMM_WORLD);
   if(rank != 0){
     return;
   }
@@ -400,9 +399,10 @@ static void io500_recursively_create(const char * dir, int touch){
   }
   mkdir(tmp, S_IRWXU);
 
-  if (touch){
-    snprintf(tmp, sizeof(tmp),"%s/%s", dir, "IO500-testfile");
-    io500_touch(tmp);
+  if(touch){
+    char tmp2[10000];
+    snprintf(tmp2, sizeof(tmp2), "%s/%s", dir, "IO500-testfile");
+    io500_touch(tmp2);
   }
 }
 
@@ -415,14 +415,8 @@ static int io500_contains_workdir_tag(io500_options_t * options){
     return ret;
 }
 
-static void io500_check_workdir(io500_options_t * options){
+static void io500_create_workdir(io500_options_t * options){
   // todo, ensure that the working directory contains no legacy stuff
-
-  if(io500_contains_workdir_tag(options)){
-      printf("Error, the working directory contains IO500-testfile already, so I will clean that directory for you before I start!\n");
-      io500_cleanup(options);
-  }
-
   char dir[10000];
 
   sprintf(dir, "%s/ior_hard/", options->workdir);
@@ -481,8 +475,15 @@ int main(int argc, char ** argv){
     exit(0);
   }
 
+  if(io500_contains_workdir_tag(options)){
+      if(rank == 0){
+        printf("Error, the working directory contains IO500-testfile already, so I will clean that directory for you before I start!\n");
+      }
+      io500_cleanup(options);
+  }
+
   if(rank == 0){
-    io500_check_workdir(options);
+    io500_create_workdir(options);
   }
   MPI_Barrier(MPI_COMM_WORLD);
 
@@ -494,6 +495,7 @@ int main(int argc, char ** argv){
     sprintf(fname, "%s/IO500_TIMESTAMP", options->workdir);
     io500_touch(fname);
   }
+  MPI_Barrier(MPI_COMM_WORLD);
 
   IOR_test_t * io_hard_create = io500_io_hard_create(options);
   table_t *    md_hard_create = io500_md_hard_create(options);
