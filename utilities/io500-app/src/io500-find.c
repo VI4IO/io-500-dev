@@ -79,7 +79,6 @@ static char  find_file_type(unsigned char c) {
         case DT_LNK :
             return 'l';
         case DT_REG :
-            res->total_files++;
             return 'f';
         case DT_SOCK :
             return 's';
@@ -129,6 +128,7 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
         fprintf (stderr, "Cannot open '%s': %s\n", path+1, strerror (errno));
         return;
     }
+    int fd = dirfd(d);
     while (1) {
         struct dirent *entry;
         entry = readdir(d);
@@ -142,15 +142,31 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
             continue;
         }
         char typ = find_file_type(entry->d_type);
+        if (typ == 'u'){
+          // sometimes the filetype is not provided by readdir.
+
+          static struct stat buf;
+          if (fstatat(fd, entry->d_name, & buf, 0 )) {
+            res->errors++;
+            if(glob_verbosity >= 1){
+              printf("Error stating file: %s\n", path);
+            }
+            continue;
+          }
+          typ = S_ISDIR(buf.st_mode) ? 'd' : 'f';
+        }
+        if (typ == 'f'){
+          res->total_files++;
+        }
         // compare file name
         if( typ != 'd' && glob_compare_str != NULL && strstr(entry->d_name, glob_compare_str) == NULL){
           continue;
         }
         char *tmp=(char*) malloc(path_len+strlen(entry->d_name)+3);
         *tmp = typ;
-        strcpy(tmp+1,path+1);
+        strcpy(tmp+1, path+1);
         *(tmp+path_len+1)='/';
-        strcpy(tmp+path_len+2,entry->d_name);
+        strcpy(tmp + path_len+2, entry->d_name);
         handle->enqueue(tmp);
     }
     closedir(d);
@@ -198,6 +214,7 @@ io500_find_results_t * io500_parallel_find_or_delete(char * workdir, char * cons
       fprintf (stderr, "Cannot open directory '%s': %s\n", start_dir, strerror (errno));
       exit (EXIT_FAILURE);
   }
+  memset(item_buf, 0, sizeof(item_buf));
   sprintf(item_buf, "%c%s", 'd', start_dir);
 
 	// initialise MPI and the libcircle stuff
