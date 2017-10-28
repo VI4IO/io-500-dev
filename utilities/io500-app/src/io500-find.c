@@ -38,7 +38,7 @@ io500_find_results_t* io500_find(io500_options_t * opt){
 
   {
     char fname[4096];
-    sprintf(fname, "%s/TIMESTAMP", opt->workdir);
+    sprintf(fname, "%s/IO500_TIMESTAMP", opt->workdir);
     if(lstat(fname, & compare_time_newer) != 0) {
       io500_error("Could not read timestamp file!");
     }
