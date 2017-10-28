@@ -424,8 +424,6 @@ static void io500_check_workdir(io500_options_t * options){
   }
 
   char dir[10000];
-  sprintf(dir, "%s/IO500-testfile", options->workdir);
-  io500_touch(dir);
 
   sprintf(dir, "%s/ior_hard/", options->workdir);
   io500_recursively_create(dir, 1);
@@ -435,6 +433,9 @@ static void io500_check_workdir(io500_options_t * options){
   io500_recursively_create(dir, 1);
   sprintf(dir, "%s/mdtest_hard/", options->workdir);
   io500_recursively_create(dir, 1);
+
+  sprintf(dir, "%s/IO500-testfile", options->workdir);
+  io500_touch(dir);
 }
 
 static void io500_print_bw(const char * prefix, int id, IOR_test_t * stat, int read){
