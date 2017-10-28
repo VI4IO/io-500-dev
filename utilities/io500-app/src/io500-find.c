@@ -53,6 +53,8 @@ io500_find_results_t* io500_find(io500_options_t * opt){
   io500_parallel_find_or_delete(opt->workdir, "01", 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
   double end = GetTimeStamp();
   res->runtime = end - start;
+  MPI_Reduce(MPI_IN_PLACE, & res->runtime, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+  MPI_Reduce(MPI_IN_PLACE, & res->found_files, 1, MPI_LONG_LONG_INT, MPI_SUM, 0, MPI_COMM_WORLD);
   res->rate = res->found_files / res->runtime;
 
   return res;
