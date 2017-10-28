@@ -19,6 +19,8 @@ typedef struct{
   int stonewall_timer_reads;
   int stonewall_timer_delete;
 
+  int only_cleanup;
+
   int verbosity;
 } io500_options_t;
 
@@ -33,4 +35,6 @@ typedef struct{
 
 io500_find_results_t* io500_find(io500_options_t * opt);
 
+void io500_error(char * const str);
+int io500_parallel_find_or_delete(char * workdir, int delete, int stonewall_timer_s);
 #endif

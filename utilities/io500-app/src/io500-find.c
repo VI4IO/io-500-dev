@@ -16,26 +16,47 @@
 #include "io500.h"
 
 // parallel recursive find
-static int find(char * workdir);
+
+static struct timespec compare_time;
+static off_t expected_size;
+static char * compare_str = "01";
+
+static int glob_delete;
+static int glob_stonewall_timer;
+static double glob_endtime;
+
 static io500_find_results_t * res;
 
 io500_find_results_t* io500_find(io500_options_t * opt){
   if(rank == 0){
     printf("Running find: %s\n", CurrentTimeString());
   }
+
+  expected_size = 3900; // TODO make that adjustable
+
+  {
+    char fname[4096];
+    sprintf(fname, "%s/TIMESTAMP", opt->workdir);
+    struct stat buf;
+    if(lstat(fname, & buf) != 0) {
+      io500_error("Could not read timestamp file!");
+    }
+    compare_time = buf.st_ctim;
+  }
+
+
   res = malloc(sizeof(io500_find_results_t));
   memset(res, 0, sizeof(*res));
 
   //ior_aiori_t * backend = aiori_select(opt->backend_name);
   double start = GetTimeStamp();
-  find(opt->workdir);
+  io500_parallel_find_or_delete(opt->workdir, 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
   double end = GetTimeStamp();
   res->runtime = end - start;
   res->rate = res->found_files / res->runtime;
 
   return res;
 }
-
 
 // globals
 static char start_dir[8192]; // absolute path of start directory
@@ -64,17 +85,16 @@ static char  find_file_type(unsigned char c) {
 
 static void find_do_lstat(char *path) {
   printf("LSTAT \"%s\"\n", path);
-    static struct stat buf;
-    if (lstat(path+1,&buf) == 0) {
-      res->found_files++;
-        //fprintf(out,"%s\t%c\t%d\t%d\t%d\t%d\t%d\t%d\n", path+1, *path,
-        //        buf.st_size, buf.st_uid, buf.st_gid, buf.st_atime,
-        //        buf.st_mtime, buf.st_ctime);
-    } else {
-      res->errors++;
-        //fprintf (stderr, "Cannot lstat '%s': %s\n", path+1, strerror (errno));
-    }
-
+  static struct stat buf;
+  if (lstat(path+1,&buf) == 0) {
+    res->found_files++;
+      //fprintf(out,"%s\t%c\t%d\t%d\t%d\t%d\t%d\t%d\n", path+1, *path,
+      //        buf.st_size, buf.st_uid, buf.st_gid, buf.st_atime,
+      //        buf.st_mtime, buf.st_ctime);
+  } else {
+    res->errors++;
+      //fprintf (stderr, "Cannot lstat '%s': %s\n", path+1, strerror (errno));
+  }
 }
 
 static void find_do_readdir(char *path, CIRCLE_handle *handle) {
@@ -87,6 +107,9 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
     while (1) {
         struct dirent *entry;
         entry = readdir(d);
+        if (glob_stonewall_timer && GetTimeStamp() >= glob_endtime ){
+          break;
+        }
         if (entry==0) {
             break;
         }
@@ -116,28 +139,37 @@ static void find_process_work(CIRCLE_handle *handle)
 {
     // dequeue the next item
     handle->dequeue(item_buf);
-    find_do_lstat(item_buf);
+    if(! glob_delete){
+      find_do_lstat(item_buf);
+    }else{
+      unlink(& item_buf[1]); // strip type
+    }
     if (*item_buf == 'd') {
-        find_do_readdir(item_buf,handle);
+        find_do_readdir(item_buf, handle);
     }
 }
 
 // arguments :
 // first argument is data directory to store the lstat files
 // second argument is directory to start lstating from
-static int find(char * workdir) {
+int io500_parallel_find_or_delete(char * workdir, int delete, int stonewall_timer_s) {
   char * err = realpath(workdir, start_dir);
 
-  DIR *sd=opendir(start_dir);
+  glob_delete = delete;
+  glob_stonewall_timer = stonewall_timer_s;
+  glob_endtime = GetTimeStamp() + glob_stonewall_timer;
+
+  DIR * sd=opendir(start_dir);
   if (err == NULL || ! sd) {
-      fprintf (stderr, "Cannot open directory '%s': %s\n",
-          start_dir, strerror (errno));
+      fprintf (stderr, "Cannot open directory '%s': %s\n", start_dir, strerror (errno));
       exit (EXIT_FAILURE);
   }
+  sprintf(item_buf, "%c%s", 'd', start_dir);
 
 	// initialise MPI and the libcircle stuff
   int argc = 1;
   char *argv[] = {"test"};
+
 	CIRCLE_init(argc, argv, CIRCLE_SPLIT_RANDOM);
 	// set the create work callback
   CIRCLE_cb_create(& find_create_work);

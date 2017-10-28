@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 #include <utilities.h>
 #include <ior.h>
@@ -47,17 +48,19 @@ static char ** io500_str_to_arr(char * str, int * out_count){
   }
   return out_arr;
 }
+
 static void io500_print_help(io500_options_t * res){
   printf("IO500 benchmark\nSynopsis:\n"
       "\t-a <API>: API for I/O [POSIX|MPIIO|HDF5|HDFS|S3|S3_EMC|NCMPI]\n"
       "\t-w <DIR>: The working directory for the benchmarks\n"
       "Optional flags\n"
+      "\t-C parallel delete of files in the working directory, *be careful*"
       "\t-e <IOR easy options>: any acceptable IOR easy option, default: %s\n"
       "\t-E <IOR hard options>: any acceptable IOR easy option, default: %s\n"
       "\t-s <seconds>: Stonewall timer for create, default: %d\n"
-      "\t-S: Activate stonewall timer for read, too (default off)\n"
-      "\t-m <N>: Max segments for ioreasy\n"
-      "\t-M <N>: Max segments for iorhard\n"
+      "\t-S: Activate stonewall timer for read, too (default off), use twice to also activate stonewall for delete and prevent cleanup\n"
+      "\t-i <N>: Max segments for ioreasy\n"
+      "\t-I <N>: Max segments for iorhard\n"
       "\t-f <N>: Max number of files for mdeasy\n"
       "\t-F <N>: Max number of files for mdhard\n"
       "\t-h: prints the help\n"
@@ -88,7 +91,7 @@ static io500_options_t * io500_parse_args(int argc, char ** argv){
 
   int c;
   while (1) {
-    c = getopt(argc, argv, "a:e:hvw:f:F:s:c:C:m:");
+    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:Si:I:C");
     if (c == -1) {
         break;
     }
@@ -96,30 +99,36 @@ static io500_options_t * io500_parse_args(int argc, char ** argv){
     switch (c) {
     case 'a':
         res->backend_name = strdup(optarg); break;
+    case 'C':
+        res->only_cleanup = TRUE; break;
     case 'e':
         res->ior_easy_options = strdup(optarg); break;
     case 'E':
         res->ior_hard_options = strdup(optarg); break;
-    case 'm':
-        res->mdtest_easy_options = strdup(optarg); break;
-    case 's':
-      res->stonewall_timer = atol(optarg); break;
-    case 'S':
-      res->stonewall_timer_reads = TRUE; break;
-    case 'h':
-      io500_print_help(res);
-    case 'v':
-      res->verbosity++; break;
-    case 'w':
-      res->workdir = strdup(optarg); break;
-    case 'c':
-      res->ioreasy_max_segments = atol(optarg); break;
-    case 'C':
-      res->iorhard_max_segments = atol(optarg); break;
     case 'f':
       res->mdeasy_max_files = atol(optarg); break;
     case 'F':
       res->mdhard_max_files = atol(optarg); break;
+    case 'h':
+      io500_print_help(res);
+    case 'i':
+      res->ioreasy_max_segments = atol(optarg); break;
+    case 'I':
+      res->iorhard_max_segments = atol(optarg); break;
+    case 'm':
+        res->mdtest_easy_options = strdup(optarg); break;
+    case 's':
+      res->stonewall_timer = atol(optarg);
+      break;
+    case 'S':
+      if(res->stonewall_timer_reads){
+        res->stonewall_timer_delete = TRUE;
+      }
+      res->stonewall_timer_reads = TRUE; break;
+    case 'v':
+      res->verbosity++; break;
+    case 'w':
+      res->workdir = strdup(optarg); break;
     }
   }
   io500_replace_str(res->ior_easy_options);
@@ -128,11 +137,11 @@ static io500_options_t * io500_parse_args(int argc, char ** argv){
   return res;
 }
 
-static void io500_error(){
+void io500_error(char * const str){
   if(rank == 0){
-    printf("IO500 error: %s\n", CurrentTimeString());
+    printf("IO500 error: %s at %s\n", str, CurrentTimeString());
   }
-  exit(1);
+  MPI_Abort(MPI_COMM_WORLD, 1);
 }
 
 static IOR_test_t * io500_io_hard_create(io500_options_t * options){
@@ -293,7 +302,7 @@ static table_t * io500_md_easy_delete(io500_options_t * options, table_t * creat
   if(rank == 0){
     printf("Running MD_EASY_DELETE: %s\n", CurrentTimeString());
   }
-  return io500_run_mdtest_easy(options, 'r', create_read->items, 0, "");
+  return io500_run_mdtest_easy(options, 'r', create_read->items, options->stonewall_timer_delete, "");
 }
 
 
@@ -346,7 +355,7 @@ static table_t * io500_md_hard_delete(io500_options_t * options, table_t * creat
   if(rank == 0){
     printf("Running MD_HARD_DELETE: %s\n", CurrentTimeString());
   }
-  return io500_run_mdtest_hard(options, 'r', create_read->items, 0, "");
+  return io500_run_mdtest_hard(options, 'r', create_read->items, options->stonewall_timer_delete, "");
 }
 
 static void io500_recursively_create(const char * dir){
@@ -381,8 +390,22 @@ static void io500_check_workdir(io500_options_t * options){
   io500_recursively_create(dir);
 }
 
-static void io500_cleanup(){
-  printf("TODO cleanup !\n");
+static void io500_cleanup(io500_options_t* options){
+  io500_parallel_find_or_delete(options->workdir, 1, 0);
+}
+
+static void io500_touch(io500_options_t* options){
+  MPI_Barrier(MPI_COMM_WORLD);
+  if(rank != 0){
+    return;
+  }
+  char fname[4096];
+  sprintf(fname, "%s/TIMESTAMP", options->workdir);
+  int fd = open(fname, O_CREAT | O_WRONLY, S_IWUSR);
+  if(fd < 0){
+    io500_error("Could not write timestamp file");
+  }
+  close(fd);
 }
 
 static void io500_print_bw(const char * prefix, int id, IOR_test_t * stat, int read){
@@ -405,15 +428,23 @@ static void io500_print_md(const char * prefix, int id, int pos, table_t * stat)
   printf("mdtest %d %s %.3f kioops\n", id, prefix, val);
 }
 
-
 int main(int argc, char ** argv){
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
+
   if(rank == 0){
     printf("IO500 starting: %s\n", CurrentTimeString());
   }
   io500_options_t * options = io500_parse_args(argc, argv);
+
+  if(options->only_cleanup){
+    if(rank == 0){
+      printf("Cleaning working directory\n");
+    }
+    io500_cleanup(options);
+    MPI_Abort(MPI_COMM_WORLD, 0);
+  }
 
   if(rank == 0){
     io500_check_workdir(options);
@@ -422,7 +453,8 @@ int main(int argc, char ** argv){
   IOR_test_t * io_easy_create = io500_io_easy_create(options);
   table_t *    md_easy_create = io500_md_easy_create(options);
 
-  // touch ...
+  io500_touch(options);
+
   IOR_test_t * io_hard_create = io500_io_hard_create(options);
   table_t *    md_hard_create = io500_md_hard_create(options);
 
@@ -463,7 +495,9 @@ int main(int argc, char ** argv){
 
     printf("find %ld %ld %fs %f kops/s\n", find->errors, find->found_files, find->runtime, find->rate / 1000);
 
-    io500_cleanup();
+    if(! options->stonewall_timer_delete){
+      io500_cleanup(options);
+    }
   }
   MPI_Finalize();
   return 0;
