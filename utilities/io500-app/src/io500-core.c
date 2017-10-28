@@ -366,6 +366,7 @@ static void io500_touch(char * const filename){
   }
   int fd = open(filename, O_CREAT | O_WRONLY, S_IWUSR | S_IRUSR);
   if(fd < 0){
+    printf("%s ", strerror(errno));
     io500_error("Could not write file, verify permissions");
   }
   close(fd);
@@ -381,7 +382,7 @@ static void io500_cleanup(io500_options_t* options){
   }
 }
 
-static void io500_recursively_create(const char * dir){
+static void io500_recursively_create(const char * dir, int touch){
   char tmp[10000]; // based on https://stackoverflow.com/questions/2336242/recursive-mkdir-system-call-on-unix
   char *p = NULL;
   size_t len;
@@ -393,14 +394,16 @@ static void io500_recursively_create(const char * dir){
   for(p = tmp + 1; *p; p++){
     if(*p == '/') {
       *p = 0;
-      io500_recursively_create(tmp);
+      io500_recursively_create(tmp, 0);
       *p = '/';
     }
   }
   mkdir(tmp, S_IRWXU);
 
-  snprintf(tmp, sizeof(tmp),"%s/%s", dir, "IO500-testfile");
-  io500_touch(tmp);
+  if (touch){
+    snprintf(tmp, sizeof(tmp),"%s/%s", dir, "IO500-testfile");
+    io500_touch(tmp);
+  }
 }
 
 static int io500_contains_workdir_tag(io500_options_t * options){
@@ -421,14 +424,17 @@ static void io500_check_workdir(io500_options_t * options){
   }
 
   char dir[10000];
+  sprintf(dir, "%s/IO500-testfile", options->workdir);
+  io500_touch(dir);
+
   sprintf(dir, "%s/ior_hard/", options->workdir);
-  io500_recursively_create(dir);
+  io500_recursively_create(dir, 1);
   sprintf(dir, "%s/ior_easy/", options->workdir);
-  io500_recursively_create(dir);
+  io500_recursively_create(dir, 1);
   sprintf(dir, "%s/mdtest_easy/", options->workdir);
-  io500_recursively_create(dir);
+  io500_recursively_create(dir, 1);
   sprintf(dir, "%s/mdtest_hard/", options->workdir);
-  io500_recursively_create(dir);
+  io500_recursively_create(dir, 1);
 }
 
 static void io500_print_bw(const char * prefix, int id, IOR_test_t * stat, int read){
