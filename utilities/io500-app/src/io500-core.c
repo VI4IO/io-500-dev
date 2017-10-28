@@ -55,7 +55,7 @@ static void io500_print_help(io500_options_t * res){
       "\t-a <API>: API for I/O [POSIX|MPIIO|HDF5|HDFS|S3|S3_EMC|NCMPI]\n"
       "\t-w <DIR>: The working directory for the benchmarks\n"
       "Optional flags\n"
-      "\t-C parallel delete of files in the working directory, *be careful*"
+      "\t-C parallel delete of files in the working directory\n"
       "\t-e <IOR easy options>: any acceptable IOR easy option, default: %s\n"
       "\t-E <IOR hard options>: any acceptable IOR easy option, default: %s\n"
       "\t-s <seconds>: Stonewall timer for create, default: %d\n"
