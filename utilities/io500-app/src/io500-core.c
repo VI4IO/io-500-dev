@@ -536,10 +536,9 @@ int main(int argc, char ** argv){
     io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
 
     printf("find err: %ld found: %ld time: %fs rate: %f kops/s\n", find->errors, find->found_files, find->runtime, find->rate / 1000);
-
-    if(! options->stonewall_timer_delete){
-      io500_cleanup(options);
-    }
+  }
+  if(! options->stonewall_timer_delete){
+    io500_cleanup(options);
   }
   MPI_Finalize();
   return 0;
