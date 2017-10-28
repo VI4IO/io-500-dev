@@ -56,8 +56,11 @@ io500_find_results_t* io500_find(io500_options_t * opt){
 
   double runtime = res->runtime;
   long long found = res->found_files;
+  long long total_files = res->total_files;
   MPI_Reduce(& runtime, & res->runtime, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
   MPI_Reduce(& found, & res->found_files, 1, MPI_LONG_LONG_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(& total_files, & res->total_files, 1, MPI_LONG_LONG_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+
   res->rate = res->found_files / res->runtime;
 
   return res;
