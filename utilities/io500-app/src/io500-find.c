@@ -154,13 +154,38 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
             continue;
           }
           typ = S_ISDIR(buf.st_mode) ? 'd' : 'f';
+
+          if(! glob_delete && typ == 'f'){ // since we have done the stat already, it would be a waste to do it again
+            res->total_files++;
+            // compare values
+            if(glob_compare_str != NULL && strstr(entry->d_name, glob_compare_str) == NULL){
+              continue;
+            }else if(buf.st_size != glob_expected_size){
+              if(glob_verbosity >= 2){
+                printf("Size does not match: %s/%s has %zu bytes\n", path + 1, entry->d_name, (size_t) buf.st_size);
+              }
+              continue;
+            }else if( buf.st_ctime < compare_time_newer.st_ctime ){
+              if(glob_verbosity >= 2){
+                printf("Timestamp too small: %s/%s\n", path + 1, entry->d_name);
+              }
+              continue;
+            }else{
+              if(glob_verbosity >= 2){
+                printf("Found acceptable file: %s/%s\n", path + 1, entry->d_name);
+              }
+              res->found_files++;
+              continue;
+            }
+          }
         }
+
         if (typ == 'f'){
           res->total_files++;
-        }
-        // compare file name
-        if( typ != 'd' && glob_compare_str != NULL && strstr(entry->d_name, glob_compare_str) == NULL){
-          continue;
+          // compare file name
+          if( glob_compare_str != NULL && strstr(entry->d_name, glob_compare_str) == NULL){
+            continue;
+          }
         }
         char *tmp=(char*) malloc(path_len+strlen(entry->d_name)+3);
         *tmp = typ;
@@ -185,13 +210,14 @@ static void find_process_work(CIRCLE_handle *handle)
 {
     // dequeue the next item
     handle->dequeue(item_buf);
-    if(! glob_delete){
-      find_do_lstat(item_buf);
-    }else{
-      unlink(& item_buf[1]); // strip type
-    }
     if (*item_buf == 'd') {
-        find_do_readdir(item_buf, handle);
+      find_do_readdir(item_buf, handle);
+    }else{
+      if(! glob_delete){
+        find_do_lstat(item_buf);
+      }else{
+        unlink(& item_buf[1]); // strip type
+      }
     }
 }
 
