@@ -39,13 +39,19 @@ static char ** io500_str_to_arr(char * str, int * out_count){
 
   int pos = 0;
   out_arr[pos] = & str[0];
+  if(rank == 0)
+    printf("  Invoking:");
   for(int i=0; str[i] != 0; i++){
     if(str[i] == '\n'){
       pos++;
       out_arr[pos] = & str[i+1];
       str[i] = 0;
+      if(rank == 0)
+        printf(" \"%s\"", out_arr[pos - 1]);
     }
   }
+  if(rank == 0)
+    printf(" \"%s\"\n", out_arr[pos]);
   return out_arr;
 }
 
@@ -54,6 +60,7 @@ static void io500_print_help(io500_options_t * res){
   printf("\nIO500 benchmark\nSynopsis:\n"
       "\t-a <API>: API for I/O [POSIX|MPIIO|HDF5|HDFS|S3|S3_EMC|NCMPI] = %s\n"
       "\t-w <DIR>: The working directory for the benchmarks = \"%s\"\n"
+      "\t-r <DIR>: The result directory for the individual results = \"%s\"\n"
       "Optional flags\n"
       "\t-C parallel delete of files in the working directory\n"
       "\t-e <IOR easy options>: any acceptable IOR easy option = \"%s\"\n"
@@ -65,9 +72,11 @@ static void io500_print_help(io500_options_t * res){
       "\t-F <N>: Max number of files for mdhard = %d\n"
       "\t-h: prints the help\n"
       "\t--help: prints the help without initializing MPI\n"
+      "\t-l: Log all processes into individual result files, otherwise only rank 0\n"
       "\t-v: increase the verbosity, use multiple times to increase level = %d\n",
       res->backend_name,
       res->workdir,
+      res->results_dir,
       res->ior_easy_options,
       res->ior_hard_options,
       res->stonewall_timer,
@@ -84,7 +93,8 @@ static io500_options_t * io500_parse_args(int argc, char ** argv, int force_prin
   int print_help = force_print_help;
 
   res->backend_name = "POSIX";
-  res->workdir = ".";
+  res->workdir = "./io500-run/";
+  res->results_dir = "./io500-results/";
   res->verbosity = 0;
 
   res->ior_easy_options = strdup("-F -t 1m -b 1t");
@@ -97,7 +107,7 @@ static io500_options_t * io500_parse_args(int argc, char ** argv, int force_prin
 
   int c;
   while (1) {
-    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:SI:C");
+    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:SI:Cl");
     if (c == -1) {
         break;
     }
@@ -119,6 +129,8 @@ static io500_options_t * io500_parse_args(int argc, char ** argv, int force_prin
       print_help = 1; break;
     case 'I':
       res->iorhard_max_segments = atol(optarg); break;
+    case 'l':
+      res->log_all_procs = TRUE; break;
     case 'm':
         res->mdtest_easy_options = strdup(optarg); break;
     case 's':
@@ -138,7 +150,7 @@ static io500_options_t * io500_parse_args(int argc, char ** argv, int force_prin
   if(print_help){
     io500_print_help(res);
     int init;
-    MPI_Initialized( &init);
+    MPI_Initialized( & init);
     if(init){
       MPI_Finalize();
     }
@@ -157,10 +169,47 @@ void io500_error(char * const str){
   MPI_Abort(MPI_COMM_WORLD, 1);
 }
 
+static FILE * io500_prepare_out(char * suffix, int testID, io500_options_t * options){
+  if(rank == 0 || options->log_all_procs){
+    char out[10000];
+    if(options->log_all_procs){
+      sprintf(out, "%s/%s-%d-%d.log", options->results_dir, suffix, rank, testID);
+    }else{
+      sprintf(out, "%s/%s-%d.log", options->results_dir, suffix, testID);
+    }
+    // open an output file
+    FILE * ret = fopen(out, "w");
+    if (ret == NULL){
+      io500_error("Could not open output file, aborting!");
+    }
+    return ret;
+  }else{
+    // messages from other processes are usually critical or verbose, let them through...
+    FILE * null = fopen("/dev/null", "w");
+    return null;
+  }
+}
+
+static IOR_test_t * io500_run_ior_really(char * args, char * suffix, int testID, io500_options_t * options){
+  int argc_count;
+  char ** args_array;
+  FILE * out;
+
+  if(rank == 0){
+    printf("Running %s: %s", suffix, CurrentTimeString());
+  }
+
+  args_array = io500_str_to_arr(args, & argc_count);
+  out = io500_prepare_out(suffix, testID, options);
+  IOR_test_t * res = ior_run(argc_count, args_array, MPI_COMM_WORLD, out);
+  fclose(out);
+  free(args_array);
+  return res;
+}
+
 static IOR_test_t * io500_io_hard_create(io500_options_t * options){
   //generic array holding the arguments to the subtests
   char args[10000];
-  int argc_count;
   int pos;
   pos = sprintf(args, IOR_HARD_OPTIONS" -w");
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
@@ -174,18 +223,13 @@ static IOR_test_t * io500_io_hard_create(io500_options_t * options){
   pos += sprintf(& args[pos], "\n-o\n%s/ior_hard/file", options->workdir);
   pos += sprintf(& args[pos], "\n%s", options->ior_hard_options);
 
-  char ** args_array;
-  args_array = io500_str_to_arr(args, & argc_count);
-  IOR_test_t * res = ior_run(argc_count, args_array);
-  free(args_array);
-  return res;
+  return io500_run_ior_really(args, "ior_hard_create", 1, options);
 }
 
 
 static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * create_read){
   //generic array holding the arguments to the subtests
   char args[10000];
-  int argc_count;
   int pos;
   pos = sprintf(args, IOR_HARD_OPTIONS" -R");
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
@@ -202,18 +246,13 @@ static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * c
   pos += sprintf(& args[pos], "\n-o\n%s/ior_hard/file", options->workdir);
   pos += sprintf(& args[pos], "\n%s", options->ior_hard_options);
 
-  char ** args_array;
-  args_array = io500_str_to_arr(args, & argc_count);
-  IOR_test_t * res = ior_run(argc_count, args_array);
-  free(args_array);
-  return res;
+  return io500_run_ior_really(args, "ior_hard_read", 1, options);
 }
 
 
 static IOR_test_t * io500_io_easy_create(io500_options_t * options){
   //generic array holding the arguments to the subtests
   char args[10000];
-  int argc_count;
   int pos;
   pos = sprintf(args, IOR_EASY_OPTIONS" -w");
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
@@ -226,17 +265,12 @@ static IOR_test_t * io500_io_easy_create(io500_options_t * options){
   pos += sprintf(& args[pos], "\n-o\n%s/ior_easy/file", options->workdir);
   pos += sprintf(& args[pos], "\n%s", options->ior_easy_options);
 
-  char ** args_array;
-  args_array = io500_str_to_arr(args, & argc_count);
-  IOR_test_t * res = ior_run(argc_count, args_array);
-  free(args_array);
-  return res;
+  return io500_run_ior_really(args, "ior_easy_create", 1, options);
 }
 
 static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * create_read){
   //generic array holding the arguments to the subtests
   char args[10000];
-  int argc_count;
   int pos;
   pos = sprintf(args, IOR_EASY_OPTIONS" -r");
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
@@ -252,18 +286,31 @@ static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * c
   pos += sprintf(& args[pos], "\n-o\n%s/ior_easy/file", options->workdir);
   pos += sprintf(& args[pos], "\n%s", options->ior_easy_options);
 
-  char ** args_array;
-  args_array = io500_str_to_arr(args, & argc_count);
-  IOR_test_t * res = ior_run(argc_count, args_array);
-  free(args_array);
-  return res;
+  return io500_run_ior_really(args, "ior_easy_create", 1, options);
 }
 
-static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int maxfiles, int use_stonewall, const char * extra){
+static table_t * io500_run_mdtest_really(char * args, char * suffix, int testID, io500_options_t * options){
+  int argc_count;
+  char ** args_array;
+  table_t * table;
+  FILE * out;
+
+  if(rank == 0){
+    printf("Running %s: %s", suffix, CurrentTimeString());
+  }
+
+  args_array = io500_str_to_arr(args, & argc_count);
+  out = io500_prepare_out(suffix, testID, options);
+  table = mdtest_run(argc_count, args_array, MPI_COMM_WORLD, out);
+  fclose(out);
+  free(args_array);
+  return table;
+}
+
+static table_t * io500_run_mdtest_easy(char mode, int maxfiles, int use_stonewall, const char * extra, char * suffix, int testID, io500_options_t * options){
   char args[10000];
   memset(args, 0, 10000);
 
-  int argc_count;
   int pos;
   pos = sprintf(args, MDTEST_EASY_OPTIONS" -%c", mode);
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
@@ -279,46 +326,29 @@ static table_t * io500_run_mdtest_easy(io500_options_t * options, char mode, int
   pos += sprintf(& args[pos], "\n-d\n%s/mdtest_easy", options->workdir);
   pos += sprintf(& args[pos], "\n%s", options->mdtest_easy_options);
 
-  char ** args_array;
-  args_array = io500_str_to_arr(args, & argc_count);
-  table_t * table = mdtest_run(argc_count, args_array);
-  free(args_array);
-  return table;
+  return io500_run_mdtest_really(args, suffix, testID, options);
 }
 
 static table_t * io500_md_easy_create(io500_options_t * options){
-  if(rank == 0){
-    printf("Running MD_EASY_CREATE: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_easy(options, 'C', options->mdeasy_max_files, 1, "");
+  return io500_run_mdtest_easy('C', options->mdeasy_max_files, 1, "", "mdtest_easy_create", 1, options);
 }
 
 static table_t * io500_md_easy_read(io500_options_t * options, table_t * create_read){
-  if(rank == 0){
-    printf("Running MD_EASY_READ: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_easy(options, 'E', create_read->items, options->stonewall_timer_reads, "");
+  return io500_run_mdtest_easy('E', create_read->items, options->stonewall_timer_reads, "", "mdtest_easy_read", 1, options);
 }
 
 static table_t * io500_md_easy_stat(io500_options_t * options, table_t * create_read){
-  if(rank == 0){
-    printf("Running MD_EASY_STAT: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_easy(options, 'T', create_read->items, options->stonewall_timer_reads, "");
+  return io500_run_mdtest_easy('T', create_read->items, options->stonewall_timer_reads, "", "mdtest_easy_stat", 1, options);
 }
 
 
 static table_t * io500_md_easy_delete(io500_options_t * options, table_t * create_read){
-  if(rank == 0){
-    printf("Running MD_EASY_DELETE: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_easy(options, 'r', create_read->items, options->stonewall_timer_delete, "");
+  return io500_run_mdtest_easy('r', create_read->items, options->stonewall_timer_delete, "", "mdtest_easy_delete", 1, options);
 }
 
 
-static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int maxfiles, int use_stonewall, const char * extra){
+static table_t * io500_run_mdtest_hard(char mode, int maxfiles, int use_stonewall, const char * extra,  char * suffix, int testID, io500_options_t * options){
   char args[10000];
-  int argc_count;
   int pos;
   pos = sprintf(args, MDTEST_HARD_OPTIONS" -%c", mode);
   pos += sprintf(& args[pos], " -a %s", options->backend_name);
@@ -332,40 +362,24 @@ static table_t * io500_run_mdtest_hard(io500_options_t * options, char mode, int
   pos += sprintf(& args[pos], "%s", extra);
   io500_replace_str(args);
   pos += sprintf(& args[pos], "\n-d\n%s/mdtest_hard", options->workdir);
-  //pos += sprintf(& args[pos], "\n%s", options->mdtest_easy_options);
-  char ** args_array;
-  args_array = io500_str_to_arr(args, & argc_count);
-  table_t * table = mdtest_run(argc_count, args_array);
-  free(args_array);
-  return table;
+
+  return io500_run_mdtest_really(args, suffix, testID, options);
 }
 
 static table_t * io500_md_hard_create(io500_options_t * options){
-  if(rank == 0){
-    printf("Running MD_HARD_CREATE: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_hard(options, 'C', options->mdhard_max_files, 1, "");
+  return io500_run_mdtest_hard('C', options->mdhard_max_files, 1, "", "mdtest_hard_create", 1, options);
 }
 
 static table_t * io500_md_hard_read(io500_options_t * options, table_t * create_read){
-  if(rank == 0){
-    printf("Running MD_HARD_READ: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_hard(options, 'E', create_read->items, options->stonewall_timer_reads, "");
+  return io500_run_mdtest_hard('E', create_read->items, options->stonewall_timer_reads, "","mdtest_hard_read", 1, options);
 }
 
 static table_t * io500_md_hard_stat(io500_options_t * options, table_t * create_read){
-  if(rank == 0){
-    printf("Running MD_HARD_Stat: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_hard(options, 'T', create_read->items, options->stonewall_timer_reads, "");
+  return io500_run_mdtest_hard('T', create_read->items, options->stonewall_timer_reads, "","mdtest_hard_stat", 1, options);
 }
 
 static table_t * io500_md_hard_delete(io500_options_t * options, table_t * create_read){
-  if(rank == 0){
-    printf("Running MD_HARD_DELETE: %s\n", CurrentTimeString());
-  }
-  return io500_run_mdtest_hard(options, 'r', create_read->items, options->stonewall_timer_delete, "");
+  return io500_run_mdtest_hard('r', create_read->items, options->stonewall_timer_delete, "", "mdtest_hard_delete", 1, options);
 }
 
 static void io500_touch(char * const filename){
@@ -382,11 +396,11 @@ static void io500_touch(char * const filename){
 
 static void io500_cleanup(io500_options_t* options){
   if(rank == 0){
-    printf("\nCleaning working directory: %s\n", CurrentTimeString());
+    printf("\nCleaning working directory: %s", CurrentTimeString());
   }
-  io500_parallel_find_or_delete(options->workdir, NULL, 1, 0);
+  io500_parallel_find_or_delete(stdout, options->workdir, NULL, 1, 0);
   if(rank == 0){
-    printf("\nDone: %s\n", CurrentTimeString());
+    printf("\nDone: %s", CurrentTimeString());
   }
 }
 
@@ -427,6 +441,9 @@ static int io500_contains_workdir_tag(io500_options_t * options){
 static void io500_create_workdir(io500_options_t * options){
   // todo, ensure that the working directory contains no legacy stuff
   char dir[10000];
+
+  sprintf(dir, "%s/", options->results_dir);
+  io500_recursively_create(dir, 0);
 
   sprintf(dir, "%s/ior_hard/", options->workdir);
   io500_recursively_create(dir, 1);
@@ -478,6 +495,7 @@ int main(int argc, char ** argv){
   if(rank == 0){
     printf("IO500 starting: %s\n", CurrentTimeString());
     printf("nproc=%d\n", size);
+    printf("\n");
   }
   io500_options_t * options = io500_parse_args(argc, argv, 0);
 
@@ -497,7 +515,7 @@ int main(int argc, char ** argv){
 
   if(io500_contains_workdir_tag(options)){
       if(rank == 0){
-        printf("Error, the working directory contains IO500-testfile already, so I will clean that directory for you before I start!\n");
+        printf("Error, the working directory contains IO500-testfile already, so I will clean that directory for you before I start!");
       }
       io500_cleanup(options);
   }
@@ -521,7 +539,9 @@ int main(int argc, char ** argv){
   table_t *    md_hard_create = io500_md_hard_create(options);
 
   // mdreal...
-  io500_find_results_t* find = io500_find(options);
+  FILE * out = io500_prepare_out("find", 1, options);
+  io500_find_results_t* find = io500_find(out, options);
+  fclose(out);
 
   IOR_test_t * io_easy_read = io500_io_easy_read(options, io_easy_create);
   table_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
@@ -535,7 +555,7 @@ int main(int argc, char ** argv){
   table_t *    md_easy_delete = io500_md_easy_delete(options, md_easy_create);
 
   if(rank == 0){
-    printf("IO500 complete: %s\n", CurrentTimeString());
+    printf("\nIO500 complete: %s\n", CurrentTimeString());
 
     printf("\n");
     printf("=== IO-500 submission ===\n");

@@ -28,9 +28,9 @@ static double glob_endtime;
 
 static io500_find_results_t * res = NULL;
 
-io500_find_results_t* io500_find(io500_options_t * opt){
+io500_find_results_t* io500_find(FILE * out_logfile, io500_options_t * opt){
   if(rank == 0){
-    printf("Running find: %s\n", CurrentTimeString());
+    fprintf(out_logfile, "Running find: %s\n", CurrentTimeString());
   }
 
   glob_expected_size = 3900; // TODO make that adjustable
@@ -46,7 +46,7 @@ io500_find_results_t* io500_find(io500_options_t * opt){
 
   //ior_aiori_t * backend = aiori_select(opt->backend_name);
   double start = GetTimeStamp();
-  io500_find_results_t * res = io500_parallel_find_or_delete(opt->workdir, "01", 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
+  io500_find_results_t * res = io500_parallel_find_or_delete(out_logfile, opt->workdir, "01", 0, opt->stonewall_timer_reads ? opt->stonewall_timer : 0 );
   double end = GetTimeStamp();
   res->runtime = end - start;
 
@@ -91,32 +91,32 @@ static void find_do_lstat(char *path) {
   static struct stat buf;
   // filename comparison has been done already
   if(glob_verbosity >= 2){
-    printf("STAT: %s\n", path);
+    fprintf(out_logfile, "STAT: %s\n", path);
   }
 
   if (lstat(path+1, & buf) == 0) {
     // compare values
     if(buf.st_size != glob_expected_size){
       if(glob_verbosity >= 2){
-        printf("Size does not match: %s has %zu bytes\n", path, (size_t) buf.st_size);
+        fprintf(out_logfile, "Size does not match: %s has %zu bytes\n", path, (size_t) buf.st_size);
       }
       return;
     }
     if( buf.st_ctime < compare_time_newer.st_ctime ){
       if(glob_verbosity >= 2){
-        printf("Timestamp too small: %s\n", path);
+        fprintf(out_logfile, "Timestamp too small: %s\n", path);
       }
       return;
     }
 
     if(glob_verbosity >= 2){
-      printf("Found acceptable file: %s\n", path);
+      fprintf(out_logfile, "Found acceptable file: %s\n", path);
     }
     res->found_files++;
   } else {
     res->errors++;
     if(glob_verbosity >= 1){
-      printf("Error stating file: %s\n", path);
+      fprintf(out_logfile, "Error stating file: %s\n", path);
     }
   }
 }
@@ -149,7 +149,7 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
           if (fstatat(fd, entry->d_name, & buf, 0 )) {
             res->errors++;
             if(glob_verbosity >= 1){
-              printf("Error stating file: %s\n", path);
+              fprintf(out_logfile, "Error stating file: %s\n", path);
             }
             continue;
           }
@@ -162,17 +162,17 @@ static void find_do_readdir(char *path, CIRCLE_handle *handle) {
               continue;
             }else if(buf.st_size != glob_expected_size){
               if(glob_verbosity >= 2){
-                printf("Size does not match: %s/%s has %zu bytes\n", path + 1, entry->d_name, (size_t) buf.st_size);
+                fprintf(out_logfile, "Size does not match: %s/%s has %zu bytes\n", path + 1, entry->d_name, (size_t) buf.st_size);
               }
               continue;
             }else if( buf.st_ctime < compare_time_newer.st_ctime ){
               if(glob_verbosity >= 2){
-                printf("Timestamp too small: %s/%s\n", path + 1, entry->d_name);
+                fprintf(out_logfile, "Timestamp too small: %s/%s\n", path + 1, entry->d_name);
               }
               continue;
             }else{
               if(glob_verbosity >= 2){
-                printf("Found acceptable file: %s/%s\n", path + 1, entry->d_name);
+                fprintf(out_logfile, "Found acceptable file: %s/%s\n", path + 1, entry->d_name);
               }
               res->found_files++;
               continue;
@@ -224,7 +224,9 @@ static void find_process_work(CIRCLE_handle *handle)
 // arguments :
 // first argument is data directory to store the lstat files
 // second argument is directory to start lstating from
-io500_find_results_t * io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s) {
+io500_find_results_t * io500_parallel_find_or_delete(FILE * logfile, char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s) {
+  out_logfile = logfile;
+
   char * err = realpath(workdir, start_dir);
   glob_compare_str = filename_pattern;
 

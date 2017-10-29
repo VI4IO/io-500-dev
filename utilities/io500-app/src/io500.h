@@ -6,6 +6,7 @@
 typedef struct{
   char * backend_name;
   char * workdir;
+  char * results_dir;
 
   char * ior_easy_options;
   char * ior_hard_options;
@@ -17,6 +18,8 @@ typedef struct{
   int stonewall_timer;
   int stonewall_timer_reads;
   int stonewall_timer_delete;
+
+  int log_all_procs;
 
   int only_cleanup;
 
@@ -33,8 +36,8 @@ typedef struct{
   double runtime;
 } io500_find_results_t;
 
-io500_find_results_t* io500_find(io500_options_t * opt);
+io500_find_results_t* io500_find(FILE * out, io500_options_t * opt);
 
 void io500_error(char * const str);
-io500_find_results_t * io500_parallel_find_or_delete(char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s);
+io500_find_results_t * io500_parallel_find_or_delete(FILE * out, char * workdir, char * const filename_pattern, int delete, int stonewall_timer_s);
 #endif

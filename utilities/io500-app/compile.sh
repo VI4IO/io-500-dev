@@ -1,6 +1,6 @@
 #!/bin/bash -e
 CC=mpicc
-CFLAGS="-g -O2 -DMDTEST_LIBRARY -fstack-protector-all -Wextra"
+CFLAGS="-g -O2 -fstack-protector-all -Wextra"
 
 pushd ior-1
 echo "Building IOR + MDTEST"
