@@ -312,6 +312,9 @@ static table_t * io500_run_mdtest_really(char * args, char * suffix, int testID,
 static table_t * io500_run_mdtest_easy(char mode, int maxfiles, int use_stonewall, const char * extra, char * suffix, int testID, io500_options_t * options){
   char args[10000];
   memset(args, 0, 10000);
+  if(maxfiles == 0){
+    io500_error("Error, mdtest does not support 0 files.");
+  }
 
   int pos;
   pos = sprintf(args, MDTEST_EASY_OPTIONS" -%c", mode);
@@ -332,7 +335,11 @@ static table_t * io500_run_mdtest_easy(char mode, int maxfiles, int use_stonewal
 }
 
 static table_t * io500_md_easy_create(io500_options_t * options){
-  return io500_run_mdtest_easy('C', options->mdeasy_max_files, 1, "", "mdtest_easy_create", 1, options);
+  table_t * res = io500_run_mdtest_easy('C', options->mdeasy_max_files, 1, "", "mdtest_easy_create", 1, options);
+  if(res->items == 0){
+    io500_error("Stonewalling returned 0 created files, that is wrong.");
+  }
+  return res;
 }
 
 static table_t * io500_md_easy_read(io500_options_t * options, table_t * create_read){
@@ -369,7 +376,11 @@ static table_t * io500_run_mdtest_hard(char mode, int maxfiles, int use_stonewal
 }
 
 static table_t * io500_md_hard_create(io500_options_t * options){
-  return io500_run_mdtest_hard('C', options->mdhard_max_files, 1, "", "mdtest_hard_create", 1, options);
+  table_t * res = io500_run_mdtest_hard('C', options->mdhard_max_files, 1, "", "mdtest_hard_create", 1, options);
+  if(res->items == 0){
+    io500_error("Stonewalling returned 0 created files, that is wrong.");
+  }
+  return res;
 }
 
 static table_t * io500_md_hard_read(io500_options_t * options, table_t * create_read){
@@ -546,7 +557,7 @@ int main(int argc, char ** argv){
   fclose(out);
 
   IOR_test_t * io_easy_read = io500_io_easy_read(options, io_easy_create);
-  table_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
+  //table_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
   table_t *    md_hard_stat = io500_md_hard_stat(options, md_hard_create);
 
   IOR_test_t * io_hard_read = io500_io_hard_read(options, io_hard_create);
@@ -568,7 +579,7 @@ int main(int argc, char ** argv){
     io500_print_bw("ior_hard_read", 4, io_hard_read, 1);
 
     io500_print_md("mdtest_easy_create", 1, 4, md_easy_create);
-    io500_print_md("mdtest_easy_read",   2, 6, md_easy_read);
+    //io500_print_md("mdtest_easy_read",   2, 6, md_easy_read);
     io500_print_md("mdtest_easy_stat",   3, 5, md_easy_stat);
     io500_print_md("mdtest_easy_delete", 4, 7, md_easy_delete);
 
