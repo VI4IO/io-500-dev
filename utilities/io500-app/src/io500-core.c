@@ -50,49 +50,54 @@ static char ** io500_str_to_arr(char * str, int * out_count){
 }
 
 static void io500_print_help(io500_options_t * res){
-  if(rank != 0) exit(0);
-  printf("IO500 benchmark\nSynopsis:\n"
-      "\t-a <API>: API for I/O [POSIX|MPIIO|HDF5|HDFS|S3|S3_EMC|NCMPI]\n"
-      "\t-w <DIR>: The working directory for the benchmarks\n"
+  if(rank != 0) return;
+  printf("\nIO500 benchmark\nSynopsis:\n"
+      "\t-a <API>: API for I/O [POSIX|MPIIO|HDF5|HDFS|S3|S3_EMC|NCMPI] = %s\n"
+      "\t-w <DIR>: The working directory for the benchmarks = \"%s\"\n"
       "Optional flags\n"
       "\t-C parallel delete of files in the working directory\n"
-      "\t-e <IOR easy options>: any acceptable IOR easy option, default: %s\n"
-      "\t-E <IOR hard options>: any acceptable IOR easy option, default: %s\n"
-      "\t-s <seconds>: Stonewall timer for create, default: %d\n"
+      "\t-e <IOR easy options>: any acceptable IOR easy option = \"%s\"\n"
+      "\t-E <IOR hard options>: any acceptable IOR easy option = \"%s\"\n"
+      "\t-s <seconds>: Stonewall timer for create = %d\n"
       "\t-S: Activate stonewall timer for read, too (default off), use twice to also activate stonewall for delete and prevent cleanup\n"
-      "\t-i <N>: Max segments for ioreasy\n"
-      "\t-I <N>: Max segments for iorhard\n"
-      "\t-f <N>: Max number of files for mdeasy\n"
-      "\t-F <N>: Max number of files for mdhard\n"
+      "\t-I <N>: Max segments for iorhard = %d\n"
+      "\t-f <N>: Max number of files for mdeasy = %d\n"
+      "\t-F <N>: Max number of files for mdhard = %d\n"
       "\t-h: prints the help\n"
-      "\t-v: increase the verbosity\n",
+      "\t--help: prints the help without initializing MPI\n"
+      "\t-v: increase the verbosity, use multiple times to increase level = %d\n",
+      res->backend_name,
+      res->workdir,
       res->ior_easy_options,
       res->ior_hard_options,
-      res->stonewall_timer
+      res->stonewall_timer,
+      res->iorhard_max_segments,
+      res->mdeasy_max_files,
+      res->mdhard_max_files,
+      res->verbosity
     );
-  exit(0);
 }
 
-static io500_options_t * io500_parse_args(int argc, char ** argv){
+static io500_options_t * io500_parse_args(int argc, char ** argv, int force_print_help){
   io500_options_t * res = malloc(sizeof(io500_options_t));
   memset(res, 0, sizeof(io500_options_t));
+  int print_help = force_print_help;
 
   res->backend_name = "POSIX";
   res->workdir = ".";
   res->verbosity = 0;
 
-  res->ior_easy_options = strdup("-t 200m -b 200m -F");
+  res->ior_easy_options = strdup("-F -t 1m -b 1t");
   res->ior_hard_options = strdup("");
   res->mdtest_easy_options = strdup("-u -L");
   res->mdeasy_max_files = 100000000;
   res->mdhard_max_files = 100000000;
   res->stonewall_timer = 300;
-  res->ioreasy_max_segments = 100000000;
   res->iorhard_max_segments = 100000000;
 
   int c;
   while (1) {
-    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:Si:I:C");
+    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:SI:C");
     if (c == -1) {
         break;
     }
@@ -111,9 +116,7 @@ static io500_options_t * io500_parse_args(int argc, char ** argv){
     case 'F':
       res->mdhard_max_files = atol(optarg); break;
     case 'h':
-      io500_print_help(res);
-    case 'i':
-      res->ioreasy_max_segments = atol(optarg); break;
+      print_help = 1; break;
     case 'I':
       res->iorhard_max_segments = atol(optarg); break;
     case 'm':
@@ -131,6 +134,15 @@ static io500_options_t * io500_parse_args(int argc, char ** argv){
     case 'w':
       res->workdir = strdup(optarg); break;
     }
+  }
+  if(print_help){
+    io500_print_help(res);
+    int init;
+    MPI_Initialized( &init);
+    if(init){
+      MPI_Finalize();
+    }
+    exit(0);
   }
   io500_replace_str(res->ior_easy_options);
   io500_replace_str(res->ior_hard_options);
@@ -156,7 +168,7 @@ static IOR_test_t * io500_io_hard_create(io500_options_t * options){
     pos += sprintf(& args[pos], " -v");
   }
   pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOut=1", options->stonewall_timer);
-  pos += sprintf(& args[pos], " -s %d", options->ioreasy_max_segments);
+  pos += sprintf(& args[pos], " -s %d", options->iorhard_max_segments);
 
   io500_replace_str(args); // make sure workdirs with space works
   pos += sprintf(& args[pos], "\n-o\n%s/ior_hard/file", options->workdir);
@@ -184,8 +196,7 @@ static IOR_test_t * io500_io_hard_read(io500_options_t * options, IOR_test_t * c
   if (options->stonewall_timer_reads){
     pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOut=1", options->stonewall_timer);
   }
-
-  pos += sprintf(& args[pos], " -s %d", options->ioreasy_max_segments);
+  pos += sprintf(& args[pos], " -s %d", options->iorhard_max_segments);
 
   io500_replace_str(args); // make sure workdirs with space works
   pos += sprintf(& args[pos], "\n-o\n%s/ior_hard/file", options->workdir);
@@ -210,7 +221,6 @@ static IOR_test_t * io500_io_easy_create(io500_options_t * options){
     pos += sprintf(& args[pos], " -v");
   }
   pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOut=1", options->stonewall_timer);
-  pos += sprintf(& args[pos], " -s %d", options->ioreasy_max_segments);
 
   io500_replace_str(args); // make sure workdirs with space works
   pos += sprintf(& args[pos], "\n-o\n%s/ior_easy/file", options->workdir);
@@ -237,7 +247,6 @@ static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * c
   if (options->stonewall_timer_reads){
     pos += sprintf(& args[pos], " -D %d -O stoneWallingWearOut=1", options->stonewall_timer);
   }
-  pos += sprintf(& args[pos], " -s %d", options->ioreasy_max_segments);
 
   io500_replace_str(args); // make sure workdirs with space works
   pos += sprintf(& args[pos], "\n-o\n%s/ior_easy/file", options->workdir);
@@ -452,6 +461,16 @@ static void io500_print_md(const char * prefix, int id, int pos, table_t * stat)
 }
 
 int main(int argc, char ** argv){
+  // output help with --help to enable running without mpiexec
+  for(int i=0; i < argc; i++){
+    if (strcmp(argv[i], "--help") == 0){
+      argv[i][0] = 0;
+      rank = 0;
+      io500_parse_args(argc, argv, 1);
+      exit(0);
+    }
+  }
+
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -460,7 +479,7 @@ int main(int argc, char ** argv){
     printf("IO500 starting: %s\n", CurrentTimeString());
     printf("nproc=%d\n", size);
   }
-  io500_options_t * options = io500_parse_args(argc, argv);
+  io500_options_t * options = io500_parse_args(argc, argv, 0);
 
   if(options->only_cleanup){
     // make sure there exists the file IO500_TIMESTAMP

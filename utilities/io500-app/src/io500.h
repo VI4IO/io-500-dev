@@ -11,7 +11,6 @@ typedef struct{
   char * ior_hard_options;
   char * mdtest_easy_options;
 
-  int ioreasy_max_segments;
   int iorhard_max_segments;
   int mdhard_max_files;
   int mdeasy_max_files;
