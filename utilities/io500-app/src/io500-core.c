@@ -107,7 +107,7 @@ static io500_options_t * io500_parse_args(int argc, char ** argv, int force_prin
 
   int c;
   while (1) {
-    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:SI:Cl");
+    c = getopt(argc, argv, "a:e:E:hvw:f:F:s:SI:Clr:");
     if (c == -1) {
         break;
     }
@@ -133,6 +133,8 @@ static io500_options_t * io500_parse_args(int argc, char ** argv, int force_prin
       res->log_all_procs = TRUE; break;
     case 'm':
         res->mdtest_easy_options = strdup(optarg); break;
+    case 'r':
+        res->results_dir = strdup(optarg); break;
     case 's':
       res->stonewall_timer = atol(optarg);
       break;
@@ -575,7 +577,7 @@ int main(int argc, char ** argv){
     io500_print_md("mdtest_hard_stat",   7, 5, md_hard_stat);
     io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
 
-    printf("find err: %ld found: %ld (scanned %ld files) time: %fs rate: %f kops/s\n", find->errors, find->found_files, find->total_files, find->runtime, find->rate / 1000);
+    printf("find err: %ld found: %ld (scanned %ld files) time: %fs rate: %.3f kiops/s\n", find->errors, find->found_files, find->total_files, find->runtime, find->rate / 1000);
   }
   if(! options->stonewall_timer_delete){
     io500_cleanup(options);
