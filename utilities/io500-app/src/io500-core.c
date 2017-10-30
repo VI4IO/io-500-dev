@@ -40,7 +40,7 @@ static char ** io500_str_to_arr(char * str, int * out_count){
   int pos = 0;
   out_arr[pos] = & str[0];
   if(rank == 0)
-    printf("  Invoking:");
+    printf("[Exec]:");
   for(int i=0; str[i] != 0; i++){
     if(str[i] == '\n'){
       pos++;
@@ -179,6 +179,7 @@ static FILE * io500_prepare_out(char * suffix, int testID, io500_options_t * opt
     }else{
       sprintf(out, "%s/%s-%d.log", options->results_dir, suffix, testID);
     }
+    printf("[Output] %s\n", out);
     // open an output file
     FILE * ret = fopen(out, "w");
     if (ret == NULL){
@@ -198,7 +199,7 @@ static IOR_test_t * io500_run_ior_really(char * args, char * suffix, int testID,
   FILE * out;
 
   if(rank == 0){
-    printf("Running %s: %s", suffix, CurrentTimeString());
+    printf("\n[Starting] %s: %s", suffix, CurrentTimeString());
   }
 
   args_array = io500_str_to_arr(args, & argc_count);
@@ -291,14 +292,14 @@ static IOR_test_t * io500_io_easy_read(io500_options_t * options, IOR_test_t * c
   return io500_run_ior_really(args, "ior_easy_create", 1, options);
 }
 
-static table_t * io500_run_mdtest_really(char * args, char * suffix, int testID, io500_options_t * options){
+static mdtest_results_t * io500_run_mdtest_really(char * args, char * suffix, int testID, io500_options_t * options){
   int argc_count;
   char ** args_array;
-  table_t * table;
+  mdtest_results_t * table;
   FILE * out;
 
   if(rank == 0){
-    printf("Running %s: %s", suffix, CurrentTimeString());
+    printf("\n[Starting] %s: %s", suffix, CurrentTimeString());
   }
 
   args_array = io500_str_to_arr(args, & argc_count);
@@ -309,7 +310,7 @@ static table_t * io500_run_mdtest_really(char * args, char * suffix, int testID,
   return table;
 }
 
-static table_t * io500_run_mdtest_easy(char mode, int maxfiles, int use_stonewall, const char * extra, char * suffix, int testID, io500_options_t * options){
+static mdtest_results_t * io500_run_mdtest_easy(char mode, int maxfiles, int use_stonewall, const char * extra, char * suffix, int testID, io500_options_t * options){
   char args[10000];
   memset(args, 0, 10000);
   if(maxfiles == 0){
@@ -334,29 +335,29 @@ static table_t * io500_run_mdtest_easy(char mode, int maxfiles, int use_stonewal
   return io500_run_mdtest_really(args, suffix, testID, options);
 }
 
-static table_t * io500_md_easy_create(io500_options_t * options){
-  table_t * res = io500_run_mdtest_easy('C', options->mdeasy_max_files, 1, "", "mdtest_easy_create", 1, options);
+static mdtest_results_t * io500_md_easy_create(io500_options_t * options){
+  mdtest_results_t * res = io500_run_mdtest_easy('C', options->mdeasy_max_files, 1, "", "mdtest_easy_create", 1, options);
   if(res->items == 0){
     io500_error("Stonewalling returned 0 created files, that is wrong.");
   }
   return res;
 }
 
-static table_t * io500_md_easy_read(io500_options_t * options, table_t * create_read){
-  return io500_run_mdtest_easy('E', create_read->items, options->stonewall_timer_reads, "", "mdtest_easy_read", 1, options);
+static mdtest_results_t * io500_md_easy_read(io500_options_t * options, mdtest_results_t * create_read){
+  return io500_run_mdtest_easy('E', create_read->stonewall_last_item[MDTEST_FILE_CREATE_NUM], options->stonewall_timer_reads, "", "mdtest_easy_read", 1, options);
 }
 
-static table_t * io500_md_easy_stat(io500_options_t * options, table_t * create_read){
-  return io500_run_mdtest_easy('T', create_read->items, options->stonewall_timer_reads, "", "mdtest_easy_stat", 1, options);
-}
-
-
-static table_t * io500_md_easy_delete(io500_options_t * options, table_t * create_read){
-  return io500_run_mdtest_easy('r', create_read->items, options->stonewall_timer_delete, "", "mdtest_easy_delete", 1, options);
+static mdtest_results_t * io500_md_easy_stat(io500_options_t * options, mdtest_results_t * create_read){
+  return io500_run_mdtest_easy('T', create_read->stonewall_last_item[MDTEST_FILE_CREATE_NUM], options->stonewall_timer_reads, "", "mdtest_easy_stat", 1, options);
 }
 
 
-static table_t * io500_run_mdtest_hard(char mode, int maxfiles, int use_stonewall, const char * extra,  char * suffix, int testID, io500_options_t * options){
+static mdtest_results_t * io500_md_easy_delete(io500_options_t * options, mdtest_results_t * create_read){
+  return io500_run_mdtest_easy('r', create_read->stonewall_last_item[MDTEST_FILE_CREATE_NUM], options->stonewall_timer_delete, "", "mdtest_easy_delete", 1, options);
+}
+
+
+static mdtest_results_t * io500_run_mdtest_hard(char mode, int maxfiles, int use_stonewall, const char * extra,  char * suffix, int testID, io500_options_t * options){
   char args[10000];
   int pos;
   pos = sprintf(args, MDTEST_HARD_OPTIONS" -%c", mode);
@@ -375,24 +376,24 @@ static table_t * io500_run_mdtest_hard(char mode, int maxfiles, int use_stonewal
   return io500_run_mdtest_really(args, suffix, testID, options);
 }
 
-static table_t * io500_md_hard_create(io500_options_t * options){
-  table_t * res = io500_run_mdtest_hard('C', options->mdhard_max_files, 1, "", "mdtest_hard_create", 1, options);
+static mdtest_results_t * io500_md_hard_create(io500_options_t * options){
+  mdtest_results_t * res = io500_run_mdtest_hard('C', options->mdhard_max_files, 1, "", "mdtest_hard_create", 1, options);
   if(res->items == 0){
     io500_error("Stonewalling returned 0 created files, that is wrong.");
   }
   return res;
 }
 
-static table_t * io500_md_hard_read(io500_options_t * options, table_t * create_read){
-  return io500_run_mdtest_hard('E', create_read->items, options->stonewall_timer_reads, "","mdtest_hard_read", 1, options);
+static mdtest_results_t * io500_md_hard_read(io500_options_t * options, mdtest_results_t * create_read){
+  return io500_run_mdtest_hard('E', create_read->stonewall_last_item[MDTEST_FILE_CREATE_NUM], options->stonewall_timer_reads, "","mdtest_hard_read", 1, options);
 }
 
-static table_t * io500_md_hard_stat(io500_options_t * options, table_t * create_read){
-  return io500_run_mdtest_hard('T', create_read->items, options->stonewall_timer_reads, "","mdtest_hard_stat", 1, options);
+static mdtest_results_t * io500_md_hard_stat(io500_options_t * options, mdtest_results_t * create_read){
+  return io500_run_mdtest_hard('T', create_read->stonewall_last_item[MDTEST_FILE_CREATE_NUM], options->stonewall_timer_reads, "","mdtest_hard_stat", 1, options);
 }
 
-static table_t * io500_md_hard_delete(io500_options_t * options, table_t * create_read){
-  return io500_run_mdtest_hard('r', create_read->items, options->stonewall_timer_delete, "", "mdtest_hard_delete", 1, options);
+static mdtest_results_t * io500_md_hard_delete(io500_options_t * options, mdtest_results_t * create_read){
+  return io500_run_mdtest_hard('r', create_read->stonewall_last_item[MDTEST_FILE_CREATE_NUM], options->stonewall_timer_delete, "", "mdtest_hard_delete", 1, options);
 }
 
 static void io500_touch(char * const filename){
@@ -473,22 +474,26 @@ static void io500_create_workdir(io500_options_t * options){
 
 static void io500_print_bw(const char * prefix, int id, IOR_test_t * stat, int read){
   double timer = read ? stat->results->readTime[0] : stat->results->writeTime[0];
-  printf("IOR %d %s time: %fs size: %lld bytes bw: %.3f GiB/s\n",
-  id, prefix,
-  timer,
-  stat->results->aggFileSizeFromXfer[0],
-  stat->results->aggFileSizeFromXfer[0] / 1024.0 / 1024.0 / 1024.0 / timer);
+  double gibsize = stat->results->aggFileSizeFromXfer[0] / 1024.0 / 1024.0 / 1024.0;
+  printf("[Result] IOR %s bw: %.3f GiB/s time: %.1fs size: %.1f GiB\n",
+  prefix, gibsize / timer, timer, gibsize );
 }
 
-static void io500_print_md(const char * prefix, int id, int pos, table_t * stat){
-  double val = stat->entry[pos] / 1000;
+static void io500_print_md(const char * prefix, int id, mdtest_test_num_t pos, mdtest_results_t * stat){
+  double val = stat->rate[pos] / 1000;
+  double tim = stat->time[pos];
   //for(int i=0; i < 10; i++){
   //  if(stat->entry[i] != 0){
   //    printf("%d %f\n", i, stat->entry[i]);
   //  }
   //}
-  printf("mdtest %d %s %.3f kioops\n", id, prefix, val);
+  printf("[Result] mdtest %s rate: %.3f kioops %.1fs\n", prefix, val, tim);
 }
+
+static void io500_print_find(io500_find_results_t * find){
+    printf("[Result] find rate: %.3f kiops/s time: %.1fs err: %ld found: %ld (scanned %ld files)\n",  find->rate / 1000, find->runtime, find->errors, find->found_files, find->total_files);
+}
+
 
 int main(int argc, char ** argv){
   // output help with --help to enable running without mpiexec
@@ -539,7 +544,10 @@ int main(int argc, char ** argv){
   MPI_Barrier(MPI_COMM_WORLD);
 
   IOR_test_t * io_easy_create = io500_io_easy_create(options);
-  table_t *    md_easy_create = io500_md_easy_create(options);
+  if(rank == 0) io500_print_bw("ior_easy_write", 1, io_easy_create, 0);
+
+  mdtest_results_t *    md_easy_create = io500_md_easy_create(options);
+  if(rank == 0) io500_print_md("mdtest_easy_create", 1, MDTEST_FILE_CREATE_NUM, md_easy_create);
 
   {
     char fname[4096];
@@ -549,23 +557,39 @@ int main(int argc, char ** argv){
   MPI_Barrier(MPI_COMM_WORLD);
 
   IOR_test_t * io_hard_create = io500_io_hard_create(options);
-  table_t *    md_hard_create = io500_md_hard_create(options);
+  if(rank == 0) io500_print_bw("ior_hard_write", 3, io_hard_create, 0);
+
+  mdtest_results_t *    md_hard_create = io500_md_hard_create(options);
+  if(rank == 0) io500_print_md("mdtest_hard_create", 5, MDTEST_FILE_CREATE_NUM, md_hard_create);
 
   // mdreal...
   FILE * out = io500_prepare_out("find", 1, options);
+  if(rank == 0)
+    printf("\n[Starting] find: %s", CurrentTimeString());
   io500_find_results_t* find = io500_find(out, options);
   fclose(out);
+  if(rank == 0) io500_print_find(find);
 
   IOR_test_t * io_easy_read = io500_io_easy_read(options, io_easy_create);
-  //table_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
-  table_t *    md_hard_stat = io500_md_hard_stat(options, md_hard_create);
+  if(rank == 0) io500_print_bw("ior_easy_read", 2, io_easy_read, 1);
+
+  //mdtest_results_t *    md_easy_read = io500_md_easy_read(options, md_easy_create);
+  mdtest_results_t *    md_hard_stat = io500_md_hard_stat(options, md_hard_create);
+  if(rank == 0) io500_print_md("mdtest_hard_stat",   7, MDTEST_FILE_STAT_NUM, md_hard_stat);
 
   IOR_test_t * io_hard_read = io500_io_hard_read(options, io_hard_create);
-  table_t *    md_hard_read = io500_md_hard_read(options, md_hard_create);
-  table_t *    md_easy_stat = io500_md_easy_stat(options, md_easy_create);
+  mdtest_results_t *    md_hard_read = io500_md_hard_read(options, md_hard_create);
+  if(rank == 0) io500_print_md("mdtest_hard_read",   6, MDTEST_FILE_READ_NUM, md_hard_read);
 
-  table_t *    md_hard_delete = io500_md_hard_delete(options, md_hard_create);
-  table_t *    md_easy_delete = io500_md_easy_delete(options, md_easy_create);
+  mdtest_results_t *    md_easy_stat = io500_md_easy_stat(options, md_easy_create);
+  if(rank == 0) io500_print_md("mdtest_easy_stat",   3, MDTEST_FILE_STAT_NUM, md_easy_stat);
+
+  mdtest_results_t *    md_hard_delete = io500_md_hard_delete(options, md_hard_create);
+  if(rank == 0) io500_print_md("mdtest_hard_delete", 8, MDTEST_FILE_REMOVE_NUM, md_hard_delete);
+
+  mdtest_results_t *    md_easy_delete = io500_md_easy_delete(options, md_easy_create);
+  if(rank == 0) io500_print_md("mdtest_easy_delete", 4, MDTEST_FILE_REMOVE_NUM, md_easy_delete);
+
 
   if(rank == 0){
     printf("\nIO500 complete: %s\n", CurrentTimeString());
@@ -578,17 +602,17 @@ int main(int argc, char ** argv){
     io500_print_bw("ior_hard_write", 3, io_hard_create, 0);
     io500_print_bw("ior_hard_read", 4, io_hard_read, 1);
 
-    io500_print_md("mdtest_easy_create", 1, 4, md_easy_create);
-    //io500_print_md("mdtest_easy_read",   2, 6, md_easy_read);
-    io500_print_md("mdtest_easy_stat",   3, 5, md_easy_stat);
-    io500_print_md("mdtest_easy_delete", 4, 7, md_easy_delete);
+    io500_print_md("mdtest_easy_create", 1, MDTEST_FILE_CREATE_NUM, md_easy_create);
+    //io500_print_md("mdtest_easy_read",   2, MDTEST_FILE_READ_NUM, md_easy_read);
+    io500_print_md("mdtest_easy_stat",   3, MDTEST_FILE_STAT_NUM, md_easy_stat);
+    io500_print_md("mdtest_easy_delete", 4, MDTEST_FILE_REMOVE_NUM, md_easy_delete);
 
-    io500_print_md("mdtest_hard_create", 5, 4, md_hard_create);
-    io500_print_md("mdtest_hard_read",   6, 6, md_hard_read);
-    io500_print_md("mdtest_hard_stat",   7, 5, md_hard_stat);
-    io500_print_md("mdtest_hard_delete", 8, 7, md_hard_delete);
+    io500_print_md("mdtest_hard_create", 5, MDTEST_FILE_CREATE_NUM, md_hard_create);
+    io500_print_md("mdtest_hard_read",   6, MDTEST_FILE_READ_NUM, md_hard_read);
+    io500_print_md("mdtest_hard_stat",   7, MDTEST_FILE_STAT_NUM, md_hard_stat);
+    io500_print_md("mdtest_hard_delete", 8, MDTEST_FILE_REMOVE_NUM, md_hard_delete);
 
-    printf("find err: %ld found: %ld (scanned %ld files) time: %fs rate: %.3f kiops/s\n", find->errors, find->found_files, find->total_files, find->runtime, find->rate / 1000);
+    io500_print_find(find);
   }
   if(! options->stonewall_timer_delete){
     io500_cleanup(options);
