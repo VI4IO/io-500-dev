@@ -487,7 +487,7 @@ static void io500_print_md(const char * prefix, int id, mdtest_test_num_t pos, m
   //    printf("%d %f\n", i, stat->entry[i]);
   //  }
   //}
-  printf("[Result] mdtest %s rate: %.3f kioops %.1fs\n", prefix, val, tim);
+  printf("[Result] mdtest %s rate: %.3f kioops time: %.1fs\n", prefix, val, tim);
 }
 
 static void io500_print_find(io500_find_results_t * find){
