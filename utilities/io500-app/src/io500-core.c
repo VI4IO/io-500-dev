@@ -563,9 +563,9 @@ int main(int argc, char ** argv){
   if(rank == 0) io500_print_md("mdtest_hard_create", 5, MDTEST_FILE_CREATE_NUM, md_hard_create);
 
   // mdreal...
-  FILE * out = io500_prepare_out("find", 1, options);
   if(rank == 0)
     printf("\n[Starting] find: %s", CurrentTimeString());
+  FILE * out = io500_prepare_out("find", 1, options);
   io500_find_results_t* find = io500_find(out, options);
   fclose(out);
   if(rank == 0) io500_print_find(find);
