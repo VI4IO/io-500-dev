@@ -1,0 +1,39 @@
+IOR-3.1.0: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Oct 30 23:35:18 2017
+Command line used: ior "-C" "-Q" "1" "-g" "-G" "27" "-k" "-e" "-t" "47008" "-b" "47008" "-R" "-a" "POSIX" "-v" "-O" "stoneWallingWearOutIterations=15000" "-D" "300" "-O" "stoneWallingWearOut=1" "-s" "15000" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_hard/file" ""
+Machine: Linux m20019
+Start time skew across all tasks: 0.01 sec
+
+Test 0 started: Mon Oct 30 23:35:18 2017
+Path: /mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_hard
+FS: 33418.8 TiB   Used FS: 48.9%   Inodes: 8102.5 Mi   Used Inodes: 3.6%
+Participating tasks: 1000
+Using reorderTasks '-C' (expecting block, not cyclic, task assignment)
+Summary:
+	api                = POSIX
+	test filename      = /mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_hard/file
+	access             = single-shared-file
+	pattern            = strided (15000 segments)
+	ordering in a file = sequential offsets
+	ordering inter file= constant task offsets = 1
+	clients            = 1000 (10 per node)
+	repetitions        = 1
+	xfersize           = 47008 bytes
+	blocksize          = 47008 bytes
+	aggregate filesize = 656.69 GiB
+	Using stonewalling = 300 second(s) with phase out
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Mon Oct 30 23:35:18 2017
+0: stonewalling pairs accessed: 15000
+stonewalling pairs accessed min: 15000 max: 15000 -- min data: 0.7 GiB mean data: 0.7 GiB time: 96.5s
+read      6953       45.91      45.91      0.204898   96.46      0.063523   96.72      0   
+
+Pairs deadlineForStonewallingaccessed: 15000
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+
+Finished: Mon Oct 30 23:36:54 2017

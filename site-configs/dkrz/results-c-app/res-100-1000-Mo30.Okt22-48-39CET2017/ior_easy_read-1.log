@@ -1,0 +1,44 @@
+IOR-3.1.0: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Oct 30 23:24:53 2017
+Command line used: ior "-k" "-r" "-a" "POSIX" "-v" "-O" "stoneWallingWearOutIterations=131072" "-D" "300" "-O" "stoneWallingWearOut=1" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_easy/file" "-F" "-t" "1m" "-b" "128g"
+Machine: Linux m20019
+Start time skew across all tasks: 0.01 sec
+
+Test 0 started: Mon Oct 30 23:24:53 2017
+Path: /mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_easy
+FS: 33418.8 TiB   Used FS: 48.9%   Inodes: 8102.5 Mi   Used Inodes: 3.6%
+Participating tasks: 1000
+Summary:
+	api                = POSIX
+	test filename      = /mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_easy/file
+	access             = file-per-process
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= no tasks offsets
+	clients            = 1000 (10 per node)
+	repetitions        = 1
+	xfersize           = 1 MiB
+	blocksize          = 128 GiB
+	aggregate filesize = 125 TiB
+	Using stonewalling = 300 second(s) with phase out
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Mon Oct 30 23:24:53 2017
+0: stonewalling pairs accessed: 77921
+stonewalling pairs accessed min: 26447 max: 98282 -- min data: 25.8 GiB mean data: 63.0 GiB time: 300.1s
+WARNING: Expected aggregate file size       = 137438953472000.
+WARNING: Stat() of aggregate file size      = 137438953472000.
+WARNING: Using actual aggregate bytes moved = 103056146432000.
+WARNING: maybe caused by deadlineForStonewalling
+read      167547     134217728  1024.00    0.016162   586.59     286.49     586.59     0   
+
+Max Read:  167547.29 MiB/sec (175686.07 MB/sec)
+Pairs deadlineForStonewallingaccessed: 98282
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read       167547.29  167547.29  167547.29       0.00  586.59259 0 1000 10 1 1 0 1 0 0 1 137438953472 1048576 103056146432000 POSIX 0
+
+Finished: Mon Oct 30 23:34:40 2017

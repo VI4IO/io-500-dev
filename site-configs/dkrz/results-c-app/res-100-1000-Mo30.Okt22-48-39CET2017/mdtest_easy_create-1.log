@@ -1,0 +1,79 @@
+V-1: Entering count_tasks_per_node...
+V-1: Entering print_timestamp...
+-- started at 10/30/2017 23:02:17 --
+
+mdtest-1.9.3 was launched with 1000 total task(s) on 100 node(s)
+Command line used: mdtest "-F" "-C" "-a" "POSIX" "-n" "20000" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/mdtest_easy" "-u" "-L"
+V-1: Entering parse_dirpath...
+V-1: Entering valid_tests...
+api                     : POSIX
+barriers                : True
+collective_creates      : False
+create_only             : True
+dirpath(s):
+	/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/mdtest_easy
+dirs_only               : False
+read_bytes              : 0
+read_only               : False
+first                   : 1
+files_only              : True
+iterations              : 1
+items_per_dir           : 0
+last                    : 0
+leaf_only               : True
+items                   : 20000
+nstride                 : 0
+pre_delay               : 0
+remove_only             : True
+random_seed             : 0
+stride                  : 1
+shared_file             : False
+time_unique_dir_overhead: False
+stone_wall_timer_seconds: 300
+stat_only               : False
+unique_dir_per_task     : True
+write_bytes             : 0
+sync_file               : False
+depth                   : 0
+V-1: Entering display_freespace...
+V-1: Entering show_file_system_size...
+FS: 33418.8 TiB   Used FS: 48.9%   Inodes: 8102.5 Mi   Used Inodes: 3.5%
+
+1000 tasks, 20000000 files
+
+   Operation               Duration              Rate
+   ---------               --------              ----
+V-1: main: * iteration 1 *
+V-1: Entering create_remove_directory_tree, currDepth = 0...
+V-1: Entering create_remove_directory_tree, currDepth = 1...
+V-1: main:   Tree creation     :          0.027 sec,         36.394 ops/sec
+V-1: Entering file_test...
+V-1: Entering unique_dir_access...
+V-1: Entering offset_timers...
+V-1: Entering create_remove_items, currDepth = 0...
+V-1: Entering create_remove_items_helper...
+V-1: rank 0 stonewall hit with 3858 items
+V-1: continue stonewall hit min: 2482 max: 10518 avg: 5757.2 
+V-1: Entering create_remove_items, currDepth = 0...
+V-1: Entering create_remove_items_helper...
+V-1: Entering offset_timers...
+V-1:   File creation     :        579.629 sec,      18146.094 ops/sec
+V-1:   File stat         :          0.000 sec,          0.000 ops/sec
+V-1:   File read         :          0.000 sec,          0.000 ops/sec
+V-1:   File removal      :          0.060 sec,          0.000 ops/sec
+V-1: Entering summarize_results...
+
+SUMMARY rate: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :      18146.098      18146.098      18146.098          0.000
+   File stat         :          0.000          0.000          0.000          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :         36.394         36.394         36.394          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+
+-- hit stonewall
+V-1: Entering print_timestamp...
+
+-- finished at 10/30/2017 23:11:57 --

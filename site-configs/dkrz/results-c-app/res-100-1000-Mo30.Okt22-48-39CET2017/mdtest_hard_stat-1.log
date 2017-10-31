@@ -1,0 +1,66 @@
+V-1: Entering count_tasks_per_node...
+V-1: Entering print_timestamp...
+-- started at 10/30/2017 23:34:40 --
+
+mdtest-1.9.3 was launched with 1000 total task(s) on 100 node(s)
+Command line used: mdtest "-w" "3900" "-e" "3900" "-t" "-F" "-T" "-a" "POSIX" "-n" "5850" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/mdtest_hard"
+V-1: Entering parse_dirpath...
+V-1: Entering valid_tests...
+api                     : POSIX
+barriers                : True
+collective_creates      : False
+create_only             : False
+dirpath(s):
+	/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/mdtest_hard
+dirs_only               : False
+read_bytes              : 3900
+read_only               : False
+first                   : 1
+files_only              : True
+iterations              : 1
+items_per_dir           : 0
+last                    : 0
+leaf_only               : False
+items                   : 5850
+nstride                 : 0
+pre_delay               : 0
+remove_only             : False
+random_seed             : 0
+stride                  : 1
+shared_file             : False
+time_unique_dir_overhead: True
+stone_wall_timer_seconds: 300
+stat_only               : True
+unique_dir_per_task     : False
+write_bytes             : 3900
+sync_file               : False
+depth                   : 0
+V-1: Entering display_freespace...
+V-1: Entering show_file_system_size...
+FS: 33418.8 TiB   Used FS: 48.9%   Inodes: 8102.5 Mi   Used Inodes: 3.6%
+
+1000 tasks, 5850000 files
+
+   Operation               Duration              Rate
+   ---------               --------              ----
+V-1: main: * iteration 1 *
+V-1: Entering file_test...
+V-1: Entering mdtest_stat...
+V-1:   File creation     :          0.000 sec,          0.000 ops/sec
+V-1:   File stat         :         37.484 sec,     156067.709 ops/sec
+V-1:   File read         :          0.000 sec,          0.000 ops/sec
+V-1:   File removal      :          0.000 sec,          0.000 ops/sec
+V-1: Entering summarize_results...
+
+SUMMARY rate: (of 1 iterations)
+   Operation                      Max            Min           Mean        Std Dev
+   ---------                      ---            ---           ----        -------
+   File creation     :          0.000          0.000          0.000          0.000
+   File stat         :     156069.158     156069.158     156069.158          0.000
+   File read         :          0.000          0.000          0.000          0.000
+   File removal      :          0.000          0.000          0.000          0.000
+   Tree creation     :          0.000          0.000          0.000          0.000
+   Tree removal      :          0.000          0.000          0.000          0.000
+V-1: Entering print_timestamp...
+
+-- finished at 10/30/2017 23:35:18 --

@@ -1,0 +1,41 @@
+IOR-3.1.0: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Oct 30 23:11:57 2017
+Command line used: ior "-C" "-Q" "1" "-g" "-G" "27" "-k" "-e" "-t" "47008" "-b" "47008" "-w" "-a" "POSIX" "-v" "-D" "300" "-O" "stoneWallingWearOut=1" "-s" "15000" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_hard/file" ""
+Machine: Linux m20019
+Start time skew across all tasks: 0.01 sec
+
+Test 0 started: Mon Oct 30 23:11:57 2017
+Path: /mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_hard
+FS: 33418.8 TiB   Used FS: 48.9%   Inodes: 8102.5 Mi   Used Inodes: 3.6%
+Participating tasks: 1000
+Using reorderTasks '-C' (expecting block, not cyclic, task assignment)
+Summary:
+	api                = POSIX
+	test filename      = /mnt/lustre02/work/k20200/k202079/io500/data-Mo30.Okt22-48-39CET2017/ior_hard/file
+	access             = single-shared-file
+	pattern            = strided (15000 segments)
+	ordering in a file = sequential offsets
+	ordering inter file= constant task offsets = 1
+	clients            = 1000 (10 per node)
+	repetitions        = 1
+	xfersize           = 47008 bytes
+	blocksize          = 47008 bytes
+	aggregate filesize = 656.69 GiB
+	Using stonewalling = 300 second(s) with phase out
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Oct 30 23:11:57 2017
+0: stonewalling pairs accessed: 8640
+stonewalling pairs accessed min: 8237 max: 15000 -- min data: 0.4 GiB mean data: 0.5 GiB time: 300.4s
+write     1563.98    45.91      45.91      0.465165   429.50     0.008366   429.96     0   
+
+Max Write: 1563.98 MiB/sec (1639.95 MB/sec)
+Pairs deadlineForStonewallingaccessed: 15000
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write        1563.98    1563.98    1563.98       0.00  429.96345 0 1000 10 1 0 1 1 0 0 15000 47008 47008 705120000000 POSIX 0
+
+Finished: Mon Oct 30 23:19:07 2017
