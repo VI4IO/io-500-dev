@@ -63,7 +63,7 @@ function setup_ior_easy {
 
 function setup_mdt_easy {
   io500_mdtest_easy_params="-u -L" # unique dir per thread, files only at leaves
-  io500_mdtest_easy_files_per_proc=6100
+  io500_mdtest_easy_files_per_proc=51000
 }
 
 function setup_ior_hard {
@@ -71,7 +71,7 @@ function setup_ior_hard {
 }
 
 function setup_mdt_hard {
-  io500_mdtest_hard_files_per_proc=6100
+  io500_mdtest_hard_files_per_proc=9100
 }
 
 function setup_find {
@@ -84,6 +84,13 @@ function setup_find {
   # the serial version that should run (SLOWLY) without modification
   io500_find_mpi="False"
   io500_find_cmd=$PWD/bin/sfind.sh
+
+  # a parallel version in C, the -s adds a stonewall
+  # for a real run, turn -s (stonewall) off or set it at 300 or more
+  io500_find_mpi="True"
+  io500_find_cmd="$PWD/build/pfind/pfind"
+  io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
+  
 
   # a parallel version that might require some work, it is a python3 program 
   # if you used utilities/prepare.sh, it should already be there. 
@@ -107,7 +114,8 @@ function run_benchmarks {
 # Add key/value pairs defining your system if you want
 # This function needs to exist although it doesn't have to output anything if you don't want
 function extra_description {
-  echo "System_name='JohnBentLaptop'"
+  echo "System_name='TheNameForYourSystem'"
+  echo "Put_Other_Keys_Here='Put_Other_Values_Here'"
 }
 
 main

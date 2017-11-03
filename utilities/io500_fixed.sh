@@ -209,7 +209,7 @@ function myfind {
   [ "$io500_run_find" != "True" ] && printf "\n[Skipping] $phase\n" && return 0 
   result_file=$io500_result_dir/$phase.txt
 
-  command="$io500_find_cmd $io500_workdir -newer $timestamp_file -size ${mdt_hard_fsize}c -name *01*" 
+  command="$io500_find_cmd $io500_workdir -newer $timestamp_file -size ${mdt_hard_fsize}c -name *01* $io500_find_cmd_args" 
 
   startphase $phase
   if [ "$io500_find_mpi" != "True" ] ; then
