@@ -63,32 +63,46 @@ function setup_ior_easy {
 
 function setup_mdt_easy {
   io500_mdtest_easy_params="-u -L" # unique dir per thread, files only at leaves
-  io500_mdtest_easy_files_per_proc=51000
+  io500_mdtest_easy_files_per_proc=25000
 }
 
 function setup_ior_hard {
-  io500_ior_hard_writes_per_proc=60
+  io500_ior_hard_writes_per_proc=10000
 }
 
 function setup_mdt_hard {
-  io500_mdtest_hard_files_per_proc=9100
+  io500_mdtest_hard_files_per_proc=5000
 }
 
 function setup_find {
   #
   # setup the find command. This is an area where innovation is allowed.
-  #    There are two default options provided. One is a serial find and the other
-  #    is a parallel version. 
+  #    There are three default options provided. One is a serial find, one is python
+  #    parallel version, one is C parallel version.  Current default is to use serial.
+  #    But it is very slow. We recommend to either customize or use the C parallel version.
+  #    Instructions below.
   #    If a custom approach is used, please provide enough info so others can reproduce.
 
   # the serial version that should run (SLOWLY) without modification
   io500_find_mpi="False"
   io500_find_cmd=$PWD/bin/sfind.sh
+  io500_find_cmd_args=""
 
   # a parallel version in C, the -s adds a stonewall
-  # for a real run, turn -s (stonewall) off or set it at 300 or more
+  #   for a real run, turn -s (stonewall) off or set it at 300 or more
+  #   to prepare this (assuming you've run ./utilities/prepare.sh already):
+  #   > cd build/pfind
+  #   > ./prepare.sh
+  #   > ./compile.sh
+  #   > cp pfind ../../bin/ 
+  #   If you use io500_find_mpi="True", then this will run with the same
+  #   number of MPI nodes and ranks as the other phases.
+  #   If you prefer another number, and fewer might be better here,
+  #   Then you can set io500_find_mpi to be "False" and write a wrapper
+  #   script for this which sets up MPI as you would like.  Then change
+  #   io500_find_cmd to point to your wrapper script. 
   io500_find_mpi="True"
-  io500_find_cmd="$PWD/build/pfind/pfind"
+  io500_find_cmd="$PWD/bin/pfind"
   io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
   
 
@@ -99,6 +113,7 @@ function setup_find {
   #export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
   #io500_find_mpi="True"
   #io500_find_cmd="$PWD/bin/pfind -stonewall 1"
+  #io500_find_cmd_args=""
 }
 
 function setup_mdreal {

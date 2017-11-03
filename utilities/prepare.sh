@@ -60,9 +60,13 @@ function get_ior {
 function get_pfind {
   echo "Preparing parallel find"
   pushd $BUILD
+  # this is the old python pfind that has been problematic
   rm -rf pwalk
   git clone https://github.com/johnbent/pwalk.git
-  cp -r pwalk/pfind pwalk/lib $BIN
+  #cp -r pwalk/pfind pwalk/lib $BIN
+
+  # this is the new C pfind
+  git clone https://github.com/VI4IO/pfind.git
   echo "Pfind: OK"
   echo
   popd

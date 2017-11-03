@@ -214,10 +214,10 @@ function myfind {
   startphase $phase
   if [ "$io500_find_mpi" != "True" ] ; then
     echo "[EXEC] $command"
-    matches=$( $command | grep MATCHED )
+    matches=$( $command | grep MATCHED | tail -1 )
   else
     myrun "$command" $result_file 
-    matches=$( grep MATCHED $result_file )
+    matches=$( grep MATCHED $result_file | tail -1 )
   fi
 
   endphase_check "find"
