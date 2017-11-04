@@ -1,0 +1,113 @@
+Arguments: /home/dkrz/k202079/work/io-500/io500-app/io500 "-w" "/mnt/lustre02/work/k20200/k202079/io500/data" "-r" "/home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017" "-s" "300" "-S" "-v" "-f" "20000" "-F" "20000" "-I" "15000" "-e" "-F -t 1m -b 128g"
+Runtime:
+NODES=10
+NPROC=1000
+
+[Starting] ior_easy_create: Fri Nov  3 03:44:35 2017
+
+[Starting] ior_easy_create: Fri Nov  3 03:44:35 2017
+[Exec]: "ior" "-k" "-w" "-a" "MPIIO" "-v" "-D" "300" "-O" "stoneWallingWearOut=1" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data/ior_easy/file" "-F" "-t" "1m" "-b" "128g"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/ior_easy_create-1.log
+[Result] IOR ior_easy_write bw: 118.047 GiB/s time: 1084.3s size: 128000.0 GiB (perf at stonewall min: 26.349 GiB/s avg: 214.203 GiB/s)
+
+[Starting] mdtest_easy_create: Fri Nov  3 04:02:40 2017
+
+[Starting] mdtest_easy_create: Fri Nov  3 04:02:40 2017
+[Exec]: "mdtest" "-F" "-C" "-a" "POSIX" "-n" "20000" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_easy" "-u" "-L"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_easy_create-1.log
+[Result] mdtest mdtest_easy_create rate: 17.917 kiops time: 559.5s (perf at stonewall min: 7.8 kiops avg: 18.9 kiops)
+
+[Starting] ior_hard_create: Fri Nov  3 04:12:00 2017
+
+[Starting] ior_hard_create: Fri Nov  3 04:12:00 2017
+[Exec]: "ior" "-C" "-Q" "1" "-g" "-G" "27" "-k" "-e" "-t" "47008" "-b" "47008" "-w" "-a" "MPIIO" "-v" "-D" "300" "-O" "stoneWallingWearOut=1" "-s" "15000" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data/ior_hard/file" ""
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/ior_hard_create-1.log
+ior WARNING: fsync() only available in POSIX.  Using value of 0.
+[Result] IOR ior_hard_write bw: 0.415 GiB/s time: 1580.5s size: 656.7 GiB (perf at stonewall min: 0.408 GiB/s avg: 0.620 GiB/s)
+
+[Starting] mdtest_hard_create: Fri Nov  3 04:38:21 2017
+
+[Starting] mdtest_hard_create: Fri Nov  3 04:38:21 2017
+[Exec]: "mdtest" "-w" "3900" "-e" "3900" "-t" "-F" "-C" "-a" "POSIX" "-n" "20000" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_hard"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_hard_create-1.log
+[Result] mdtest mdtest_hard_create rate: 17.499 kiops time: 331.2s (perf at stonewall min: 16.2 kiops avg: 17.8 kiops)
+
+[Starting] find: Fri Nov  3 04:43:52 2017
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/find-1.log
+[Running] find: Fri Nov  3 04:43:52 2017
+
+[Result] find-easy rate: 1715.941 kiops time: 5.8s err: 0 found: 0 (scanned 10024001 files)
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/find-hard-1.log
+[Running] find: Fri Nov  3 04:43:58 2017
+
+[Result] find-hard rate: 895.001 kiops time: 6.5s err: 0 found: 158192 (scanned 5795001 files)
+
+[Starting] ior_easy_read: Fri Nov  3 04:44:04 2017
+
+[Starting] ior_easy_read: Fri Nov  3 04:44:04 2017
+[Exec]: "ior" "-k" "-r" "-a" "MPIIO" "-v" "-O" "stoneWallingWearOutIterations=131072" "-D" "300" "-O" "stoneWallingWearOut=1" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data/ior_easy/file" "-F" "-t" "1m" "-b" "128g"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/ior_easy_read-1.log
+[Result] IOR ior_easy_read bw: 153.599 GiB/s time: 551.3s size: 84677.7 GiB (perf at stonewall min: 88.219 GiB/s avg: 184.012 GiB/s)
+
+[Starting] mdtest_hard_stat: Fri Nov  3 04:53:15 2017
+
+[Starting] mdtest_hard_stat: Fri Nov  3 04:53:15 2017
+[Exec]: "mdtest" "-w" "3900" "-e" "3900" "-t" "-F" "-T" "-a" "POSIX" "-n" "5795" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_hard"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_hard_stat-1.log
+[Result] mdtest mdtest_hard_stat rate: 146.796 kiops time: 39.5s
+
+[Starting] ior_hard_read: Fri Nov  3 04:53:55 2017
+
+[Starting] ior_hard_read: Fri Nov  3 04:53:55 2017
+[Exec]: "ior" "-C" "-Q" "1" "-g" "-G" "27" "-k" "-e" "-t" "47008" "-b" "47008" "-R" "-a" "MPIIO" "-v" "-O" "stoneWallingWearOutIterations=15000" "-D" "300" "-O" "stoneWallingWearOut=1" "-s" "15000" "-o" "/mnt/lustre02/work/k20200/k202079/io500/data/ior_hard/file" ""
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/ior_hard_read-1.log
+ior WARNING: fsync() only available in POSIX.  Using value of 0.
+
+[Starting] mdtest_hard_read: Fri Nov  3 04:59:24 2017
+
+[Starting] mdtest_hard_read: Fri Nov  3 04:59:24 2017
+[Exec]: "mdtest" "-w" "3900" "-e" "3900" "-t" "-F" "-E" "-a" "POSIX" "-n" "5795" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_hard"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_hard_read-1.log
+[Result] mdtest mdtest_hard_read rate: 14.309 kiops time: 405.0s
+
+[Starting] mdtest_easy_stat: Fri Nov  3 05:06:09 2017
+
+[Starting] mdtest_easy_stat: Fri Nov  3 05:06:09 2017
+[Exec]: "mdtest" "-F" "-T" "-a" "POSIX" "-n" "10024" "-W" "300" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_easy" "-u" "-L"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_easy_stat-1.log
+[Result] mdtest mdtest_easy_stat rate: 142.709 kiops time: 70.2s
+
+[Starting] mdtest_hard_delete: Fri Nov  3 05:07:19 2017
+
+[Starting] mdtest_hard_delete: Fri Nov  3 05:07:19 2017
+[Exec]: "mdtest" "-w" "3900" "-e" "3900" "-t" "-F" "-r" "-a" "POSIX" "-n" "5795" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_hard"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_hard_delete-1.log
+[Result] mdtest mdtest_hard_delete rate: 8.830 kiops time: 656.3s
+
+[Starting] mdtest_easy_delete: Fri Nov  3 05:18:16 2017
+
+[Starting] mdtest_easy_delete: Fri Nov  3 05:18:16 2017
+[Exec]: "mdtest" "-F" "-r" "-a" "POSIX" "-n" "10024" "-v" "-d" "/mnt/lustre02/work/k20200/k202079/io500/data/mdtest_easy" "-u" "-L"
+[Output] /home/dkrz/k202079/work/io-500/io500-app/res-100-1000-Fr3.Nov03-44-27CET2017/mdtest_easy_delete-1.log
+[Result] mdtest mdtest_easy_delete rate: 7.917 kiops time: 1266.1s
+
+IO500 complete: Fri Nov  3 05:39:23 2017
+
+
+=== IO-500 submission ===
+[Result] IOR ior_easy_write bw: 118.047 GiB/s time: 1084.3s size: 128000.0 GiB (perf at stonewall min: 26.349 GiB/s avg: 214.203 GiB/s)
+[Result] IOR ior_easy_read bw: 153.599 GiB/s time: 551.3s size: 84677.7 GiB (perf at stonewall min: 88.219 GiB/s avg: 184.012 GiB/s)
+[Result] IOR ior_hard_write bw: 0.415 GiB/s time: 1580.5s size: 656.7 GiB (perf at stonewall min: 0.408 GiB/s avg: 0.620 GiB/s)
+[Result] IOR ior_hard_read bw: 1.158 GiB/s time: 328.8s size: 380.6 GiB (perf at stonewall min: 1.184 GiB/s avg: 1.242 GiB/s)
+[Result] mdtest mdtest_easy_create rate: 17.917 kiops time: 559.5s (perf at stonewall min: 7.8 kiops avg: 18.9 kiops)
+[Result] mdtest mdtest_easy_stat rate: 142.709 kiops time: 70.2s
+[Result] mdtest mdtest_easy_delete rate: 7.917 kiops time: 1266.1s
+[Result] mdtest mdtest_hard_create rate: 17.499 kiops time: 331.2s (perf at stonewall min: 16.2 kiops avg: 17.8 kiops)
+[Result] mdtest mdtest_hard_read rate: 14.309 kiops time: 405.0s
+[Result] mdtest mdtest_hard_stat rate: 146.796 kiops time: 39.5s
+[Result] mdtest mdtest_hard_delete rate: 8.830 kiops time: 656.3s
+[Result] find-easy rate: 1715.941 kiops time: 5.8s err: 0 found: 0 (scanned 10024001 files)
+[Result] find-hard rate: 895.001 kiops time: 6.5s err: 0 found: 158192 (scanned 5795001 files)
+
+Cleaning files from working directory: Fri Nov  3 05:39:23 2017
+
