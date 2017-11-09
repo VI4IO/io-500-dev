@@ -24,7 +24,7 @@ function main {
   #get_mdrealio || true  # this failed on RHEL 7.4 so turning off until fixed
 
   build_ior
-#  build_pfind   # unnecessary since it is a Python 3 program
+  build_pfind   # unnecessary since it is a Python 3 program
 #  build_mdrealio || true  # this failed on RHEL 7.4 so turning off until fixed
 
   echo
@@ -85,6 +85,17 @@ function build_ior {
   pushd $BUILD
   cd ior/src # just build the source
   $MAKE install
+  echo "IOR: OK"
+  echo
+  popd
+}
+
+function build_pfind {
+  pushd $BUILD
+  cd pfind 
+  ./prepare.sh
+  ./compile.sh
+  cp pfind $BIN
   echo "IOR: OK"
   echo
   popd
