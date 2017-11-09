@@ -101,9 +101,9 @@ function setup_find {
   #   Then you can set io500_find_mpi to be "False" and write a wrapper
   #   script for this which sets up MPI as you would like.  Then change
   #   io500_find_cmd to point to your wrapper script. 
-  io500_find_mpi="True"
-  io500_find_cmd="$PWD/bin/pfind"
-  io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
+  #io500_find_mpi="True"
+  #io500_find_cmd="$PWD/bin/pfind"
+  #io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
   
 
   # a parallel version that might require some work, it is a python3 program 
