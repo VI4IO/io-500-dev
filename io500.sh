@@ -80,6 +80,7 @@ function setup_find {
   #    There are three default options provided. One is a serial find, one is python
   #    parallel version, one is C parallel version.  Current default is to use serial.
   #    But it is very slow. We recommend to either customize or use the C parallel version.
+  #    For GPFS, we recommend to use the provided mmfind wrapper described below.
   #    Instructions below.
   #    If a custom approach is used, please provide enough info so others can reproduce.
 
@@ -105,14 +106,10 @@ function setup_find {
   #io500_find_cmd="$PWD/bin/pfind"
   #io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
   
-
-  # a parallel version that might require some work, it is a python3 program 
-  # if you used utilities/prepare.sh, it should already be there. 
-  # change the stonewall to 300 to get a valid score
-  #set +u
-  #export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
-  #io500_find_mpi="True"
-  #io500_find_cmd="$PWD/bin/pfind -stonewall 1"
+  # for GPFS systems, you should probably use the provided mmfind wrapper 
+  # if you used ./utilities/prepare.sh, you'll find this wrapper in ./bin/mmfind.sh
+  #io500_find_mpi="False"
+  #io500_find_cmd="$PWD/bin/mmfind.sh"
   #io500_find_cmd_args=""
 }
 

@@ -35,7 +35,7 @@ function main {
 function setup {
   rm -rf $BUILD $BIN
   mkdir -p $BUILD $BIN 
-  cp utilities/io500_fixed.sh utilities/find/sfind.sh $BIN
+  cp utilities/io500_fixed.sh utilities/find/sfind.sh utilities/find/mmfind.sh $BIN
 }
 
 function git_co {
