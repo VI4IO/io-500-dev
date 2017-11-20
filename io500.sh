@@ -5,6 +5,7 @@
 # This simplified version is just for running on a single node.
 # It is a simplified version of the site-configs/sandia/startup.sh which include SLURM directives.
 # Most of the variables set in here are needed for io500_fixed.sh which gets sourced at the end of this.
+# Please also edit 'extra_description' function.
 
 set -euo pipefail  # better error handling
 
@@ -27,6 +28,8 @@ io500_run_md_hard_delete="True" # turn this off if you want to just run find by 
 io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
 
+# to run this benchmark, find and edit each of these functions.
+# please also edit 'extra_description' function to help us collect the required data.
 function main {
   setup_directories
   setup_paths    
@@ -123,11 +126,20 @@ function run_benchmarks {
   source ./bin/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
 }
 
-# Add key/value pairs defining your system if you want
-# This function needs to exist although it doesn't have to output anything if you don't want
+# Add key/value pairs defining your system 
+# Feel free to add extra ones if you'd like
 function extra_description {
-  echo "System_name='TheNameForYourSystem'"
-  echo "Put_Other_Keys_Here='Put_Other_Values_Here'"
+  io500_info_system_name='xxx'      # e.g. Oakforest-PACS
+  io500_info_institute_name='xxx'   # e.g. JCAHPC
+  io500_info_num_client_nodes='xxx'
+  io500_info_num_server_nodes='xxx'
+  io500_info_procs_per_node='xxx'
+  io500_info_storage_age_in_months='xxx' # not install date but age since last refresh
+  io500_info_storage_install_date='xxx'  # MM/YY
+  io500_info_filesysem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
+  io500_info_filesystem_version='xxx'
+  io500_info_num_storage_devices='xxx'  # if you have 5 servers, and each has 5 drives, then this number is 25
+  io500_info_whatever='WhateverElseYouThinkRelevant'
 }
 
 main
