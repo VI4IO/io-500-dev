@@ -139,6 +139,8 @@ function extra_description {
   io500_info_filesysem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
   io500_info_filesystem_version='xxx'
   io500_info_num_storage_devices='xxx'  # if you have 5 servers, and each has 5 drives, then this number is 25
+  io500_info_storage_network='xxx' # infiniband, omnipath, ethernet, etc
+  io500_info_storage_interface='xxx' # SAS, SATA, NVMe, etc
   io500_info_whatever='WhateverElseYouThinkRelevant'
 }
 
