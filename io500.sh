@@ -129,18 +129,26 @@ function run_benchmarks {
 # Add key/value pairs defining your system 
 # Feel free to add extra ones if you'd like
 function extra_description {
+  # top level info
   io500_info_system_name='xxx'      # e.g. Oakforest-PACS
   io500_info_institute_name='xxx'   # e.g. JCAHPC
-  io500_info_num_client_nodes='xxx'
-  io500_info_num_server_nodes='xxx'
-  io500_info_procs_per_node='xxx'
   io500_info_storage_age_in_months='xxx' # not install date but age since last refresh
   io500_info_storage_install_date='xxx'  # MM/YY
   io500_info_filesysem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
   io500_info_filesystem_version='xxx'
-  io500_info_num_storage_devices='xxx'  # if you have 5 servers, and each has 5 drives, then this number is 25
+  # client side info
+  io500_info_num_client_nodes='xxx'
+  io500_info_procs_per_node='xxx'
+  # server side info
+  io500_info_num_metadata_server_nodes='xxx'
+  io500_info_num_data_server_nodes='xxx'
+  io500_info_num_data_storage_devices='xxx'  # if you have 5 data servers, and each has 5 drives, then this number is 25
+  io500_info_num_metadata_storage_devices='xxx'  # if you have 2 metadata servers, and each has 5 drives, then this number is 10
+  io500_info_data_storage_type='xxx' # HDD, SSD, persistent memory, etc, feel free to put specific models
+  io500_info_metadata_storage_type='xxx' # HDD, SSD, persistent memory, etc, feel free to put specific models
   io500_info_storage_network='xxx' # infiniband, omnipath, ethernet, etc
   io500_info_storage_interface='xxx' # SAS, SATA, NVMe, etc
+  # miscellaneous
   io500_info_whatever='WhateverElseYouThinkRelevant'
 }
 
