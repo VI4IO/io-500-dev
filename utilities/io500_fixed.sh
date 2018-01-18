@@ -34,11 +34,11 @@ function cleanup {
 }
 
 function output_description {
+  extra_description
   echo "System: " `uname -n`
   echo "filesystem_utilization=$(df ${io500_workdir}|tail -1)"
   echo "date=$timestamp"
   (set -o posix; set | grep '^io500' | sort)
-  extra_description
 }
 
 function check_variables {

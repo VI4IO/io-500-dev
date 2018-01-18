@@ -5,6 +5,7 @@
 # This simplified version is just for running on a single node.
 # It is a simplified version of the site-configs/sandia/startup.sh which include SLURM directives.
 # Most of the variables set in here are needed for io500_fixed.sh which gets sourced at the end of this.
+# Please also edit 'extra_description' function.
 
 set -euo pipefail  # better error handling
 
@@ -27,6 +28,8 @@ io500_run_md_hard_delete="True" # turn this off if you want to just run find by 
 io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
 
+# to run this benchmark, find and edit each of these functions.
+# please also edit 'extra_description' function to help us collect the required data.
 function main {
   setup_directories
   setup_paths    
@@ -80,6 +83,7 @@ function setup_find {
   #    There are three default options provided. One is a serial find, one is python
   #    parallel version, one is C parallel version.  Current default is to use serial.
   #    But it is very slow. We recommend to either customize or use the C parallel version.
+  #    For GPFS, we recommend to use the provided mmfind wrapper described below.
   #    Instructions below.
   #    If a custom approach is used, please provide enough info so others can reproduce.
 
@@ -105,14 +109,10 @@ function setup_find {
   #io500_find_cmd="$PWD/bin/pfind"
   #io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
   
-
-  # a parallel version that might require some work, it is a python3 program 
-  # if you used utilities/prepare.sh, it should already be there. 
-  # change the stonewall to 300 to get a valid score
-  #set +u
-  #export PYTHONPATH=$PYTHONPATH:$PWD/bin/lib
-  #io500_find_mpi="True"
-  #io500_find_cmd="$PWD/bin/pfind -stonewall 1"
+  # for GPFS systems, you should probably use the provided mmfind wrapper 
+  # if you used ./utilities/prepare.sh, you'll find this wrapper in ./bin/mmfind.sh
+  #io500_find_mpi="False"
+  #io500_find_cmd="$PWD/bin/mmfind.sh"
   #io500_find_cmd_args=""
 }
 
@@ -126,11 +126,30 @@ function run_benchmarks {
   source ./bin/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
 }
 
-# Add key/value pairs defining your system if you want
-# This function needs to exist although it doesn't have to output anything if you don't want
+# Add key/value pairs defining your system 
+# Feel free to add extra ones if you'd like
 function extra_description {
-  echo "System_name='TheNameForYourSystem'"
-  echo "Put_Other_Keys_Here='Put_Other_Values_Here'"
+  # top level info
+  io500_info_system_name='xxx'      # e.g. Oakforest-PACS
+  io500_info_institute_name='xxx'   # e.g. JCAHPC
+  io500_info_storage_age_in_months='xxx' # not install date but age since last refresh
+  io500_info_storage_install_date='xxx'  # MM/YY
+  io500_info_filesysem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
+  io500_info_filesystem_version='xxx'
+  # client side info
+  io500_info_num_client_nodes='xxx'
+  io500_info_procs_per_node='xxx'
+  # server side info
+  io500_info_num_metadata_server_nodes='xxx'
+  io500_info_num_data_server_nodes='xxx'
+  io500_info_num_data_storage_devices='xxx'  # if you have 5 data servers, and each has 5 drives, then this number is 25
+  io500_info_num_metadata_storage_devices='xxx'  # if you have 2 metadata servers, and each has 5 drives, then this number is 10
+  io500_info_data_storage_type='xxx' # HDD, SSD, persistent memory, etc, feel free to put specific models
+  io500_info_metadata_storage_type='xxx' # HDD, SSD, persistent memory, etc, feel free to put specific models
+  io500_info_storage_network='xxx' # infiniband, omnipath, ethernet, etc
+  io500_info_storage_interface='xxx' # SAS, SATA, NVMe, etc
+  # miscellaneous
+  io500_info_whatever='WhateverElseYouThinkRelevant'
 }
 
 main
