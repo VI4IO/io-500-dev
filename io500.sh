@@ -123,7 +123,7 @@ function setup_mdreal {
 function run_benchmarks {
   # Important: source the io500_fixed.sh script.  Do not change it. If you discover
   # a need to change it, please email the mailing list to discuss
-  source ./bin/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
+  source ./utilities/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
 }
 
 # Add key/value pairs defining your system 
