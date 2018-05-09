@@ -229,14 +229,14 @@ function myfind {
 
 function output_score {
   echo "[Summary] Results files in $io500_result_dir"
-  if [ "$io500_cleanup_workdir" != "True" ] ; then 
+  if [ "$io500_cleanup_workdir" != "True" ] ; then
     echo "[Summary] Data files in $io500_workdir"
   fi
   cat $summary_file | grep BW
   cat $summary_file | grep IOPS
   bw_score=`echo $bw1 $bw2 $bw3 $bw4 | awk '{print ($1*$2*$3*$4)^(1/4)}'`
   md_score=`echo $iops1 $iops2 $iops3 $iops4 $iops5 $iops6 $iops7 $iops8 | awk '{print ($1*$2*$3*$4*$5*$6*$7*$8)^(1/8)}'`
-  tot_score=`echo "scale = 2; $bw_score * $md_score" | bc`
+  tot_score=`echo $bw_score $md_score | awk '{print ($1*$2)^(1/2)}'`
   echo "[SCORE] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
   if [ "$io500_run_ior_easy" != "True" ] ; then
     echo "IOR Easy Write skipped. No aggregate score possible."
