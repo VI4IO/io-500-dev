@@ -42,15 +42,13 @@ function output_description {
 }
 
 function check_variables {
-  # anyone know a way to do this crap with a helper function?
-  [ -z "$io500_workdir" ]                    && echo "Need to set io500_workdir variable"           && exit 1
-  [ -z "$io500_ior_easy_params" ]            && echo "Need to set io500_ior_easy_params variable"   && exit 1
-  [ -z "$io500_mdtest_hard_files_per_proc" ] && echo "Need to set io500_mdtest_hard_files_per_proc variable" && exit 1
-  [ -z "$io500_ior_hard_writes_per_proc" ]   && echo "Need to set io500_ior_hard_writes_per_proc variable" && exit 1
-  [ -z "$io500_find_cmd" ]                   && echo "Need to set io500_find_cmd variable" && exit 1
-  [ -z "$io500_ior_cmd" ]                    && echo "Need to set io500_ior_cmd variable" && exit 1
-  [ -z "$io500_mdtest_cmd" ]                 && echo "Need to set io500_mdtest_cmd variable" && exit 1
-  [ -z "$io500_mpirun" ]                     && echo "Need to set io500_mpirun variable" && exit 1
+  local important_vars="io500_workdir io500_ior_easy_params io500_mdtest_hard_files_per_proc io500_ior_hard_writes_per_proc io500_find_cmd io500_ior_cmd io500_mdtest_cmd io500_mpirun"
+
+  for V in $important_vars; do
+    [ -z "${!V}" -o "${!V}" = "xxx" ] &&
+      echo "Need to set '$V' in io500.sh" && exit 1
+  done
+
   return 0
 }
 
