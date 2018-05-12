@@ -17,12 +17,12 @@ io500_run_ior_easy="True" # does the write phase and enables the subsequent read
 io500_run_md_easy="True"  # does the creat phase and enables the subsequent stat
 io500_run_ior_hard="True" # does the write phase and enables the subsequent read
 io500_run_md_hard="True"  # does the creat phase and enables the subsequent read
-io500_run_find="True"     
+io500_run_find="True"
 io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
 io500_run_md_hard_stat="True"
-io500_run_md_hard_read="True"  
+io500_run_md_hard_read="True"
 io500_run_md_easy_delete="True" # turn this off if you want to just run find by itself
 io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
 io500_run_mdreal="False"  # this one is optional
@@ -32,7 +32,7 @@ io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to 
 # please also edit 'extra_description' function to help us collect the required data.
 function main {
   setup_directories
-  setup_paths    
+  setup_paths
   setup_ior_easy # required if you want a complete score
   setup_ior_hard # required if you want a complete score
   setup_mdt_easy # required if you want a complete score
@@ -44,7 +44,7 @@ function main {
 
 function setup_directories {
   # set directories for where the benchmark files are created and where the results will go.
-  # If you want to set up stripe tuning on your output directories or anything similar, then this is good place to do it. 
+  # If you want to set up stripe tuning on your output directories or anything similar, then this is good place to do it.
   timestamp=`date +%Y.%m.%d-%H.%M.%S`           # create a uniquifier
   io500_workdir=$PWD/datafiles/io500.$timestamp # directory where the data will be stored
   io500_result_dir=$PWD/results/$timestamp      # the directory where the output results will be kept
@@ -61,7 +61,7 @@ function setup_paths {
 }
 
 function setup_ior_easy {
-  io500_ior_easy_params="-t 2048k -b 2g -F" # 2M writes, 2 GB per proc, file per proc 
+  io500_ior_easy_params="-t 2048k -b 2g -F" # 2M writes, 2 GB per proc, file per proc
 }
 
 function setup_mdt_easy {
@@ -71,6 +71,7 @@ function setup_mdt_easy {
 
 function setup_ior_hard {
   io500_ior_hard_writes_per_proc=10000
+  io500_ior_hard_other_options="" #e.g., -E to keep precreated files using lfs setstripe, or -a MPIIO
 }
 
 function setup_mdt_hard {
@@ -98,18 +99,18 @@ function setup_find {
   #   > cd build/pfind
   #   > ./prepare.sh
   #   > ./compile.sh
-  #   > cp pfind ../../bin/ 
+  #   > cp pfind ../../bin/
   #   If you use io500_find_mpi="True", then this will run with the same
   #   number of MPI nodes and ranks as the other phases.
   #   If you prefer another number, and fewer might be better here,
   #   Then you can set io500_find_mpi to be "False" and write a wrapper
   #   script for this which sets up MPI as you would like.  Then change
-  #   io500_find_cmd to point to your wrapper script. 
+  #   io500_find_cmd to point to your wrapper script.
   #io500_find_mpi="True"
   #io500_find_cmd="$PWD/bin/pfind"
   #io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
-  
-  # for GPFS systems, you should probably use the provided mmfind wrapper 
+
+  # for GPFS systems, you should probably use the provided mmfind wrapper
   # if you used ./utilities/prepare.sh, you'll find this wrapper in ./bin/mmfind.sh
   #io500_find_mpi="False"
   #io500_find_cmd="$PWD/bin/mmfind.sh"
@@ -126,7 +127,7 @@ function run_benchmarks {
   source ./utilities/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
 }
 
-# Add key/value pairs defining your system 
+# Add key/value pairs defining your system
 # Feel free to add extra ones if you'd like
 function extra_description {
   # top level info
