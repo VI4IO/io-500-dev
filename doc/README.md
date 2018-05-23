@@ -43,16 +43,8 @@ Since the easy tests are user configured, we request that all configuration info
 
 Overall, we encourage *gaming* the easy tests as long as full instructions for how that was done is provided as part of the benchmark submission.
 
-To submit results, prepare a directory under site-config, appropriately name, containing the following items:
-1. The results directory
-2. The overall output file
-3. Scripts used to run the tests
-4. Source code for custom tools used for the easy tests or find operation
-5. If a different version of any repo is used than the ones listed in prepare.sh, include those repo hash keys.
-  
-Make a separate submission directory for each file system (or storage layer) tested. Please use a site-fs naming convention as a pattern. Other parts are probably required. Use good judgement.
-  
-Generate a pull request to vi4io/io-500-dev to start the process.
+To submit results, please refer to our submission website for instructions:
+<https://www.vi4io.org/io500-submission/>
 
 ## IO500 Help
 For users needing help, we offer multiple communications channels: <https://www.vi4io.org/std/io500/start#communication_contribution>.

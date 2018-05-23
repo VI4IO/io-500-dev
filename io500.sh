@@ -135,8 +135,9 @@ function extra_description {
   io500_info_institute_name='xxx'   # e.g. JCAHPC
   io500_info_storage_age_in_months='xxx' # not install date but age since last refresh
   io500_info_storage_install_date='xxx'  # MM/YY
-  io500_info_filesysem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
+  io500_info_filesystem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
   io500_info_filesystem_version='xxx'
+  io500_info_filesystem_vendor='xxx'
   # client side info
   io500_info_num_client_nodes='xxx'
   io500_info_procs_per_node='xxx'
