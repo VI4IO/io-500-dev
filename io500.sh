@@ -61,7 +61,11 @@ function setup_paths {
 }
 
 function setup_ior_easy {
-  io500_ior_easy_params="-t 2048k -b 2g -F" # 2M writes, 2 GB per proc, file per proc
+  # io500_ior_easy_size is the amount of data written per rank in MiB units,
+  # but it can be any number as long as it is somehow used to scale the IOR
+  # runtime as part of io500_ior_easy_params
+  io500_ior_easy_size=2048
+  io500_ior_easy_params="-t 2048k -b ${io500_ior_easy_size}m -F" # 2M writes, 2 GB per proc, file per proc
 }
 
 function setup_mdt_easy {
