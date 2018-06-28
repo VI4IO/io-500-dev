@@ -61,7 +61,11 @@ function setup_paths {
 }
 
 function setup_ior_easy {
-  io500_ior_easy_params="-t 2048k -b 2g -F" # 2M writes, 2 GB per proc, file per proc
+  # io500_ior_easy_size is the amount of data written per rank in MiB units,
+  # but it can be any number as long as it is somehow used to scale the IOR
+  # runtime as part of io500_ior_easy_params
+  io500_ior_easy_size=2048
+  io500_ior_easy_params="-t 2048k -b ${io500_ior_easy_size}m -F" # 2M writes, 2 GB per proc, file per proc
 }
 
 function setup_mdt_easy {
@@ -89,9 +93,9 @@ function setup_find {
   #    If a custom approach is used, please provide enough info so others can reproduce.
 
   # the serial version that should run (SLOWLY) without modification
-  io500_find_mpi="False"
-  io500_find_cmd=$PWD/bin/sfind.sh
-  io500_find_cmd_args=""
+  #io500_find_mpi="False"
+  #io500_find_cmd=$PWD/bin/sfind.sh
+  #io500_find_cmd_args=""
 
   # a parallel version in C, the -s adds a stonewall
   #   for a real run, turn -s (stonewall) off or set it at 300 or more
@@ -106,9 +110,10 @@ function setup_find {
   #   Then you can set io500_find_mpi to be "False" and write a wrapper
   #   script for this which sets up MPI as you would like.  Then change
   #   io500_find_cmd to point to your wrapper script.
-  #io500_find_mpi="True"
-  #io500_find_cmd="$PWD/bin/pfind"
-  #io500_find_cmd_args="-s 3 -r $io500_result_dir/pfind_results"
+  io500_find_mpi="True"
+  io500_find_cmd="$PWD/bin/pfind"
+  # uses a 300s stonewalling, run pfind for at most 300 seconds.
+  io500_find_cmd_args="-s 300 -r $io500_result_dir/pfind_results"
 
   # for GPFS systems, you should probably use the provided mmfind wrapper
   # if you used ./utilities/prepare.sh, you'll find this wrapper in ./bin/mmfind.sh
