@@ -46,7 +46,8 @@ Overall, we encourage *gaming* the easy tests as long as full instructions for h
 To submit results, please refer to our submission website for instructions:
 <https://www.vi4io.org/io500-submission/>
 
-*Stonewalling* 
+*Stonewalling* is a mechanism that can help you and it is allowed in the official results with some caveats.  The pfind command and IOR both have stonewalling flags.  Please see the usage for details.  However, if you do use stonewall in IOR, you must use the wearout flag as well in order that the tail effect of straggling processes is correctly measured.  Also, the stonewalling flag in IOR only works for the write phases which makes it difficult to run in practice since each read phase must read all of the data produced by the respective write phase.  Therefore, only the pfind command can currently be
+used in the io500.sh script.  However, if you would like you can modify the io500.sh script in order to use stonewalling.  What you will have to do is parse the output of the write phase in order to discover how much data was written.  Then pass that value to the respective read phase.
 
 ## IO500 Help
 For users needing help, we offer multiple communications channels: <https://www.vi4io.org/std/io500/start#communication_contribution>.
