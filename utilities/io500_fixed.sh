@@ -168,7 +168,7 @@ function mdt_hard {
   if [[ "$1" == "write" ]] ; then
     startphase $phase
     myrun "$io500_mdtest_cmd -C $params_md_hard -W $io500_stonewall_timer" $result_file
-    endphase_check "write" "io500_mdtest_files_per_proc"
+    endphase_check "write" "io500_mdtest_hard_files_per_proc"
     iops2=$( get_mdt_iops $result_file "creation" )
     print_iops 2 $iops2 $duration "$invalid"
   elif [[ "$1" == "stat" ]] ; then
