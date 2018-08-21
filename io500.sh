@@ -27,6 +27,7 @@ io500_run_md_easy_delete="True" # turn this off if you want to just run find by 
 io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
 io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
+io500_stonewall_timer=300 # Stonewalling timer, stop with wearout after 300s with default test, set to 0, if you never want to abort...
 
 # to run this benchmark, find and edit each of these functions.
 # please also edit 'extra_description' function to help us collect the required data.
@@ -64,8 +65,9 @@ function setup_ior_easy {
   # io500_ior_easy_size is the amount of data written per rank in MiB units,
   # but it can be any number as long as it is somehow used to scale the IOR
   # runtime as part of io500_ior_easy_params
-  io500_ior_easy_size=2048
-  io500_ior_easy_params="-t 2048k -b ${io500_ior_easy_size}m -F" # 2M writes, 2 GB per proc, file per proc
+  io500_ior_easy_size=2000
+  # 2M writes, 2 GB per proc, file per proc
+  io500_ior_easy_params="-t 2048k -b ${io500_ior_easy_size}m -F"
 }
 
 function setup_mdt_easy {
@@ -80,6 +82,7 @@ function setup_ior_hard {
 
 function setup_mdt_hard {
   io500_mdtest_hard_files_per_proc=5000
+  io500_mdtest_hard_other_options=""
 }
 
 function setup_find {

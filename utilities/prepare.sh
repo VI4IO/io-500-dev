@@ -7,7 +7,7 @@ echo It will also attempt to build the benchmarks
 echo It will output OK at the end if builds succeed
 echo
 
-IOR_HASH=e1968cd4ad50d3d5dee853ae3b1a8724f4f072c7
+IOR_HASH=0870ad78b3b022bcd30392a8990ba4e5090d6e34
 MDREAL_HASH=f1f4269666bc58056a122a742dc5ca13be5a79f5
 
 INSTALL_DIR=$PWD
@@ -34,7 +34,7 @@ function main {
 
 function setup {
   rm -rf $BUILD $BIN
-  mkdir -p $BUILD $BIN 
+  mkdir -p $BUILD $BIN
   cp utilities/io500_fixed.sh utilities/find/sfind.sh utilities/find/mmfind.sh $BIN
 }
 
@@ -43,7 +43,7 @@ function git_co {
   git clone $1
   cd $2
   # turning off the hash thing for now because too many changes happening too quickly
-  #git checkout $3
+  git checkout $3
   popd
 }
 
@@ -92,7 +92,7 @@ function build_ior {
 
 function build_pfind {
   pushd $BUILD
-  cd pfind 
+  cd pfind
   ./prepare.sh
   ./compile.sh
   cp pfind $BIN

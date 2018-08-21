@@ -82,12 +82,12 @@ function ior_easy {
   phase="ior_easy_$1"
   [ "$io500_run_ior_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_easy="-C -Q 1 -g -G 27 -k -e $io500_ior_easy_params -o $io500_workdir/ior_easy/ior_file_easy"
+  params_ior_easy="-C -Q 1 -g -G 27 -k -e $io500_ior_easy_params -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
     startphase
-    myrun "$io500_ior_cmd -w $params_ior_easy" $result_file
+    myrun "$io500_ior_cmd -w $params_ior_easy -O stoneWallingWearOut=1 -D $io500_stonewall_timer " $result_file
     endphase_check "write" "io500_ior_easy_size"
     bw1=$(get_ior_bw $result_file "write")
     dur=$(get_ior_time $result_file "write")
@@ -107,12 +107,12 @@ function mdt_easy {
   phase="mdtest_easy_$1"
   [ "$io500_run_md_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_easy="-F -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params"
+  params_md_easy="-F -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
     startphase
-    myrun "$io500_mdtest_cmd -C $params_md_easy" $result_file
+    myrun "$io500_mdtest_cmd -C $params_md_easy -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_easy_files_per_proc"
     iops1=$( get_mdt_iops $result_file "creation" )
     print_iops 1 $iops1 $duration "$invalid"
@@ -137,12 +137,12 @@ function ior_hard {
   phase="ior_hard_$1"
   [ "$io500_run_ior_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_hard="-C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s $io500_ior_hard_writes_per_proc $io500_ior_hard_other_options -o $io500_workdir/ior_hard/IOR_file"
+  params_ior_hard="-C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s $io500_ior_hard_writes_per_proc $io500_ior_hard_other_options -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
     startphase
-    myrun "$io500_ior_cmd -w $params_ior_hard" $result_file
+    myrun "$io500_ior_cmd -w $params_ior_hard -O stoneWallingWearOut=1 -D $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_ior_hard_writes_per_proc"
     bw2=$(get_ior_bw $result_file "write")
     dur=$(get_ior_time $result_file "write")
@@ -162,13 +162,13 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc"
+  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall $io500_mdtest_hard_other_options"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
     startphase $phase
-    myrun "$io500_mdtest_cmd -C $params_md_hard" $result_file
-    endphase_check "write" "io500_mdtest_files_per_proc"
+    myrun "$io500_mdtest_cmd -C $params_md_hard -W $io500_stonewall_timer" $result_file
+    endphase_check "write" "io500_mdtest_hard_files_per_proc"
     iops2=$( get_mdt_iops $result_file "creation" )
     print_iops 2 $iops2 $duration "$invalid"
   elif [[ "$1" == "stat" ]] ; then
