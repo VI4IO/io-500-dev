@@ -14,3 +14,10 @@ To improve it, edit i0500.sh one function at a time to grow the problem size and
 [Our documents directory](https://github.com/VI4IO/io-500-dev/tree/master/doc) has more detailed instructions including how to submit once you have successfully run.
 
 Thanks for your participation and good luck!  
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1422814.svg)](https://doi.org/10.5281/zenodo.1422814)
+
+To Cite:
+Julian Kunkel, George Markomanolis, John Bent, & Jay Lofstead. (2018, September 20). VI4IO/io-500-dev: Zenodo Citation Release (Version v1.1). Zenodo. http://doi.org/10.5281/zenodo.1422814
+
+[BibTeX](doc/io500.bib)
