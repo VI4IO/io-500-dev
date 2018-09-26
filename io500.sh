@@ -115,8 +115,8 @@ function setup_find {
   #   io500_find_cmd to point to your wrapper script.
   io500_find_mpi="True"
   io500_find_cmd="$PWD/bin/pfind"
-  # uses a 300s stonewalling, run pfind for at most 300 seconds.
-  io500_find_cmd_args="-s 300 -r $io500_result_dir/pfind_results"
+  # uses stonewalling, run pfind 
+  io500_find_cmd_args="-s $io500_stonewall_timer -r $io500_result_dir/pfind_results"
 
   # for GPFS systems, you should probably use the provided mmfind wrapper
   # if you used ./utilities/prepare.sh, you'll find this wrapper in ./bin/mmfind.sh
