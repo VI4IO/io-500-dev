@@ -45,8 +45,10 @@ function check_variables {
   local important_vars="io500_workdir io500_ior_easy_params io500_ior_easy_size io500_mdtest_hard_files_per_proc io500_ior_hard_writes_per_proc io500_find_cmd io500_ior_cmd io500_mdtest_cmd io500_mpirun"
 
   for V in $important_vars; do
-    [ -z "${!V}" -o "${!V}" = "xxx" ] &&
-      echo "Need to set '$V' in io500.sh" && exit 1
+    if [ -z "$(eval echo \$$V)" ] || [ "${!V}" = "xxx" ]; then
+      echo "Need to set '$V' in io500.sh"
+      exit 1
+    fi
   done
 
   return 0
