@@ -109,12 +109,13 @@ function mdt_easy {
   phase="mdtest_easy_$1"
   [ "$io500_run_md_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_easy="-F -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall"
+  params_md_easy="-n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -F -d $io500_workdir/mdt_easy" # -x $io500_workdir/mdt_easy-stonewall disabled for now due to some issues
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
     startphase
-    myrun "$io500_mdtest_cmd -C $params_md_easy -W $io500_stonewall_timer" $result_file
+    myrun "$io500_mdtest_cmd -C $params_md_easy" $result_file
+    # -W $io500_stonewall_timer stonewall disabled for now.
     endphase_check "write" "io500_mdtest_easy_files_per_proc"
     iops1=$( get_mdt_iops $result_file "creation" )
     print_iops 1 $iops1 $duration "$invalid"
@@ -164,12 +165,12 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall $io500_mdtest_hard_other_options"
+  params_md_hard="-n $io500_mdtest_hard_files_per_proc  $io500_mdtest_hard_other_options -t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard" # stonewall disabled for now: -x $io500_workdir/mdt_hard-stonewall
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
     startphase $phase
-    myrun "$io500_mdtest_cmd -C $params_md_hard -W $io500_stonewall_timer" $result_file
+    myrun "$io500_mdtest_cmd -C $params_md_hard" $result_file # stonewall disabled for now: -W $io500_stonewall_timer
     endphase_check "write" "io500_mdtest_hard_files_per_proc"
     iops2=$( get_mdt_iops $result_file "creation" )
     print_iops 2 $iops2 $duration "$invalid"
