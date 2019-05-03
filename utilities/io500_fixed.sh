@@ -84,7 +84,7 @@ function ior_easy {
   phase="ior_easy_$1"
   [ "$io500_run_ior_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_easy="-C -Q 1 -g -G 27 -k -e $io500_ior_easy_params -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
+  params_ior_easy="$io500_ior_easy_params -i 1 -C -Q 1 -g -G 27 -k -e -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
@@ -139,7 +139,7 @@ function ior_hard {
   phase="ior_hard_$1"
   [ "$io500_run_ior_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_hard="-C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s $io500_ior_hard_writes_per_proc $io500_ior_hard_other_options -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
+  params_ior_hard="-s $io500_ior_hard_writes_per_proc $io500_ior_hard_other_options -i 1 -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
