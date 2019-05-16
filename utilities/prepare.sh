@@ -7,7 +7,7 @@ echo It will also attempt to build the benchmarks
 echo It will output OK at the end if builds succeed
 echo
 
-IOR_HASH=0870ad78b3b022bcd30392a8990ba4e5090d6e34
+IOR_HASH=c5c43c4f3cc89cf9f08c6c3d16b4f7ff58f583ea
 MDREAL_HASH=f1f4269666bc58056a122a742dc5ca13be5a79f5
 
 INSTALL_DIR=$PWD
@@ -50,7 +50,7 @@ function git_co {
 ###### GET FUNCTIONS
 function get_ior {
   echo "Getting IOR and mdtest"
-  git_co https://github.com/hpc/ior.git ior #$IOR_HASH
+  git_co https://github.com/hpc/ior.git ior $IOR_HASH
   pushd $BUILD/ior
   ./bootstrap
   ./configure --prefix=$INSTALL_DIR
