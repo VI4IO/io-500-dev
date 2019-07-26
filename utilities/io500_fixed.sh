@@ -109,7 +109,7 @@ function mdt_easy {
   phase="mdtest_easy_$1"
   [ "$io500_run_md_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_easy="-F -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall"
+  params_md_easy="-F -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
@@ -139,7 +139,7 @@ function ior_hard {
   phase="ior_hard_$1"
   [ "$io500_run_ior_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_hard="-s $io500_ior_hard_writes_per_proc $io500_ior_hard_other_options -i 1 -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
+  params_ior_hard="-s $io500_ior_hard_writes_per_proc $io500_ior_hard_api $io500_ior_hard_api $io500_ior_hard_api_specific_options -i 1 -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
@@ -164,7 +164,7 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall $io500_mdtest_hard_other_options"
+  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall $io500_mdtest_hard_api $io500_mdtest_hard_api_specific_options -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
