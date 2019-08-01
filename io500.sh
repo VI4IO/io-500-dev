@@ -27,7 +27,7 @@ io500_run_md_easy_delete="True" # turn this off if you want to just run find by 
 io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
 io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
-io500_stonewall_timer=300 # Stonewalling timer, stop with wearout after 300s with default test, set to 0, if you never want to abort...
+io500_stonewall_timer=1 # Stonewalling timer, stop with wearout after 300s with default test, set to 0, if you never want to abort...
 
 # to run this benchmark, find and edit each of these functions.
 # please also edit 'extra_description' function to help us collect the required data.
@@ -62,26 +62,19 @@ function setup_paths {
 }
 
 function setup_ior_easy {
-  # io500_ior_easy_size is the amount of data written per rank in MiB units,
-  # but it can be any number as long as it is somehow used to scale the IOR
-  # runtime as part of io500_ior_easy_params
-  io500_ior_easy_size=2000
-  # 2M writes, 2 GB per proc, file per proc
-  io500_ior_easy_params="-t 2048k -b ${io500_ior_easy_size}m -F"
+  #io500_ior_easy_params="-t 2048k -b \${io500_ior_easy_size}m -F"
+  echo -n ""
 }
 
 function setup_mdt_easy {
   io500_mdtest_easy_params="-u -L" # unique dir per thread, files only at leaves
-  io500_mdtest_easy_files_per_proc=25000
 }
 
 function setup_ior_hard {
-  io500_ior_hard_writes_per_proc=10000
   io500_ior_hard_other_options="" #e.g., -E to keep precreated files using lfs setstripe, or -a MPIIO
 }
 
 function setup_mdt_hard {
-  io500_mdtest_hard_files_per_proc=5000
   io500_mdtest_hard_other_options=""
 }
 
@@ -113,10 +106,10 @@ function setup_find {
   #   Then you can set io500_find_mpi to be "False" and write a wrapper
   #   script for this which sets up MPI as you would like.  Then change
   #   io500_find_cmd to point to your wrapper script.
-  io500_find_mpi="True"
-  io500_find_cmd="$PWD/bin/pfind"
-  # uses stonewalling, run pfind 
-  io500_find_cmd_args="-s $io500_stonewall_timer -r $io500_result_dir/pfind_results"
+  io500_find_mpi="False"
+  io500_find_cmd="$PWD/bin/sfind.sh"
+  # uses stonewalling, run pfind
+  io500_find_cmd_args=""
 
   # for GPFS systems, you should probably use the provided mmfind wrapper
   # if you used ./utilities/prepare.sh, you'll find this wrapper in ./bin/mmfind.sh
@@ -126,7 +119,7 @@ function setup_find {
 }
 
 function setup_mdreal {
-  io500_mdreal_params="-P=5000 -I=1000"
+  echo -n ""
 }
 
 function run_benchmarks {
@@ -135,31 +128,13 @@ function run_benchmarks {
   source ./utilities/io500_fixed.sh 2>&1 | tee $io500_result_dir/io-500-summary.$timestamp.txt
 }
 
-# Add key/value pairs defining your system
-# Feel free to add extra ones if you'd like
+# Information fields; these provide information about your system hardware
+# Use https://vi4io.org/io500-info-creator/ to generate information about your hardware
+# that you want to include publicly!
 function extra_description {
-  # top level info
+  # TODO: Please add your information using the info-creator!
+  # EXAMPLE:
   io500_info_system_name='xxx'      # e.g. Oakforest-PACS
-  io500_info_institute_name='xxx'   # e.g. JCAHPC
-  io500_info_storage_age_in_months='xxx' # not install date but age since last refresh
-  io500_info_storage_install_date='xxx'  # MM/YY
-  io500_info_filesystem='xxx'     # e.g. BeeGFS, DataWarp, GPFS, IME, Lustre
-  io500_info_filesystem_version='xxx'
-  io500_info_filesystem_vendor='xxx'
-  # client side info
-  io500_info_num_client_nodes='xxx'
-  io500_info_procs_per_node='xxx'
-  # server side info
-  io500_info_num_metadata_server_nodes='xxx'
-  io500_info_num_data_server_nodes='xxx'
-  io500_info_num_data_storage_devices='xxx'  # if you have 5 data servers, and each has 5 drives, then this number is 25
-  io500_info_num_metadata_storage_devices='xxx'  # if you have 2 metadata servers, and each has 5 drives, then this number is 10
-  io500_info_data_storage_type='xxx' # HDD, SSD, persistent memory, etc, feel free to put specific models
-  io500_info_metadata_storage_type='xxx' # HDD, SSD, persistent memory, etc, feel free to put specific models
-  io500_info_storage_network='xxx' # infiniband, omnipath, ethernet, etc
-  io500_info_storage_interface='xxx' # SAS, SATA, NVMe, etc
-  # miscellaneous
-  io500_info_whatever='WhateverElseYouThinkRelevant'
 }
 
 main

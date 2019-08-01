@@ -6,7 +6,9 @@
 set -euo pipefail   # give bash better error handling.
 export LC_NUMERIC=C  # prevents printf errors
 
+
 function main {
+  set_defaults
   check_variables
   output_description
   core_setup
@@ -27,6 +29,22 @@ function main {
   cleanup
   output_score
 }
+
+
+function set_defaults {
+  # Set default values, they may be overwritten by the user if necessary
+  io500_mdtest_easy_files_per_proc=${io500_mdtest_easy_files_per_proc:-250000}
+  io500_mdtest_hard_files_per_proc=${io500_mdtest_hard_files_per_proc:-500000}
+  io500_ior_hard_writes_per_proc=${io500_ior_hard_writes_per_proc:-100000}
+  # io500_ior_easy_size is the amount of data written per rank in MiB units,
+  # but it can be any number as long as it is somehow used to scale the IOR
+  # runtime as part of io500_ior_easy_params
+  io500_ior_easy_size=${io500_ior_easy_size:-200000}
+  # 2M writes, 2 GB per proc, file per proc
+  io500_ior_easy_params=${io500_ior_easy_params:-"-t 2048k -b ${io500_ior_easy_size}m -F"}
+  io500_mdreal_params=${io500_mdreal_params:-"-P=5000 -I=1000"}
+}
+
 
 function cleanup {
   [ "$io500_cleanup_workdir" != "True" ] && printf "\n[Leaving] datafiles in $io500_workdir\n" && return 0
@@ -50,6 +68,10 @@ function check_variables {
       exit 1
     fi
   done
+
+  if [[ $io500_stonewall_timer -le 299 ]]; then
+    echo "[WARNING] For a valid submission, the stonewall timer must be 300 at least!"
+  fi
 
   return 0
 }
