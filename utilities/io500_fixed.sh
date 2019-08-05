@@ -43,7 +43,7 @@ function output_description {
 
 function check_variables {
   local important_vars="io500_workdir io500_ior_easy_params io500_ior_easy_size io500_mdtest_hard_files_per_proc io500_ior_hard_writes_per_proc io500_find_cmd io500_ior_cmd io500_mdtest_cmd io500_mpirun"
-
+  exact_match=0
   for V in $important_vars; do
     if [ -z "$(eval echo \$$V)" ] || [ "${!V}" = "xxx" ]; then
       echo "Need to set '$V' in io500.sh"
@@ -215,9 +215,11 @@ function myfind {
   if [ "$io500_find_mpi" != "True" ] ; then
     echo "[EXEC] $command"
     matches=$( $command | grep MATCHED | tail -1 )
+    exact_match=`echo $matches | awk -F " |/" '{print $2}'`
   else
     myrun "$command" $result_file
     matches=$( grep MATCHED $result_file | tail -1 )
+    exact_match=`echo $matches | awk -F " |/" '{print $2}'`
   fi
 
   endphase_check "find"
@@ -326,12 +328,15 @@ function endphase_check  {
   fi
   end=$(date +%s.%N)
   duration=$(printf "%.4f" $(echo "$end - $start" | bc))
-
-  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt 300 ]] ; then
+  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt 300 ]]; then
     local var="$2"
 
     echo "[Warning] This cannot be an official IO-500 score. The phase runtime of ${duration}s is below 300s."
     echo "[Warning] Suggest $var=$(echo "${!var} * 320 / $duration" | bc)"
+    io500_invalid="-invalid"
+    invalid="-invalid"
+  elif [[  "$op" == "find" && $exact_match == 0 && $(printf "%.0f" $duration) -lt 300 ]]; then
+    echo "[Warning] Pfind found 0 matches, something is wrong with the script."
     io500_invalid="-invalid"
     invalid="-invalid"
   else
