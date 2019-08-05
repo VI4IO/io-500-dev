@@ -27,7 +27,7 @@ io500_run_md_easy_delete="True" # turn this off if you want to just run find by 
 io500_run_md_hard_delete="True" # turn this off if you want to just run find by itself
 io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
-io500_stonewall_timer=300 # Stonewalling timer, stop with wearout after 300s with default test, set to 0, if you never want to abort...
+io500_stonewall_timer=300 # Stonewalling timer, set to 300 to be an official run 
 
 # to run this benchmark, find and edit each of these functions.
 # please also edit 'extra_description' function to help us collect the required data.
@@ -77,12 +77,14 @@ function setup_mdt_easy {
 
 function setup_ior_hard {
   io500_ior_hard_writes_per_proc=10000
-  io500_ior_hard_other_options="" #e.g., -E to keep precreated files using lfs setstripe, or -a MPIIO
+  io500_ior_hard_api="POSIX"
+  io500_ior_hard_api_specific_options=""
 }
 
 function setup_mdt_hard {
   io500_mdtest_hard_files_per_proc=5000
-  io500_mdtest_hard_other_options=""
+  io500_mdtest_hard_api="POSIX"
+  io500_mdtest_hard_api_specific_options=""
 }
 
 function setup_find {
