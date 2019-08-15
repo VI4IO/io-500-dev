@@ -205,7 +205,7 @@ function mdt_hard {
   elif [[ "$1" == "read" ]] ; then
     [ "$io500_run_md_hard_read" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
-    myrun "$io500_mdtest_cmd -E $params_md_hard" $result_file
+    myrun "$io500_mdtest_cmd -X -E $params_md_hard" $result_file
     endphase_check "read"
     iops7=$( get_mdt_iops $result_file "read" )
     print_iops 7 $iops7 $duration "$invalid"
