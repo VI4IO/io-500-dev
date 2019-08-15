@@ -99,7 +99,13 @@ function get_ior_time {
 function get_mdt_iops {
   file=$1
   op=$2
-  grep '^ *File '$op $file | awk '{print $4/1000}'
+  grep '^ *File '$op $file | head -n 1 | awk '{print $4/1000}'
+}
+
+function get_mdt_time {
+  file=$1
+  op=$2
+  grep '^ *File '$op $file | tail -n 1 | awk '{print $4}'
 }
 
 function ior_easy {
@@ -139,21 +145,24 @@ function mdt_easy {
     myrun "$io500_mdtest_cmd -C $params_md_easy -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_easy_files_per_proc"
     iops1=$( get_mdt_iops $result_file "creation" )
-    print_iops 1 $iops1 $duration "$invalid"
+    iops1time=$( get_mdt_time $result_file "creation" )
+    print_iops 1 $iops1 $iops1time "$invalid"
   elif [[ "$1" == "stat" ]] ; then
     [ "$io500_run_md_easy_stat" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -T $params_md_easy" $result_file
     endphase_check "stat"
     iops4=$( get_mdt_iops $result_file "stat" )
-    print_iops 4 $iops4 $duration "$invalid"
+    iops4time=$( get_mdt_time $result_file "stat" )
+    print_iops 4 $iops4 $iops4time "$invalid"
   else
     [ "$io500_run_md_easy_delete" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -r $params_md_easy" $result_file
     endphase_check "delete"
     iops6=$( get_mdt_iops $result_file "removal" )
-    print_iops 6 $iops6 $duration "$invalid"
+    iops6time=$( get_mdt_time $result_file "removal" )
+    print_iops 6 $iops6 $iops6time "$invalid"
   fi
 }
 
@@ -194,21 +203,24 @@ function mdt_hard {
     myrun "$io500_mdtest_cmd -C $params_md_hard -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_hard_files_per_proc"
     iops2=$( get_mdt_iops $result_file "creation" )
-    print_iops 2 $iops2 $duration "$invalid"
+    iops2time=$( get_mdt_time $result_file "creation" )
+    print_iops 2 $iops2 $iops2time "$invalid"
   elif [[ "$1" == "stat" ]] ; then
     [ "$io500_run_md_hard_stat" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -T $params_md_hard" $result_file
     endphase_check "stat"
     iops5=$( get_mdt_iops $result_file "stat" )
-    print_iops 5 $iops5 $duration "$invalid"
+    iops5time=$( get_mdt_time $result_file "stat" )
+    print_iops 5 $iops5 $iops5time "$invalid"
   elif [[ "$1" == "read" ]] ; then
     [ "$io500_run_md_hard_read" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -X -E $params_md_hard" $result_file
     endphase_check "read"
     iops7=$( get_mdt_iops $result_file "read" )
-    print_iops 7 $iops7 $duration "$invalid"
+    iops7time=$( get_mdt_time $result_file "read" )
+    print_iops 7 $iops7 $iops7time "$invalid"
   else
     [ "$io500_run_md_hard_delete" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
