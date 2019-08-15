@@ -61,7 +61,7 @@ function output_description {
 
 function check_variables {
   local important_vars="io500_workdir io500_ior_easy_params io500_ior_easy_size io500_mdtest_hard_files_per_proc io500_ior_hard_writes_per_proc io500_find_cmd io500_ior_cmd io500_mdtest_cmd io500_mpirun"
-
+  exact_match=0
   for V in $important_vars; do
     if [ -z "$(eval echo \$$V)" ] || [ "${!V}" = "xxx" ]; then
       echo "Need to set '$V' in io500.sh"
@@ -106,7 +106,7 @@ function ior_easy {
   phase="ior_easy_$1"
   [ "$io500_run_ior_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_easy="-C -Q 1 -g -G 27 -k -e $io500_ior_easy_params -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
+  params_ior_easy="$io500_ior_easy_params -i 1 -C -Q 1 -g -G 27 -k -e -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
@@ -131,7 +131,7 @@ function mdt_easy {
   phase="mdtest_easy_$1"
   [ "$io500_run_md_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_easy="-F -P -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall"
+  params_md_easy="-F -P -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
@@ -161,7 +161,7 @@ function ior_hard {
   phase="ior_hard_$1"
   [ "$io500_run_ior_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_hard="-C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -s $io500_ior_hard_writes_per_proc $io500_ior_hard_other_options -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
+  params_ior_hard="-s $io500_ior_hard_writes_per_proc -a $io500_ior_hard_api $io500_ior_hard_api_specific_options -i 1 -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
@@ -186,7 +186,7 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_hard="-t -F -P -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall $io500_mdtest_hard_other_options"
+  params_md_hard="-t -F -P -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall -a $io500_mdtest_hard_api $io500_mdtest_hard_api_specific_options -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
@@ -237,9 +237,11 @@ function myfind {
   if [ "$io500_find_mpi" != "True" ] ; then
     echo "[EXEC] $command"
     matches=$( $command | grep MATCHED | tail -1 )
+    exact_match=`echo $matches | awk -F " |/" '{print $2}'`
   else
     myrun "$command" $result_file
     matches=$( grep MATCHED $result_file | tail -1 )
+    exact_match=`echo $matches | awk -F " |/" '{print $2}'`
   fi
 
   endphase_check "find"
@@ -348,12 +350,15 @@ function endphase_check  {
   fi
   end=$(date +%s.%N)
   duration=$(printf "%.4f" $(echo "$end - $start" | bc))
-
-  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt 300 ]] ; then
+  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt 300 ]]; then
     local var="$2"
 
     echo "[Warning] This cannot be an official IO-500 score. The phase runtime of ${duration}s is below 300s."
     echo "[Warning] Suggest $var=$(echo "${!var} * 320 / $duration" | bc)"
+    io500_invalid="-invalid"
+    invalid="-invalid"
+  elif [[  "$op" == "find" && $exact_match == 0 && $(printf "%.0f" $duration) -lt 300 ]]; then
+    echo "[Warning] Pfind found 0 matches, something is wrong with the script."
     io500_invalid="-invalid"
     invalid="-invalid"
   else
