@@ -5,31 +5,41 @@
 
 set -euo pipefail   # give bash better error handling.
 export LC_NUMERIC=C  # prevents printf errors
-
+export LC_ALL=C
 
 function main {
   set_defaults
   check_variables
   output_description
   core_setup
+  clean_cache
   ior_easy "write"
+  clean_cache
   mdt_easy "write"
+  clean_cache
   touch $timestamp_file  # this file is used subsequently by the find command
   ior_hard "write"
+  clean_cache
   mdt_hard "write"
+  clean_cache
   myfind
   ior_easy "read"
+  clean_cache
   mdt_easy "stat"
+  clean_cache
   ior_hard "read"
+  clean_cache
   mdt_hard "stat"
+  clean_cache
   mdt_easy "delete"
+  clean_cache
   mdt_hard "read"
+  clean_cache
   mdt_hard "delete"
   mdreal
   cleanup
   output_score
 }
-
 
 function set_defaults {
   # Set default values, they may be overwritten by the user if necessary
@@ -43,8 +53,21 @@ function set_defaults {
   # 2M writes, 2 GB per proc, file per proc
   io500_ior_easy_params=${io500_ior_easy_params:-"-t 2048k -b ${io500_ior_easy_size}m -F"}
   io500_mdreal_params=${io500_mdreal_params:-"-P=5000 -I=1000"}
+  io500_clean_cache_cmd=${io500_clean_cache_cmd:-drop_cache}
 }
 
+function drop_cache {
+  sudo bash -c "echo 3 > /proc/sys/vm/drop_caches"
+}
+
+function clean_cache {
+  [ "$io500_clean_cache" != "True" ] && return
+  echo "Synchronizing and cleaning the cache"
+  free -m
+  sync
+  $io500_clean_cache_cmd
+  free -m
+}
 
 function cleanup {
   [ "$io500_cleanup_workdir" != "True" ] && printf "\n[Leaving] datafiles in $io500_workdir\n" && return 0
