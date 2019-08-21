@@ -6,6 +6,7 @@
 set -euo pipefail   # give bash better error handling.
 export LC_NUMERIC=C  # prevents printf errors
 export LC_ALL=C
+IO500_MIN_WRITE_RUNTIME=300
 
 function main {
   set_defaults
@@ -92,8 +93,8 @@ function check_variables {
     fi
   done
 
-  if [[ $io500_stonewall_timer -le 299 ]]; then
-    echo "[WARNING] For a valid submission, the stonewall timer must be 300 at least!"
+  if [[ $io500_stonewall_timer -lt $IO500_MIN_WRITE_RUNTIME ]]; then
+    echo "[WARNING] For a valid submission, the stonewall timer must be $IO500_MIN_WRITE_RUNTIME at least!"
   fi
 
   return 0
@@ -385,14 +386,14 @@ function endphase_check  {
   fi
   end=$(date +%s.%N)
   duration=$(printf "%.4f" $(echo "$end - $start" | bc))
-  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt 300 ]]; then
+  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt $IO500_MIN_WRITE_RUNTIME ]]; then
     local var="$2"
 
-    echo "[Warning] This cannot be an official IO-500 score. The phase runtime of ${duration}s is below 300s."
+    echo "[Warning] This cannot be an official IO-500 score. The phase runtime of ${duration}s is below ${IO500_MIN_WRITE_RUNTIME}s."
     echo "[Warning] Suggest $var=$(echo "${!var} * 320 / $duration" | bc)"
     io500_invalid="-invalid"
     invalid="-invalid"
-  elif [[  "$op" == "find" && $exact_match == 0 && $(printf "%.0f" $duration) -lt 300 ]]; then
+  elif [[  "$op" == "find" && $exact_match == 0 && $(printf "%.0f" $duration) -lt $IO500_MIN_WRITE_RUNTIME ]]; then
     echo "[Warning] Pfind found 0 matches, something is wrong with the script."
     io500_invalid="-invalid"
     invalid="-invalid"
