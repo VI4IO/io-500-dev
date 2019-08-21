@@ -6,3 +6,4 @@
   * MDTest uses -X flag and verifies that data read is matching the expected pattern
   * MDTest now uses the new -P flag to print rate and time to ease debugging
   * MDTest now uses rank shifting supporting block and cyclic layout (auto-detected)
+  * The io500_clean_cache option reduces the impact of caching (useful for testing and small systems)
