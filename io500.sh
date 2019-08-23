@@ -29,6 +29,7 @@ io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
 io500_clean_cache="False" # attempt to clean the cache after every benchmark, useful for validating the performance results and for testing with a local node; it uses the io500_clean_cache_cmd (can be overwritten); make sure the user can write to /proc/sys/vm/drop_caches
 io500_stonewall_timer=1 # Stonewalling timer, set to 300 to be an official run; set to 0, if you never want to abort...
+scc=0 # If the value of scc is 0 then IO-500 is executed with stonewall of 300 seconds, if it is 1, then it is executed for 30 seconds and the results are valid for write phases which took place for at least 30 seconds. Do not use this variable if you do not take part in a Student Cluster Competition
 
 # to run this benchmark, find and edit each of these functions.
 # please also edit 'extra_description' function to help us collect the required data.
