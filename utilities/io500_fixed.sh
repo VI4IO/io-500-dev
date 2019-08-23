@@ -6,8 +6,11 @@
 set -euo pipefail   # give bash better error handling.
 export LC_NUMERIC=C  # prevents printf errors
 export LC_ALL=C
-IO500_MIN_WRITE_RUNTIME=300
-
+if [[ $scc == 0 ]] ; then
+        IO500_MIN_WRITE_RUNTIME=300
+elif [[ $scc == 1 ]] ; then
+        IO500_MIN_WRITE_RUNTIME=30
+fi
 function main {
   set_defaults
   check_variables
