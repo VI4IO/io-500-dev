@@ -61,7 +61,7 @@ function set_defaults {
 }
 
 function drop_cache {
-  sudo bash -c "echo 3 > /proc/sys/vm/drop_caches"
+  sudo -n bash -c "echo 3 > /proc/sys/vm/drop_caches"
 }
 
 function clean_cache {
