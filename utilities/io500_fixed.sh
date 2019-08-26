@@ -10,6 +10,9 @@ if [[ $io500_rules == "regular" ]] ; then
         IO500_MIN_WRITE_RUNTIME=300
 elif [[ $io500_rules == "scc" ]] ; then
         IO500_MIN_WRITE_RUNTIME=30
+else
+  echo "Unknown setting of io500_rules=$io500_rules"
+  exit 1
 fi
 function main {
   set_defaults
