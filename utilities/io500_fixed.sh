@@ -5,27 +5,75 @@
 
 set -euo pipefail   # give bash better error handling.
 export LC_NUMERIC=C  # prevents printf errors
-
+export LC_ALL=C
+if [[ $io500_rules == "regular" ]] ; then
+        IO500_MIN_WRITE_RUNTIME=300
+elif [[ $io500_rules == "scc" ]] ; then
+        IO500_MIN_WRITE_RUNTIME=30
+else
+  echo "Unknown setting of io500_rules=$io500_rules"
+  exit 1
+fi
 function main {
+  set_defaults
   check_variables
   output_description
   core_setup
+  clean_cache
   ior_easy "write"
+  clean_cache
   mdt_easy "write"
+  clean_cache
   touch $timestamp_file  # this file is used subsequently by the find command
   ior_hard "write"
+  clean_cache
   mdt_hard "write"
+  clean_cache
   myfind
   ior_easy "read"
+  clean_cache
   mdt_easy "stat"
+  clean_cache
   ior_hard "read"
+  clean_cache
   mdt_hard "stat"
+  clean_cache
   mdt_easy "delete"
+  clean_cache
   mdt_hard "read"
+  clean_cache
   mdt_hard "delete"
   mdreal
   cleanup
   output_score
+}
+
+function set_defaults {
+  # Set default values, they may be overwritten by the user if necessary
+  io500_mdtest_easy_files_per_proc=${io500_mdtest_easy_files_per_proc:-900000}
+  io500_mdtest_hard_files_per_proc=${io500_mdtest_hard_files_per_proc:-950000}
+  io500_ior_hard_writes_per_proc=${io500_ior_hard_writes_per_proc:-95000}
+  # io500_ior_easy_size is the amount of data written per rank in MiB units,
+  # but it can be any number as long as it is somehow used to scale the IOR
+  # runtime as part of io500_ior_easy_params
+  io500_ior_easy_size=${io500_ior_easy_size:-9920000}
+  # 2M writes, 2 GB per proc, file per proc
+  io500_ior_easy_params=${io500_ior_easy_params:-"-t 2048k -b ${io500_ior_easy_size}m -F"}
+  io500_mdreal_params=${io500_mdreal_params:-"-P=5000 -I=1000"}
+  io500_clean_cache_cmd=${io500_clean_cache_cmd:-drop_cache}
+}
+
+function drop_cache {
+  sudo -n bash -c "echo 3 > /proc/sys/vm/drop_caches"
+}
+
+function clean_cache {
+  [ "$io500_clean_cache" != "True" ] && return
+  echo "Synchronizing and cleaning the cache"
+  free -m
+  sync
+  $io500_clean_cache_cmd
+  free -m
 }
 
 function cleanup {
@@ -50,6 +98,10 @@ function check_variables {
       exit 1
     fi
   done
+
+  if [[ $io500_stonewall_timer -lt $IO500_MIN_WRITE_RUNTIME ]]; then
+    echo "[WARNING] For a valid submission, the stonewall timer must be $IO500_MIN_WRITE_RUNTIME at least!"
+  fi
 
   return 0
 }
@@ -77,7 +129,13 @@ function get_ior_time {
 function get_mdt_iops {
   file=$1
   op=$2
-  grep '^ *File '$op $file | awk '{print $4/1000}'
+  grep '^ *File '$op $file | head -n 1 | awk '{print $4/1000}'
+}
+
+function get_mdt_time {
+  file=$1
+  op=$2
+  grep '^ *File '$op $file | tail -n 1 | awk '{print $4}'
 }
 
 function ior_easy {
@@ -109,7 +167,7 @@ function mdt_easy {
   phase="mdtest_easy_$1"
   [ "$io500_run_md_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_easy="-F -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall -N 1"
+  params_md_easy="-F -P -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
@@ -117,21 +175,24 @@ function mdt_easy {
     myrun "$io500_mdtest_cmd -C $params_md_easy -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_easy_files_per_proc"
     iops1=$( get_mdt_iops $result_file "creation" )
-    print_iops 1 $iops1 $duration "$invalid"
+    iops1time=$( get_mdt_time $result_file "creation" )
+    print_iops 1 $iops1 $iops1time "$invalid"
   elif [[ "$1" == "stat" ]] ; then
     [ "$io500_run_md_easy_stat" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -T $params_md_easy" $result_file
     endphase_check "stat"
     iops4=$( get_mdt_iops $result_file "stat" )
-    print_iops 4 $iops4 $duration "$invalid"
+    iops4time=$( get_mdt_time $result_file "stat" )
+    print_iops 4 $iops4 $iops4time "$invalid"
   else
     [ "$io500_run_md_easy_delete" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -r $params_md_easy" $result_file
     endphase_check "delete"
     iops6=$( get_mdt_iops $result_file "removal" )
-    print_iops 6 $iops6 $duration "$invalid"
+    iops6time=$( get_mdt_time $result_file "removal" )
+    print_iops 6 $iops6 $iops6time "$invalid"
   fi
 }
 
@@ -164,7 +225,7 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_hard="-t -F -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall -a $io500_mdtest_hard_api $io500_mdtest_hard_api_specific_options -N 1"
+  params_md_hard="-t -F -P -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall -a $io500_mdtest_hard_api $io500_mdtest_hard_api_specific_options -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
@@ -172,21 +233,24 @@ function mdt_hard {
     myrun "$io500_mdtest_cmd -C $params_md_hard -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_hard_files_per_proc"
     iops2=$( get_mdt_iops $result_file "creation" )
-    print_iops 2 $iops2 $duration "$invalid"
+    iops2time=$( get_mdt_time $result_file "creation" )
+    print_iops 2 $iops2 $iops2time "$invalid"
   elif [[ "$1" == "stat" ]] ; then
     [ "$io500_run_md_hard_stat" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
     myrun "$io500_mdtest_cmd -T $params_md_hard" $result_file
     endphase_check "stat"
     iops5=$( get_mdt_iops $result_file "stat" )
-    print_iops 5 $iops5 $duration "$invalid"
+    iops5time=$( get_mdt_time $result_file "stat" )
+    print_iops 5 $iops5 $iops5time "$invalid"
   elif [[ "$1" == "read" ]] ; then
     [ "$io500_run_md_hard_read" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
-    myrun "$io500_mdtest_cmd -E $params_md_hard" $result_file
+    myrun "$io500_mdtest_cmd -X -E $params_md_hard" $result_file
     endphase_check "read"
     iops7=$( get_mdt_iops $result_file "read" )
-    print_iops 7 $iops7 $duration "$invalid"
+    iops7time=$( get_mdt_time $result_file "read" )
+    print_iops 7 $iops7 $iops7time "$invalid"
   else
     [ "$io500_run_md_hard_delete" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
     startphase
@@ -328,14 +392,14 @@ function endphase_check  {
   fi
   end=$(date +%s.%N)
   duration=$(printf "%.4f" $(echo "$end - $start" | bc))
-  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt 300 ]]; then
+  if [[  "$op" == "write" && $(printf "%.0f" $duration) -lt $IO500_MIN_WRITE_RUNTIME ]]; then
     local var="$2"
 
-    echo "[Warning] This cannot be an official IO-500 score. The phase runtime of ${duration}s is below 300s."
+    echo "[Warning] This cannot be an official IO-500 score. The phase runtime of ${duration}s is below ${IO500_MIN_WRITE_RUNTIME}s."
     echo "[Warning] Suggest $var=$(echo "${!var} * 320 / $duration" | bc)"
     io500_invalid="-invalid"
     invalid="-invalid"
-  elif [[  "$op" == "find" && $exact_match == 0 && $(printf "%.0f" $duration) -lt 300 ]]; then
+  elif [[  "$op" == "find" && $exact_match == 0 && $(printf "%.0f" $duration) -lt $IO500_MIN_WRITE_RUNTIME ]]; then
     echo "[Warning] Pfind found 0 matches, something is wrong with the script."
     io500_invalid="-invalid"
     invalid="-invalid"
