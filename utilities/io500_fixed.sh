@@ -52,7 +52,7 @@ function set_defaults {
   # Set default values, they may be overwritten by the user if necessary
   io500_mdtest_easy_files_per_proc=${io500_mdtest_easy_files_per_proc:-900000}
   io500_mdtest_hard_files_per_proc=${io500_mdtest_hard_files_per_proc:-950000}
-  io500_ior_hard_writes_per_proc=${io500_ior_hard_writes_per_proc:-95000}
+  io500_ior_hard_writes_per_proc=${io500_ior_hard_writes_per_proc:-1900000}
   # io500_ior_easy_size is the amount of data written per rank in MiB units,
   # but it can be any number as long as it is somehow used to scale the IOR
   # runtime as part of io500_ior_easy_params
