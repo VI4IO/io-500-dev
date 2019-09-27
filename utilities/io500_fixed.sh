@@ -58,7 +58,7 @@ function set_defaults {
   # runtime as part of io500_ior_easy_params
   io500_ior_easy_size=${io500_ior_easy_size:-9920000}
   # 2M writes, 2 GB per proc, file per proc
-  io500_ior_easy_params=${io500_ior_easy_params:-"-t 2048k -b ${io500_ior_easy_size}m -F"}
+  io500_ior_easy_params=${io500_ior_easy_params}" -b ${io500_ior_easy_size}m -F"
   io500_mdreal_params=${io500_mdreal_params:-"-P=5000 -I=1000"}
   io500_clean_cache_cmd=${io500_clean_cache_cmd:-drop_cache}
 }
