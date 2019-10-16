@@ -59,8 +59,8 @@ function setup_paths {
   io500_ior_cmd=$PWD/bin/ior
   io500_mdtest_cmd=$PWD/bin/mdtest
   io500_mdreal_cmd=$PWD/bin/md-real-io
-  io500_mpirun="jsrun"
-  io500_mpiargs="-n 6 -r 3 -a 1 -c 1"
+  io500_mpirun="mpirun"
+  io500_mpiargs="-np 2"
 }
 
 function setup_ior_easy {
