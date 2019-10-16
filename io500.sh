@@ -15,9 +15,9 @@ set -euo pipefail  # better error handling
 # These are listed in the order that they run.
 io500_run_ior_easy="True" # does the write phase and enables the subsequent read
 io500_run_md_easy="True"  # does the creat phase and enables the subsequent stat
-io500_run_ior_hard="True" # does the write phase and enables the subsequent read
+io500_run_ior_hard="False" # does the write phase and enables the subsequent read
 io500_run_md_hard="True"  # does the creat phase and enables the subsequent read
-io500_run_find="True"
+io500_run_find="False"
 io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
@@ -29,7 +29,7 @@ io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
 io500_clean_cache="False" # attempt to clean the cache after every benchmark, useful for validating the performance results and for testing with a local node; it uses the io500_clean_cache_cmd (can be overwritten); make sure the user can write to /proc/sys/vm/drop_caches
 io500_stonewall_timer=1 # Stonewalling timer, set to 300 to be an official run; set to 0, if you never want to abort...
-io500_rules="scc" # Choose regular for an official regular submission or scc for a Student Cluster Competition submission to execute the test cases for 30 seconds instead of 300 seconds
+io500_rules="regular" # Choose regular for an official regular submission or scc for a Student Cluster Competition submission to execute the test cases for 30 seconds instead of 300 seconds
 
 # to run this benchmark, find and edit each of these functions.
 # please also edit 'extra_description' function to help us collect the required data.
@@ -59,8 +59,8 @@ function setup_paths {
   io500_ior_cmd=$PWD/bin/ior
   io500_mdtest_cmd=$PWD/bin/mdtest
   io500_mdreal_cmd=$PWD/bin/md-real-io
-  io500_mpirun="mpirun"
-  io500_mpiargs="-np 2"
+  io500_mpirun="jsrun"
+  io500_mpiargs="-n 6 -r 3 -a 1 -c 1"
 }
 
 function setup_ior_easy {
