@@ -114,6 +114,11 @@ function myrun {
   echo "[Results] in $2."
 }
 
+function get_num_nodes {
+  file=$1
+  grep ^nodes $file | awk '{print $3}'
+}
+
 function get_ior_bw {
   file=$1
   operation=$2
@@ -151,6 +156,7 @@ function ior_easy {
     endphase_check "write" "io500_ior_easy_size"
     bw1=$(get_ior_bw $result_file "write")
     dur=$(get_ior_time $result_file "write")
+    num_nodes=$(get_num_nodes $result_file)
     print_bw 1 $bw1 $dur "$invalid"
   else
     [ "$io500_run_ior_easy_read" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
@@ -171,6 +177,9 @@ function mdt_easy {
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
+    if [[ $num_nodes == 1 ]]; then
+	params_md_easy=$params_md_easy" -Y"
+    fi
     startphase
     myrun "$io500_mdtest_cmd -C $params_md_easy -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_easy_files_per_proc"
@@ -229,6 +238,9 @@ function mdt_hard {
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
+    if [[ $num_nodes == 1 ]]; then
+        params_md_hard=$params_md_hard" -Y"
+    fi
     startphase $phase
     myrun "$io500_mdtest_cmd -C $params_md_hard -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_hard_files_per_proc"
