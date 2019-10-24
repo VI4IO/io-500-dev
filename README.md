@@ -1,7 +1,7 @@
 ## IO 500 in Four Easy Steps
 
 ```bash
-git clone https://github.com/VI4IO/io-500-dev
+git clone  https://github.com/VI4IO/io-500-dev.git -b io500-sc19
 cd io-500-dev
 ./utilities/prepare.sh
 ./io500.sh
