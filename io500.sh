@@ -15,9 +15,9 @@ set -euo pipefail  # better error handling
 # These are listed in the order that they run.
 io500_run_ior_easy="True" # does the write phase and enables the subsequent read
 io500_run_md_easy="True"  # does the creat phase and enables the subsequent stat
-io500_run_ior_hard="False" # does the write phase and enables the subsequent read
+io500_run_ior_hard="True" # does the write phase and enables the subsequent read
 io500_run_md_hard="True"  # does the creat phase and enables the subsequent read
-io500_run_find="False"
+io500_run_find="True"
 io500_run_ior_easy_read="True"
 io500_run_md_easy_stat="True"
 io500_run_ior_hard_read="True"
