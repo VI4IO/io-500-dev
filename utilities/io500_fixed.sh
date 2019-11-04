@@ -53,12 +53,14 @@ function set_defaults {
   io500_mdtest_easy_files_per_proc=${io500_mdtest_easy_files_per_proc:-900000}
   io500_mdtest_hard_files_per_proc=${io500_mdtest_hard_files_per_proc:-950000}
   io500_ior_hard_writes_per_proc=${io500_ior_hard_writes_per_proc:-1900000}
+  io500_ior_hard_seed=${io500_ior_hard_seed:-$(($RANDOM$RANDOM & 0x7fffffff))}
   # io500_ior_easy_size is the amount of data written per rank in MiB units,
   # but it can be any number as long as it is somehow used to scale the IOR
   # runtime as part of io500_ior_easy_params
   io500_ior_easy_size=${io500_ior_easy_size:-9920000}
   # 2M writes, 2 GB per proc, file per proc
   io500_ior_easy_params=${io500_ior_easy_params}" -b ${io500_ior_easy_size}m -F"
+  io500_ior_easy_seed=${io500_ior_easy_seed:-$(($RANDOM$RANDOM & 0x7fffffff))}
   io500_mdreal_params=${io500_mdreal_params:-"-P=5000 -I=1000"}
   io500_clean_cache_cmd=${io500_clean_cache_cmd:-drop_cache}
 }
@@ -147,7 +149,7 @@ function ior_easy {
   phase="ior_easy_$1"
   [ "$io500_run_ior_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_easy="$io500_ior_easy_params -i 1 -C -Q 1 -g -G 27 -k -e -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
+  params_ior_easy="$io500_ior_easy_params -i 1 -C -Q 1 -g -G $io500_ior_easy_seed -k -e -o $io500_workdir/ior_easy/ior_file_easy -O stoneWallingStatusFile=$io500_workdir/ior_easy/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
@@ -209,7 +211,7 @@ function ior_hard {
   phase="ior_hard_$1"
   [ "$io500_run_ior_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_ior_hard="-s $io500_ior_hard_writes_per_proc -a $io500_ior_hard_api $io500_ior_hard_api_specific_options -i 1 -C -Q 1 -g -G 27 -k -e -t 47008 -b 47008 -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
+  params_ior_hard="-s $io500_ior_hard_writes_per_proc -a $io500_ior_hard_api $io500_ior_hard_api_specific_options -i 1 -C -Q 1 -g -G $io500_ior_hard_seed -k -e -t 47008 -b 47008 -o $io500_workdir/ior_hard/IOR_file -O stoneWallingStatusFile=$io500_workdir/ior_hard/stonewall"
   result_file="$io500_result_dir/$phase.txt"
 
   if [[ "$1" == "write" ]] ; then
