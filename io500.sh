@@ -28,7 +28,7 @@ io500_run_md_hard_delete="True" # turn this off if you want to just run find by 
 io500_run_mdreal="False"  # this one is optional
 io500_cleanup_workdir="False"  # this flag is currently ignored. You'll need to clean up your data files manually if you want to.
 io500_clean_cache="False" # attempt to clean the cache after every benchmark, useful for validating the performance results and for testing with a local node; it uses the io500_clean_cache_cmd (can be overwritten); make sure the user can write to /proc/sys/vm/drop_caches
-io500_stonewall_timer=1 # Stonewalling timer, set to 300 to be an official run; set to 0, if you never want to abort...
+io500_stonewall_timer=1 # Stonewalling timer, set to 300 to be an official run
 io500_rules="regular" # Choose regular for an official regular submission or scc for a Student Cluster Competition submission to execute the test cases for 30 seconds instead of 300 seconds
 
 # to run this benchmark, find and edit each of these functions.
