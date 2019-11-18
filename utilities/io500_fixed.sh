@@ -362,7 +362,7 @@ function output_score {
   if [ -n "$io500_invalid" ]; then
     echo "One or more test phases invalid.  Not valid for IO-500 submission."
   fi
-  echo "[SCORE$io500_invalid] Bandwidth $bw_score GB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
+  echo "[SCORE$io500_invalid] Bandwidth $bw_score GiB/s : IOPS $md_score kiops : TOTAL $tot_score" | tee -a $summary_file
 }
 
 function core_setup {
@@ -381,7 +381,7 @@ function core_setup {
 }
 
 function print_bw  {
-  printf "[RESULT$4] BW   phase $1 %25s %20.3f GB/s : time %6.2f seconds\n" $phase $2 $3 | tee -a $summary_file
+  printf "[RESULT$4] BW   phase $1 %25s %20.3f GiB/s : time %6.2f seconds\n" $phase $2 $3 | tee -a $summary_file
 }
 
 function print_iops  {
