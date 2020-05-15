@@ -1,5 +1,8 @@
 #!/bin/bash
 #
+echo "** NOTE: you should be using the "io500-app" repo for submissions for"
+echo "         the ISC20 list.  This repo is for historical comparison only."
+exit 99
 # INSTRUCTIONS:
 # Edit this file as needed for your machine.
 # This simplified version is just for running on a single node.
