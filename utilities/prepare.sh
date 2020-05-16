@@ -7,8 +7,8 @@ echo It will also attempt to build the benchmarks
 echo It will output OK at the end if builds succeed
 echo
 
-IOR_HASH=b334c3f6fdb17367a2
-MDREAL_HASH=io500-sc19
+IOR_HASH=io500-isc20
+MDREAL_HASH=io500-isc20
 
 INSTALL_DIR=$PWD
 BIN=$INSTALL_DIR/bin
@@ -33,7 +33,7 @@ function main {
 }
 
 function setup {
-  rm -rf $BUILD $BIN
+  #rm -rf $BUILD $BIN
   mkdir -p $BUILD $BIN
   cp utilities/io500_fixed.sh utilities/find/sfind.sh utilities/find/mmfind.sh $BIN
 }

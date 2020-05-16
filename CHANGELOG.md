@@ -1,3 +1,7 @@
+# ISC-20
+  * You should checkout and use the "io500-app" repository instead of this one
+  * This is to facilitate simplified configuration an running the benchmark.
+  * The configuration is handled with a single .ini file in that repo.
 # SC-19
   * Moved high default values for all benchmarks to io500_fixed.sh
     * Users should not have to modify them, for testing set the stonewall time to 1
