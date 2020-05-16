@@ -1,4 +1,4 @@
-# ISC-19
+# ISC-20
   * You should checkout and use the "io500-app" repository instead of this one
   * This is to facilitate simplified configuration an running the benchmark.
   * The configuration is handled with a single .ini file in that repo.
