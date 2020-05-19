@@ -12,12 +12,12 @@ if len(sys.argv) == 1:
   exit(1)
 
 def parseDir(d):
-  """Parse the output of of a single IO500 results directory"""
+  """Parse the output of a single IO500 results directory"""
   print("Parsing: %s " % (d))
   keyset = {}
   with open(d + "/result_summary.txt", "r") as results_file:
     for line in results_file:
-      m = re.match(".*[ ]+([a-z_]+)[ ]*([0-9\.]+) (GB/s|kiops)", line)
+      m = re.match(".*[ ]+([a-z_]+)[ ]*([0-9\.]+) (GiB/s|kiops)", line)
       if m:
         keyset[m.group(1)] = m.group(2)
   return keyset
