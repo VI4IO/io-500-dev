@@ -180,13 +180,10 @@ function mdt_easy {
   phase="mdtest_easy_$1"
   [ "$io500_run_md_easy" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_easy="-F -P -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall -N 1"
+  params_md_easy="-F -P -Y -d $io500_workdir/mdt_easy -n $io500_mdtest_easy_files_per_proc $io500_mdtest_easy_params -x $io500_workdir/mdt_easy-stonewall -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
-    if [[ $num_nodes == 1 ]]; then
-	params_md_easy=$params_md_easy" -Y"
-    fi
     startphase
     myrun "$io500_mdtest_cmd -C $params_md_easy -W $io500_stonewall_timer" $result_file
     endphase_check "write" "io500_mdtest_easy_files_per_proc"
@@ -241,7 +238,7 @@ function mdt_hard {
   phase="mdtest_hard_$1"
   [ "$io500_run_md_hard" != "True" ] && printf "\n[Skipping] $phase\n" && return 0
 
-  params_md_hard="-t -F -P -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall -a $io500_mdtest_hard_api $io500_mdtest_hard_api_specific_options -N 1"
+  params_md_hard="-t -F -Y -P -w $mdt_hard_fsize -e $mdt_hard_fsize -d $io500_workdir/mdt_hard -n $io500_mdtest_hard_files_per_proc -x $io500_workdir/mdt_hard-stonewall -a $io500_mdtest_hard_api $io500_mdtest_hard_api_specific_options -N 1"
   result_file=$io500_result_dir/$phase.txt
 
   if [[ "$1" == "write" ]] ; then
