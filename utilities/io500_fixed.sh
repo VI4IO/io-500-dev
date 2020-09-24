@@ -4,8 +4,8 @@
 # If you discover a need to edit this file, please email the mailing list to discuss.
 
 if [ -z "$io500_ini" ]; then
-	echo "** NOTE: you should be using the "io500-app" repo for submissions"
-	echo "  for the ISC20 list.  This repo is for reference use only."
+	echo "** NOTE: you should use the "IO500/io500" repo for submissions"
+	echo "  for the SC20 list.  This repo is for reference use only."
 	# set "io500_ini" in your calling script if you still want to use it
 	exit 99
 fi

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-echo "** NOTE: you should be using the "io500-app" repo for submissions for"
-echo "         the ISC20 list.  This repo is for historical comparison only."
+echo "** NOTE: you should be using the "IO500/io500" repo for submissions for"
+echo "         the SC20 list.  This repo is for historical comparison only."
 exit 99
 # INSTRUCTIONS:
 # Edit this file as needed for your machine.
