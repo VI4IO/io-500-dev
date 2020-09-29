@@ -1,10 +1,10 @@
 ## IO 500 in Four Easy Steps
 
-*NOTE: please use the "io500-app" repo for ISC20 and later list submissions*
+*NOTE: please use the "IO500/io500" repo for SC20 and later list submissions*
 
 ```bash
-git clone https://github.com/VI4IO/io500-app.git -b io500-isc20
-cd io500-app
+git clone https://github.com/IO500/io500.git
+cd io500
 ./prepare.sh
 ./io500.sh
 ```
